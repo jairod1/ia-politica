@@ -16,14 +16,13 @@ def cargar_metricas():
     """
     # Definir rutas base (desde el directorio del script de streamlit)
     # Asumiendo que app.py está en streamlit/ y data/ está en la raíz del proyecto
-    ruta_base = os.path.abspath(os.path.join("..", "data"))
-    carpeta_metricas = os.path.join(ruta_base, "processed", "metrics-data")
-    carpeta_politicos = os.path.join(ruta_base, "processed", "metrics-advanced")
+    vis_path = os.path.join("..", "data", "processed", "metrics-data", "visualizaciones_totales.csv")
+    pol_path = os.path.join("..", "data", "processed", "metrics-advanced", "politicos_totales.csv")
     
     try:
         # Rutas de archivos de visualizaciones generales
-        vis_total = pd.read_csv(os.path.join(carpeta_metricas, "visualizaciones_totales.csv"))
-        pol_total = pd.read_csv(os.path.join(carpeta_politicos, "politicos_totales.csv"))
+        vis_total = pd.read_csv(vis_path)
+        pol_total = pd.read_csv(pol_path)
         
         # Limpiar títulos: quitar " - Carriola de Marín" del final
         def limpiar_titulo(titulo):
@@ -260,7 +259,7 @@ def cargar_metricas():
     
     except FileNotFoundError as e:
         st.error(f"❌ No se encontró el archivo: {e.filename}")
-        st.write(f"Ruta buscada: {carpeta_metricas} y {carpeta_politicos}")
+        st.write(f"Ruta buscada: {vis_path} y {pol_path}")
         st.stop()
     except Exception as e:
         st.error(f"❌ Error cargando métricas: {str(e)}")
@@ -273,12 +272,11 @@ def cargar_datos_comentarios():
     """
     # Definir rutas base (desde el directorio del script de streamlit)
     # Asumiendo que app.py está en streamlit/ y data/ está en la raíz del proyecto
-    ruta_base = os.path.abspath(os.path.join("..", "data"))
-    carpeta_comentarios = os.path.join(ruta_base, "processed", "filtered-data")
+    ruta_archivo = os.path.join("..", "data", "processed", "filtered-data", "filtered_data.csv")
     
     try:
         # Cargar solo el archivo principal de datos filtrados
-        filtered_data = pd.read_csv(os.path.join(carpeta_comentarios, "filtered_data.csv"))
+        filtered_data = pd.read_csv(ruta_archivo)
         
         return {
             "filtered_data": filtered_data
@@ -286,7 +284,7 @@ def cargar_datos_comentarios():
     
     except FileNotFoundError as e:
         st.error(f"❌ No se encontró el archivo: {e.filename}")
-        st.write(f"Ruta buscada: {carpeta_comentarios}")
+        st.write(f"Ruta buscada: {ruta_archivo}")
         st.stop()
     except Exception as e:
         st.error(f"❌ Error cargando datos de comentarios: {str(e)}")
@@ -299,25 +297,12 @@ def cargar_datos_comentarios_morrazo():
     """
     # Definir rutas base (desde el directorio del script de streamlit)
     # Asumiendo que app.py está en streamlit/ y el archivo CSV está en el directorio raíz
-    ruta_base = os.path.abspath(os.path.join(".."))
-    carpeta_comentarios = os.path.join(ruta_base, "data", "processed", "filtered-data")
-    archivo_morrazo = os.path.join(carpeta_comentarios, "filtro1_localizacion.csv")
-    
-    # Rutas alternativas por si el archivo está en otro directorio
-    rutas_alternativas = [
-        "filtro1_localizacion.csv",  # Directorio actual
-        "../filtro1_localizacion.csv",  # Directorio padre
-        os.path.join(ruta_base, "filtro1_localizacion.csv"),  # Directorio raíz
-        os.path.join(ruta_base, "data", "filtro1_localizacion.csv"),  # En carpeta data
-        os.path.join(ruta_base, "data", "processed", "filtro1_localizacion.csv"),  # En processed
-        os.path.join(ruta_base, "data", "processed", "filtered-data", "filtro1_localizacion.csv"),  # En filtered-data
-        os.path.join(ruta_base, "data", "raw", "filtro1_localizacion.csv"),  # En raw
-    ]
+    archivo_morrazo = os.path.join("..", "data", "processed", "filtered-data", "filtro1_localizacion.csv")
     
     archivo_encontrado = None
     
     # Buscar el archivo en las rutas posibles
-    for ruta in [archivo_morrazo] + rutas_alternativas:
+    for ruta in [archivo_morrazo]:
         if os.path.exists(ruta):
             archivo_encontrado = ruta
             break
@@ -326,7 +311,7 @@ def cargar_datos_comentarios_morrazo():
         # Mostrar rutas buscadas para debugging
         st.error("❌ No se encontró el archivo filtro1_localizacion.csv")
         st.write("📂 Rutas buscadas:")
-        for ruta in [archivo_morrazo] + rutas_alternativas:
+        for ruta in [archivo_morrazo]:
             st.write(f"   - {ruta}")
         st.stop()
     
@@ -359,25 +344,12 @@ def cargar_datos_comentarios_marin():
     """
     # Definir rutas base (desde el directorio del script de streamlit)
     # Asumiendo que app.py está en streamlit/ y el archivo CSV está en el directorio raíz
-    ruta_base = os.path.abspath(os.path.join(".."))
-    carpeta_comentarios = os.path.join(ruta_base, "data", "processed", "filtered-data")
-    archivo_marin = os.path.join(carpeta_comentarios, "filtro6_marin.csv")
-    
-    # Rutas alternativas por si el archivo está en otro directorio
-    rutas_alternativas = [
-        "filtro6_marin.csv",  # Directorio actual
-        "../filtro6_marin.csv",  # Directorio padre
-        os.path.join(ruta_base, "filtro6_marin.csv"),  # Directorio raíz
-        os.path.join(ruta_base, "data", "filtro6_marin.csv"),  # En carpeta data
-        os.path.join(ruta_base, "data", "processed", "filtro6_marin.csv"),  # En processed
-        os.path.join(ruta_base, "data", "processed", "filtered-data", "filtro6_marin.csv"),  # En filtered-data
-        os.path.join(ruta_base, "data", "raw", "filtro6_marin.csv"),  # En raw
-    ]
-    
+    archivo_marin = os.path.join("..", "data", "processed", "filtered-data", "filtro6_marin.csv")
+        
     archivo_encontrado = None
     
     # Buscar el archivo en las rutas posibles
-    for ruta in [archivo_marin] + rutas_alternativas:
+    for ruta in [archivo_marin]:
         if os.path.exists(ruta):
             archivo_encontrado = ruta
             break
@@ -386,7 +358,7 @@ def cargar_datos_comentarios_marin():
         # Mostrar rutas buscadas para debugging
         st.error("❌ No se encontró el archivo filtro6_marin.csv")
         st.write("📂 Rutas buscadas:")
-        for ruta in [archivo_marin] + rutas_alternativas:
+        for ruta in [archivo_marin]:
             st.write(f"   - {ruta}")
         st.stop()
     
