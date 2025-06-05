@@ -8,6 +8,10 @@ con y sin sentimientos para obtener resultados consistentes.
 
 import streamlit as st
 import pandas as pd
+import nest_asyncio
+import os
+os.environ["STREAMLIT_USE_WATCHMAN"] = "false"
+nest_asyncio.apply()
 
 # Importar módulos utils
 try:
