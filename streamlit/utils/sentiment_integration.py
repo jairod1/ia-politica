@@ -29,6 +29,7 @@ def cargar_analizador_sentimientos():
             "../feelings-visualizations.py",  # Directorio padre
             "../src/feelings-analyzers/feelings-visualizations.py",  # Estructura propuesta
             "src/feelings-analyzers/feelings-visualizations.py",  # Variación
+            "utils/advanced_sentiment_analyzer.py"
         ]
         
         archivo_encontrado = None
