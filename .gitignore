@@ -1,0 +1,14 @@
+# Ignora configuración local de Streamlit (no afecta al código de tu app)
+.streamlit/
+
+# Ignora entorno virtual
+venv/
+env/
+
+# Ignora cachés de Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignora archivos o datos locales
+userdata/
