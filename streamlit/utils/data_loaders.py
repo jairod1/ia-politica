@@ -272,7 +272,10 @@ def cargar_datos_comentarios():
     """
     # Definir rutas base (desde el directorio del script de streamlit)
     # Asumiendo que app.py está en streamlit/ y data/ está en la raíz del proyecto
-    ruta_archivo = os.path.join("..", "data", "processed", "filtered-data", "filtered_data.csv")
+    #ruta_archivo = os.path.join("..", "data", "processed", "filtered-data", "filtered_data.csv")
+
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    ruta_archivo = os.path.join(BASE_DIR, "data", "processed", "filtered-data", "filtered_data.csv")
     
     try:
         # Cargar solo el archivo principal de datos filtrados
@@ -297,7 +300,10 @@ def cargar_datos_comentarios_morrazo():
     """
     # Definir rutas base (desde el directorio del script de streamlit)
     # Asumiendo que app.py está en streamlit/ y el archivo CSV está en el directorio raíz
-    archivo_morrazo = os.path.join("..", "data", "processed", "filtered-data", "filtro1_localizacion.csv")
+    #archivo_morrazo = os.path.join("..", "data", "processed", "filtered-data", "filtro1_localizacion.csv")
+
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    archivo_morrazo = os.path.join(BASE_DIR, "data", "processed", "filtered-data", "filtro1_localizacion.csv")
     
     archivo_encontrado = None
     
@@ -344,8 +350,11 @@ def cargar_datos_comentarios_marin():
     """
     # Definir rutas base (desde el directorio del script de streamlit)
     # Asumiendo que app.py está en streamlit/ y el archivo CSV está en el directorio raíz
-    archivo_marin = os.path.join("..", "data", "processed", "filtered-data", "filtro6_marin.csv")
-        
+    #archivo_marin = os.path.join("..", "data", "processed", "filtered-data", "filtro6_marin.csv")
+
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    archivo_marin = os.path.join(BASE_DIR, "data", "processed", "filtered-data", "filtro6_marin.csv")
+ 
     archivo_encontrado = None
     
     # Buscar el archivo en las rutas posibles
