@@ -70,6 +70,10 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+st.write("📁 cwd:", os.getcwd())
+st.write("📋 Listing aquí:", os.listdir('.'))
+st.write("📋 Listing data:", os.listdir('../data') if os.path.exists('../data') else "no existe ../data")
+
 # Inicialización de variables globales
 SENTIMENTS_AVAILABLE = False
 AnalizadorArticulosMarin = None
