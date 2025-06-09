@@ -276,6 +276,10 @@ def cargar_datos_comentarios():
 
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     ruta_archivo = os.path.join(BASE_DIR, "data", "processed", "filtered-data", "filtered_data.csv")
+
+    st.write("🔍 BASE_DIR:", BASE_DIR)
+    st.write("🔍 Carpeta esperada:", ruta_archivo)
+    st.write("📋 listdir folder:", os.listdir(ruta_archivo) if os.path.exists(ruta_archivo) else "❌ No existe esa carpeta")
     
     try:
         # Cargar solo el archivo principal de datos filtrados
