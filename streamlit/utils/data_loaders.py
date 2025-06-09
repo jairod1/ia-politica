@@ -9,6 +9,18 @@ import streamlit as st
 import pandas as pd
 import os
 
+# === FUNCIÓN ROBUSTA PARA DETECTAR LA RAÍZ DEL PROYECTO ===
+def get_project_root():
+    """
+    Sube directorios hasta encontrar la carpeta raíz del proyecto (la que contiene /data).
+    """
+    current = os.path.abspath(__file__)
+    while current != "/" and current:
+        if os.path.isdir(os.path.join(current, "data")):
+            return current
+        current = os.path.dirname(current)
+    raise RuntimeError("No se encontró la carpeta raíz del proyecto (con /data dentro).")
+
 @st.cache_data  # Cache para mejorar rendimiento
 def cargar_metricas():
     """
@@ -274,7 +286,7 @@ def cargar_datos_comentarios():
     # Asumiendo que app.py está en streamlit/ y data/ está en la raíz del proyecto
     #ruta_archivo = os.path.join("..", "data", "processed", "filtered-data", "filtered_data.csv")
 
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    BASE_DIR = get_project_root()
     ruta_archivo = os.path.join(BASE_DIR, "data", "processed", "filtered-data", "filtered_data.csv")
 
     st.write("🔍 BASE_DIR:", BASE_DIR)
@@ -306,7 +318,7 @@ def cargar_datos_comentarios_morrazo():
     # Asumiendo que app.py está en streamlit/ y el archivo CSV está en el directorio raíz
     #archivo_morrazo = os.path.join("..", "data", "processed", "filtered-data", "filtro1_localizacion.csv")
 
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    BASE_DIR = get_project_root()
     archivo_morrazo = os.path.join(BASE_DIR, "data", "processed", "filtered-data", "filtro1_localizacion.csv")
     
     archivo_encontrado = None
@@ -356,7 +368,7 @@ def cargar_datos_comentarios_marin():
     # Asumiendo que app.py está en streamlit/ y el archivo CSV está en el directorio raíz
     #archivo_marin = os.path.join("..", "data", "processed", "filtered-data", "filtro6_marin.csv")
 
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    BASE_DIR = get_project_root()
     archivo_marin = os.path.join(BASE_DIR, "data", "processed", "filtered-data", "filtro6_marin.csv")
  
     archivo_encontrado = None
