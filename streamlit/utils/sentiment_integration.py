@@ -21,6 +21,7 @@ def cargar_analizador_sentimientos():
     try:
         # Buscar el archivo en diferentes ubicaciones posibles
         posibles_rutas = [
+            "./advanced_sentiment_analyzer.py",  # ✅ Relativo a donde está este archivo (utils/)
             "advanced_sentiment_analyzer.py",  # Directorio actual
             "../advanced_sentiment_analyzer.py",  # Directorio padre
             "utils/advanced_sentiment_analyzer.py",  # En utils

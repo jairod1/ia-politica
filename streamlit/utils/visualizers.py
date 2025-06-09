@@ -966,8 +966,6 @@ def mostrar_seccion_comentarios_temporal(titulo, descripcion, datos, titulo_secc
         st.error(f"💥 Función que falló: {procesador_func.__name__}")
 
 def mostrar_tabla_articulos_con_sentimientos(df, titulo, reporte=None):
-    import streamlit as st
-    import pandas as pd
 
     if len(df) == 0:
         st.warning(f"🤷‍♂️ No hay datos para mostrar en: {titulo}")
