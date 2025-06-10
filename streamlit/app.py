@@ -85,6 +85,27 @@ except Exception as e:
     SENTIMENTS_AVAILABLE = False
     mensaje_carga = f"❌ Error cargando analizador: {e}"
 
+# AÑADIR ESTE DIAGNÓSTICO:
+st.write("🔍 **DIAGNÓSTICO COMPLETO:**")
+st.write(f"**Mensaje de carga:** {mensaje_carga}")
+st.write(f"**AnalizadorArticulosMarin:** {AnalizadorArticulosMarin}")
+st.write(f"**SENTIMENTS_AVAILABLE:** {SENTIMENTS_AVAILABLE}")
+
+# Verificar archivo directamente
+import os
+archivo_path = "utils/advanced_sentiment_analyzer.py"
+st.write(f"**¿Existe el archivo?** {os.path.exists(archivo_path)}")
+
+if os.path.exists(archivo_path):
+    try:
+        with open(archivo_path, 'r') as f:
+            contenido = f.read()
+            st.write(f"**Tamaño del archivo:** {len(contenido)} caracteres")
+            st.write(f"**¿Tiene AnalizadorSentimientosAvanzado?** {'AnalizadorSentimientosAvanzado' in contenido}")
+            st.write(f"**¿Tiene AnalizadorArticulosMarin?** {'AnalizadorArticulosMarin' in contenido}")
+    except Exception as e:
+        st.write(f"**Error leyendo archivo:** {e}")
+
 # VERIFICACIÓN DIRECTA
 if SENTIMENTS_AVAILABLE:
     try:
