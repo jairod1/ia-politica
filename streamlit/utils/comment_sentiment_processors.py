@@ -74,55 +74,40 @@ def mostrar_comentarios_con_sentimientos(df_comentarios, reporte, titulo_seccion
 
 def resumir_sentimientos_por_articulo(df_analizado):
     """
-    🚨 SOLUCIÓN DEFINITIVA: Forzar columnas antes de agrupar
+    Agrupa los comentarios analizados por artículo y calcula estadísticas agregadas de sentimiento.
+
+    Args:
+        df_analizado: DataFrame con una fila por comentario, y análisis de sentimientos hecho
+
+    Returns:
+        DataFrame con una fila por artículo y resumen emocional
     """
-    if len(df_analizado) == 0:
-        return pd.DataFrame()
-    
-    # FORZAR COLUMNAS NECESARIAS PRIMERO
-    df_fixed = df_analizado.copy()
-    
-    columnas_basicas = {
-        'tono_general': 'neutral',
-        'emocion_principal': 'neutral', 
-        'intensidad_emocional': 1,
-        'confianza_analisis': 0.5,
-        'es_politico': False,
-        'idioma': 'castellano',
-        'title_original': df_fixed.get('title', 'Sin título'),
-        'link': 'sin_enlace',
-        'date': '2025-01-01',
-        'source': 'Sin fuente',
-        'n_visualizations': 0
-    }
-    
-    for col, valor in columnas_basicas.items():
-        if col not in df_fixed.columns:
-            if col == 'title_original' and 'title' in df_fixed.columns:
-                df_fixed[col] = df_fixed['title']
-            else:
-                df_fixed[col] = valor
-    
     def moda_o_neutral(col):
         conteo = col.value_counts()
         if len(conteo) == 0:
             return 'neutral'
         return conteo.idxmax()
     
-    # AGRUPACIÓN SIMPLIFICADA
-    agrupado = df_fixed.groupby(['link', 'title_original']).agg({
+    # Verificar que las columnas necesarias existen
+    columnas_necesarias = ['tono_general', 'emocion_principal', 'intensidad_emocional', 'confianza_analisis']
+    columnas_faltantes = [col for col in columnas_necesarias if col not in df_analizado.columns]
+
+    if columnas_faltantes:
+        st.error(f"❌ Faltan columnas de análisis: {columnas_faltantes}")
+        return pd.DataFrame()
+
+    agrupado = df_analizado.groupby(['link', 'title_original']).agg({
         'tono_general': moda_o_neutral,
         'emocion_principal': moda_o_neutral,
         'intensidad_emocional': 'mean',
-        'confianza_analisis': 'mean', 
+        'confianza_analisis': 'mean',
         'es_politico': lambda x: x.sum() > len(x) / 2,
         'idioma': moda_o_neutral,
         'date': 'first',
         'n_visualizations': 'first',
         'source': 'first'
     }).reset_index()
-    
-    # RENOMBRAR COLUMNAS
+
     agrupado.rename(columns={
         'title_original': 'title',
         'tono_general': 'tono_comentarios',
@@ -134,9 +119,10 @@ def resumir_sentimientos_por_articulo(df_analizado):
         'link': 'article_link',
         'date': 'article_date'
     }, inplace=True)
-    
+
     return agrupado
-    
+
+
 def procesar_comentarios_politicos_con_sentimientos(df, aplicar_analisis_sentimientos, analizador, top_n=20, filtro_popularidad=None):
     """
     Procesa comentarios políticos aplicando análisis de sentimientos, y resume por artículo

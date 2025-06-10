@@ -85,25 +85,6 @@ except Exception as e:
     SENTIMENTS_AVAILABLE = False
     mensaje_carga = f"❌ Error cargando analizador: {e}"
 
-# VERIFICACIÓN TEMPORAL - añadir después de cargar_analizador_sentimientos()
-if SENTIMENTS_AVAILABLE:
-    st.write("🔍 **VERIFICACIÓN DEL ARCHIVO:**")
-    try:
-        with open("utils/advanced_sentiment_analyzer.py", "r") as f:
-            contenido = f.read()
-            if "AnalizadorSentimientosAvanzado" in contenido:
-                st.write("✅ Archivo correcto cargado")
-            else:
-                st.write("❌ Archivo incorrecto - no tiene AnalizadorSentimientosAvanzado")
-            
-            if "pipeline_es" in contenido:
-                st.write("❌ PROBLEMA: Archivo tiene pipeline_es (versión vieja)")
-            else:
-                st.write("✅ Archivo no tiene pipeline_es (versión nueva)")
-                
-    except Exception as e:
-        st.write(f"❌ Error leyendo archivo: {e}")
-
 # Inicializar session_state para analizador global
 if 'analizador_global' not in st.session_state:
     st.session_state.analizador_global = None
@@ -129,12 +110,8 @@ def get_analizador_global():
 
 def procesar_comentarios_con_sentimientos_directo(df, analizador, top_n=20, filtro_popularidad=None):
     """
-    🔧 VERSIÓN CON LOGS DETALLADOS PARA DEBUGGING
+    🔧 VERSIÓN UNIFICADA CORREGIDA: Usa exactamente la misma lógica que la función sin analizador
     """
-    st.write("🔍 **DEBUG**: Iniciando procesamiento...")
-    st.write(f"🔍 **DEBUG**: DataFrame input tiene {len(df)} filas")
-    st.write(f"🔍 **DEBUG**: Analizador: {type(analizador)}")
-    st.write(f"🔍 **DEBUG**: Filtro popularidad: {filtro_popularidad}")
     
     if analizador is None:
         st.warning("⚠️ Analizador no disponible")
@@ -142,27 +119,21 @@ def procesar_comentarios_con_sentimientos_directo(df, analizador, top_n=20, filt
     
     # 🔧 CLAVE: Usar función unificada para obtener artículos polémicos
     if filtro_popularidad is None:  # Solo para artículos polémicos
-        st.write("🔍 **DEBUG**: Procesando artículos polémicos...")
-        
         # Usar EXACTAMENTE la misma lógica que la función sin analizador
         df_articulos_polemicos = obtener_articulos_polemicos_unificado(df, top_n)
-        st.write(f"🔍 **DEBUG**: Artículos polémicos encontrados: {len(df_articulos_polemicos)}")
         
         if len(df_articulos_polemicos) == 0:
             st.warning("⚠️ No se encontraron artículos polémicos")
             return pd.DataFrame(), None, pd.DataFrame()
         
         # Extraer comentarios SOLO de estos artículos polémicos
-        st.write("🔍 **DEBUG**: Extrayendo comentarios...")
         df_comentarios_completos = extraer_comentarios_para_analisis(df_articulos_polemicos)
-        st.write(f"🔍 **DEBUG**: Comentarios extraídos: {len(df_comentarios_completos)}")
         
         # Para artículos polémicos, usar TODOS los comentarios de los artículos seleccionados
         df_comentarios_filtrados = df_comentarios_completos.copy()
         
     else:
         # Para comentarios populares/impopulares, usar lógica anterior
-        st.write("🔍 **DEBUG**: Procesando comentarios populares/impopulares...")
         df_comentarios_completos = extraer_comentarios_para_analisis(df)
         
         if len(df_comentarios_completos) == 0:
@@ -183,32 +154,19 @@ def procesar_comentarios_con_sentimientos_directo(df, analizador, top_n=20, filt
         df_comentarios_filtrados = df_comentarios_filtrados.head(top_n)
     
     # Verificar que hay comentarios filtrados para analizar
-    st.write(f"🔍 **DEBUG**: Comentarios filtrados: {len(df_comentarios_filtrados)}")
-    
     if len(df_comentarios_filtrados) == 0:
         st.warning(f"⚠️ No hay comentarios {filtro_popularidad} para analizar")
         return pd.DataFrame(), None, df_comentarios_completos
     
     # Aplicar análisis de sentimientos
-    st.write("🔍 **DEBUG**: Aplicando análisis de sentimientos...")
     try:
         df_analizado, reporte = aplicar_analisis_sentimientos(df_comentarios_filtrados, analizador)
-        st.write(f"🔍 **DEBUG**: Análisis completado. Filas resultado: {len(df_analizado) if df_analizado is not None else 'None'}")
-        
-        if df_analizado is not None:
-            st.write(f"🔍 **DEBUG**: Columnas en df_analizado: {list(df_analizado.columns)}")
-        
         if df_analizado is None or len(df_analizado) == 0:
             st.error("❌ El análisis de sentimientos no devolvió datos")
             return df_comentarios_filtrados, None, df_comentarios_completos
-        
+                
         # Resumir por artículo
-        st.write("🔍 **DEBUG**: Resumiendo por artículo...")
         df_resumido = resumir_sentimientos_por_articulo(df_analizado)
-        st.write(f"🔍 **DEBUG**: Artículos resumidos: {len(df_resumido)}")
-        
-        if len(df_resumido) > 0:
-            st.write(f"🔍 **DEBUG**: Columnas en df_resumido: {list(df_resumido.columns)}")
         
         # 🔧 ASEGURAR ORDENAMIENTO FINAL por número de comentarios (igual que sin analizador)
         if len(df_resumido) > 0 and filtro_popularidad is None:
@@ -219,21 +177,16 @@ def procesar_comentarios_con_sentimientos_directo(df, analizador, top_n=20, filt
                     df_resumido['n_comments'] = df_resumido['title'].map(mapping_comentarios).fillna(0)
                     # Ordenar por número de comentarios descendente (mismo criterio)
                     df_resumido = df_resumido.sort_values('n_comments', ascending=False)
-                    st.write("🔍 **DEBUG**: Ordenamiento por comentarios aplicado")
-                except Exception as e:
-                    st.write(f"🔍 **DEBUG**: Error en ordenamiento: {e}")
+                except:
                     # Si el mapeo falla, mantener orden existente
                     pass
         
-        st.write("🔍 **DEBUG**: Procesamiento completado exitosamente")
         return df_resumido, reporte, df_comentarios_completos
         
     except Exception as e:
         st.error(f"❌ Error aplicando análisis de sentimientos: {e}")
-        st.write(f"🔍 **DEBUG**: Tipo de error: {type(e)}")
-        st.write(f"🔍 **DEBUG**: Detalles del error: {str(e)}")
         return df_comentarios_filtrados, None, df_comentarios_completos
-                
+            
 def procesar_comentarios_individuales_con_sentimientos(df, analizador, top_n=20, filtro_popularidad=None):
     """
     NUEVA FUNCIÓN: Para comentarios individuales con análisis de sentimientos completo
