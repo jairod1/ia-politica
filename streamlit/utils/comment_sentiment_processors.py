@@ -74,16 +74,27 @@ def mostrar_comentarios_con_sentimientos(df_comentarios, reporte, titulo_seccion
 
 def resumir_sentimientos_por_articulo(df_analizado):
     """
-    🔧 VERSIÓN DE EMERGENCIA: Agrupa comentarios por artículo con validación robusta
+    🚨 ARREGLO: Forzar columnas básicas antes de agrupar
     """
-    st.write("🔧 **EMERGENCY**: Resumiendo sentimientos por artículo...")
-    st.write(f"🔧 **EMERGENCY**: Input tiene {len(df_analizado)} comentarios")
-    st.write(f"🔧 **EMERGENCY**: Columnas disponibles: {list(df_analizado.columns)}")
-    
     if len(df_analizado) == 0:
-        st.warning("⚠️ No hay comentarios para resumir")
         return pd.DataFrame()
     
+    # 🚨 FORZAR COLUMNAS NECESARIAS
+    df_fixed = df_analizado.copy()
+    
+    columnas_basicas = {
+        'tono_general': 'neutral',
+        'emocion_principal': 'neutral', 
+        'intensidad_emocional': 1,
+        'confianza_analisis': 0.5,
+        'es_politico': False,
+        'idioma': 'castellano'
+    }
+    
+    for col, valor in columnas_basicas.items():
+        if col not in df_fixed.columns:
+            df_fixed[col] = valor
+
     def moda_o_neutral(col):
         """Función auxiliar segura para calcular moda"""
         try:
@@ -107,25 +118,25 @@ def resumir_sentimientos_por_articulo(df_analizado):
         
         # Añadir columnas faltantes con valores por defecto
         for col, valor_default in columnas_verificacion.items():
-            if col not in df_analizado.columns:
+            if col not in df_fixed.columns:
                 st.write(f"🔧 **EMERGENCY**: Añadiendo columna faltante '{col}' con valor '{valor_default}'")
-                df_analizado[col] = valor_default
+                df_fixed[col] = valor_default
         
         # Verificar columnas de agrupación
-        if 'title_original' not in df_analizado.columns:
-            if 'title' in df_analizado.columns:
-                df_analizado['title_original'] = df_analizado['title']
+        if 'title_original' not in df_fixed.columns:
+            if 'title' in df_fixed.columns:
+                df_fixed['title_original'] = df_fixed['title']
             else:
                 st.error("❌ No se puede agrupar: falta columna de título")
                 return pd.DataFrame()
         
-        if 'link' not in df_analizado.columns:
-            df_analizado['link'] = 'sin_enlace'
+        if 'link' not in df_fixed.columns:
+            df_fixed['link'] = 'sin_enlace'
         
         # Realizar agrupación
         st.write("🔧 **EMERGENCY**: Realizando agrupación...")
         
-        agrupado = df_analizado.groupby(['link', 'title_original']).agg({
+        agrupado = df_fixed.groupby(['link', 'title_original']).agg({
             'tono_general': moda_o_neutral,
             'emocion_principal': moda_o_neutral,
             'intensidad_emocional': 'mean',
@@ -162,7 +173,7 @@ def resumir_sentimientos_por_articulo(df_analizado):
         # Crear DataFrame mínimo de emergencia
         try:
             # Tomar primer comentario por artículo como representativo
-            df_minimo = df_analizado.groupby('title_original' if 'title_original' in df_analizado.columns else 'title').first().reset_index()
+            df_minimo = df_fixed.groupby('title_original' if 'title_original' in df_fixed.columns else 'title').first().reset_index()
             
             # Asegurar columnas necesarias
             df_minimo['tono_comentarios'] = df_minimo.get('tono_general', 'neutral')
