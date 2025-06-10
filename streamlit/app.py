@@ -85,44 +85,24 @@ except Exception as e:
     SENTIMENTS_AVAILABLE = False
     mensaje_carga = f"❌ Error cargando analizador: {e}"
 
-# AÑADIR ESTE DIAGNÓSTICO:
-st.write("🔍 **DIAGNÓSTICO COMPLETO:**")
-st.write(f"**Mensaje de carga:** {mensaje_carga}")
-st.write(f"**AnalizadorArticulosMarin:** {AnalizadorArticulosMarin}")
-st.write(f"**SENTIMENTS_AVAILABLE:** {SENTIMENTS_AVAILABLE}")
-
-# Verificar archivo directamente
-import os
-archivo_path = "utils/advanced_sentiment_analyzer.py"
-st.write(f"**¿Existe el archivo?** {os.path.exists(archivo_path)}")
-
-if os.path.exists(archivo_path):
-    try:
-        with open(archivo_path, 'r') as f:
-            contenido = f.read()
-            st.write(f"**Tamaño del archivo:** {len(contenido)} caracteres")
-            st.write(f"**¿Tiene AnalizadorSentimientosAvanzado?** {'AnalizadorSentimientosAvanzado' in contenido}")
-            st.write(f"**¿Tiene AnalizadorArticulosMarin?** {'AnalizadorArticulosMarin' in contenido}")
-    except Exception as e:
-        st.write(f"**Error leyendo archivo:** {e}")
-
-# VERIFICACIÓN DIRECTA
+# VERIFICACIÓN TEMPORAL - añadir después de cargar_analizador_sentimientos()
 if SENTIMENTS_AVAILABLE:
+    st.write("🔍 **VERIFICACIÓN DEL ARCHIVO:**")
     try:
-        # Test directo del analizador
-        test_instance = AnalizadorArticulosMarin()
-        st.write(f"🔍 **Clase cargada:** {type(test_instance)}")
-        st.write(f"🔍 **Analizador interno:** {type(test_instance.analizador)}")
-        st.write(f"🔍 **Atributos:** {[attr for attr in dir(test_instance.analizador) if not attr.startswith('_')]}")
-        
-        # Verificar si tiene el atributo problemático
-        if hasattr(test_instance.analizador, 'pipeline_es'):
-            st.error("❌ PROBLEMA: Analizador tiene pipeline_es (archivo viejo)")
-        else:
-            st.success("✅ Analizador correcto (sin pipeline_es)")
+        with open("utils/advanced_sentiment_analyzer.py", "r") as f:
+            contenido = f.read()
+            if "AnalizadorSentimientosAvanzado" in contenido:
+                st.write("✅ Archivo correcto cargado")
+            else:
+                st.write("❌ Archivo incorrecto - no tiene AnalizadorSentimientosAvanzado")
             
+            if "pipeline_es" in contenido:
+                st.write("❌ PROBLEMA: Archivo tiene pipeline_es (versión vieja)")
+            else:
+                st.write("✅ Archivo no tiene pipeline_es (versión nueva)")
+                
     except Exception as e:
-        st.error(f"❌ Error probando analizador: {e}")
+        st.write(f"❌ Error leyendo archivo: {e}")
 
 # Inicializar session_state para analizador global
 if 'analizador_global' not in st.session_state:
@@ -211,10 +191,6 @@ def procesar_comentarios_con_sentimientos_directo(df, analizador, top_n=20, filt
     
     # Aplicar análisis de sentimientos
     st.write("🔍 **DEBUG**: Aplicando análisis de sentimientos...")
-    st.write("🔍 DEBUG: ANTES de aplicar_analisis_sentimientos")
-    st.write(f"🔍 DEBUG: df_comentarios_filtrados tiene {len(df_comentarios_filtrados)} filas")
-    st.write(f"🔍 DEBUG: Columnas antes del análisis: {list(df_comentarios_filtrados.columns)}")
-
     try:
         df_analizado, reporte = aplicar_analisis_sentimientos(df_comentarios_filtrados, analizador)
         st.write(f"🔍 **DEBUG**: Análisis completado. Filas resultado: {len(df_analizado) if df_analizado is not None else 'None'}")
