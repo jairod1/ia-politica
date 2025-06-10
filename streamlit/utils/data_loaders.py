@@ -293,10 +293,10 @@ def cargar_datos_comentarios():
     st.write("🔍 Carpeta esperada:", ruta_archivo)
     st.write("📋 listdir folder:", os.listdir(ruta_archivo) if os.path.exists(ruta_archivo) else "❌ No existe esa carpeta")
 
-    print(f"DEBUG: ruta_archivo = {ruta_archivo}")
-    print(f"DEBUG: existe? = {os.path.exists(ruta_archivo)}")
-    print(f"DEBUG: es archivo? = {os.path.isfile(ruta_archivo)}")
-    print(f"DEBUG: es directorio? = {os.path.isdir(ruta_archivo)}")
+    st.write(f"DEBUG: ruta_archivo = {ruta_archivo}")
+    st.write(f"DEBUG: existe? = {os.path.exists(ruta_archivo)}")
+    st.write(f"DEBUG: es archivo? = {os.path.isfile(ruta_archivo)}")
+    st.write(f"DEBUG: es directorio? = {os.path.isdir(ruta_archivo)}")
 
     
     try:
