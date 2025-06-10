@@ -474,7 +474,7 @@ class AnalizadorSentimientosAvanzado:
                         columna_resumen: str = None) -> pd.DataFrame:
         """
         Aplica análisis completo a un dataset de artículos
-    
+
         Args:
             df: DataFrame con los artículos
             columna_titulo: Nombre de la columna con títulos
@@ -484,6 +484,11 @@ class AnalizadorSentimientosAvanzado:
             DataFrame con las nuevas columnas de análisis
         """
         print(f"🧠 Analizando sentimientos y emociones de {len(df)} artículos...")
+
+        # 🔧 DEBUG 1: Verificar entrada
+        print(f"🔍 DEBUG: Columnas de entrada: {list(df.columns)}")
+        print(f"🔍 DEBUG: Columna título: {columna_titulo}")
+        print(f"🔍 DEBUG: Columna resumen: {columna_resumen}")
         
         resultados = []
         for idx, row in df.iterrows():
@@ -493,11 +498,26 @@ class AnalizadorSentimientosAvanzado:
             titulo = str(row[columna_titulo]) if pd.notna(row[columna_titulo]) else ""
             resumen = str(row[columna_resumen]) if columna_resumen and pd.notna(row[columna_resumen]) else ""
             
+            # 🔧 DEBUG 2: Verificar datos de entrada
+            if idx == 0:  # Solo para el primer artículo
+                print(f"🔍 DEBUG primer artículo:")
+                print(f"  Título: {titulo[:50]}...")
+                print(f"  Resumen: {resumen[:50]}...")
+
             try:
                 resultado = self.analizar_articulo_completo(titulo, resumen)
+                
+                # 🔧 DEBUG 3: Verificar resultado
+                if idx == 0:  # Solo para el primer artículo
+                    print(f"🔍 DEBUG resultado análisis:")
+                    print(f"  language: {resultado.language}")
+                    print(f"  emotion_primary: {resultado.emotion_primary}")
+                    print(f"  general_tone: {resultado.general_tone}")
+                    print(f"  confidence: {resultado.confidence}")
+
                 resultados.append(resultado)
             except Exception as e:
-                print(f"Error procesando artículo {idx}: {e}")
+                print(f"🔍 DEBUG: Error procesando artículo {idx}: {e}")
                 resultado_default = EmotionResult(
                     language='castellano',
                     emotion_primary='neutral',
@@ -511,9 +531,14 @@ class AnalizadorSentimientosAvanzado:
                     thematic_category='📄 Otros'
                 )
                 resultados.append(resultado_default)
-        
+
+        # 🔧 DEBUG 4: Verificar resultados finales
+        print(f"🔍 DEBUG: Total resultados: {len(resultados)}")
+        if len(resultados) > 0:
+            print(f"🔍 DEBUG: Primer resultado tipo: {type(resultados[0])}")
+            print(f"🔍 DEBUG: Primer resultado atributos: {dir(resultados[0])}")
+
         # Añadir TODAS las columnas al DataFrame
-        # Añadir columnas al DataFrame
         df_resultado = df.copy()
 
         # NUEVA: Columna de detección de idioma
@@ -527,18 +552,39 @@ class AnalizadorSentimientosAvanzado:
 
         df_resultado['idioma'] = idiomas_detectados
 
-        # Columnas de análisis general (ESTAS SON LAS COLUMNAS QUE FALTABAN)
-        df_resultado['tono_general'] = [r.general_tone for r in resultados]
-        df_resultado['emocion_principal'] = [r.emotion_primary for r in resultados]  # NUEVA
-        df_resultado['confianza_analisis'] = [r.general_confidence for r in resultados]
-        df_resultado['intensidad_emocional'] = [r.emotional_intensity for r in resultados]
-        df_resultado['contexto_emocional'] = [r.emotional_context for r in resultados]
-        df_resultado['es_politico'] = [r.is_political for r in resultados]
-        df_resultado['tematica'] = [r.thematic_category for r in resultados]  # MEJORADA
-        
-        # Columnas detalladas adicionales
-        df_resultado['confianza_emocion'] = [r.confidence for r in resultados]
-        df_resultado['emociones_detectadas'] = [r.emotions_detected for r in resultados]
+        # 🔧 DEBUG 5: Verificar antes de añadir columnas
+        print(f"🔍 DEBUG: Añadiendo columnas...")
+
+        try:
+            # Columnas de análisis general (ESTAS SON LAS COLUMNAS QUE FALTABAN)
+            df_resultado['tono_general'] = [r.general_tone for r in resultados]
+            print(f"🔍 DEBUG: ✅ tono_general añadido")
+            
+            df_resultado['emocion_principal'] = [r.emotion_primary for r in resultados]  # NUEVA
+            print(f"🔍 DEBUG: ✅ emocion_principal añadido")
+            
+            df_resultado['confianza_analisis'] = [r.general_confidence for r in resultados]
+            print(f"🔍 DEBUG: ✅ confianza_analisis añadido")
+            
+            df_resultado['intensidad_emocional'] = [r.emotional_intensity for r in resultados]
+            print(f"🔍 DEBUG: ✅ intensidad_emocional añadido")
+            
+            df_resultado['contexto_emocional'] = [r.emotional_context for r in resultados]
+            df_resultado['es_politico'] = [r.is_political for r in resultados]
+            df_resultado['tematica'] = [r.thematic_category for r in resultados]  # MEJORADA
+            
+            # Columnas detalladas adicionales
+            df_resultado['confianza_emocion'] = [r.confidence for r in resultados]
+            df_resultado['emociones_detectadas'] = [r.emotions_detected for r in resultados]
+            
+            print(f"🔍 DEBUG: ✅ Todas las columnas añadidas")
+            print(f"🔍 DEBUG: Columnas finales: {list(df_resultado.columns)}")
+
+        except Exception as e:
+            print(f"🔍 DEBUG: ❌ Error añadiendo columnas: {e}")
+            print(f"🔍 DEBUG: Tipo de error: {type(e)}")
+            import traceback
+            traceback.print_exc()
         
         print("✅ Análisis completo terminado")
         return df_resultado
