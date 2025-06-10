@@ -85,24 +85,23 @@ except Exception as e:
     SENTIMENTS_AVAILABLE = False
     mensaje_carga = f"❌ Error cargando analizador: {e}"
 
-# VERIFICACIÓN TEMPORAL - añadir después de cargar_analizador_sentimientos()
+# VERIFICACIÓN DIRECTA
 if SENTIMENTS_AVAILABLE:
-    st.write("🔍 **VERIFICACIÓN DEL ARCHIVO:**")
     try:
-        with open("utils/advanced_sentiment_analyzer.py", "r") as f:
-            contenido = f.read()
-            if "AnalizadorSentimientosAvanzado" in contenido:
-                st.write("✅ Archivo correcto cargado")
-            else:
-                st.write("❌ Archivo incorrecto - no tiene AnalizadorSentimientosAvanzado")
+        # Test directo del analizador
+        test_instance = AnalizadorArticulosMarin()
+        st.write(f"🔍 **Clase cargada:** {type(test_instance)}")
+        st.write(f"🔍 **Analizador interno:** {type(test_instance.analizador)}")
+        st.write(f"🔍 **Atributos:** {[attr for attr in dir(test_instance.analizador) if not attr.startswith('_')]}")
+        
+        # Verificar si tiene el atributo problemático
+        if hasattr(test_instance.analizador, 'pipeline_es'):
+            st.error("❌ PROBLEMA: Analizador tiene pipeline_es (archivo viejo)")
+        else:
+            st.success("✅ Analizador correcto (sin pipeline_es)")
             
-            if "pipeline_es" in contenido:
-                st.write("❌ PROBLEMA: Archivo tiene pipeline_es (versión vieja)")
-            else:
-                st.write("✅ Archivo no tiene pipeline_es (versión nueva)")
-                
     except Exception as e:
-        st.write(f"❌ Error leyendo archivo: {e}")
+        st.error(f"❌ Error probando analizador: {e}")
 
 # Inicializar session_state para analizador global
 if 'analizador_global' not in st.session_state:

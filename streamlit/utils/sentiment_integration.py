@@ -13,25 +13,37 @@ import importlib.util
 
 def cargar_analizador_sentimientos():
     """
-    Carga el analizador de sentimientos avanzado mejorado de forma robusta
+    FORZAR RECARGA COMPLETA
     """
     try:
-        # RUTA DIRECTA - sin complicaciones
         archivo_path = "utils/advanced_sentiment_analyzer.py"
         
         if not os.path.exists(archivo_path):
             return None, None, f"❌ No encontrado: {archivo_path}"
         
-        # Cargar módulo
-        spec = importlib.util.spec_from_file_location("sentiment_analyzer", archivo_path)
+        # LIMPIAR CACHÉ DE MÓDULOS
+        module_name = "sentiment_analyzer"
+        if module_name in sys.modules:
+            del sys.modules[module_name]
+            
+        # CARGAR FORZADO
+        spec = importlib.util.spec_from_file_location(module_name, archivo_path)
         modulo_sentimientos = importlib.util.module_from_spec(spec)
+        
+        # FORZAR EJECUCIÓN
         spec.loader.exec_module(modulo_sentimientos)
         
-        # Extraer clases
+        # VERIFICAR CONTENIDO
+        if not hasattr(modulo_sentimientos, 'AnalizadorArticulosMarin'):
+            return None, None, "❌ No tiene AnalizadorArticulosMarin"
+            
+        if not hasattr(modulo_sentimientos, 'AnalizadorSentimientosAvanzado'):
+            return None, None, "❌ No tiene AnalizadorSentimientosAvanzado"
+        
         AnalizadorArticulosMarin = getattr(modulo_sentimientos, 'AnalizadorArticulosMarin')
         analizar_articulos_marin = getattr(modulo_sentimientos, 'analizar_articulos_marin')
         
-        return AnalizadorArticulosMarin, analizar_articulos_marin, f"✅ Cargado desde: {archivo_path}"
+        return AnalizadorArticulosMarin, analizar_articulos_marin, f"✅ FORZADO desde: {archivo_path}"
         
     except Exception as e:
         return None, None, f"❌ Error: {e}"
