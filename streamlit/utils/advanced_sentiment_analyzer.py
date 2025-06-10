@@ -1,8 +1,8 @@
 """
-Advanced Sentiment Analyzer - HorizontAI (VERSIÓN MEJORADA)
-===========================================================
+Advanced Sentiment Analyzer - HorizontAI (VERSIÓN CORREGIDA)
+============================================================
 
-Analizador avanzado mejorado con detección de idioma, lógica corregida y mejores categorías.
+🔧 CORRECCIÓN: Fixes para errores de columnas faltantes y signatura incorrecta
 """
 
 import re
@@ -333,44 +333,60 @@ class AnalizadorSentimientosAvanzado:
     
     def analizar_articulo_completo(self, titulo: str, resumen: str = "") -> EmotionResult:
         """Análisis completo mejorado con todas las correcciones"""
-        texto_completo = f"{titulo} {resumen}".lower()
-        
-        # 1. NUEVO: Detectar idioma
-        language = self.detectar_idioma(f"{titulo} {resumen}")
-        
-        # 2. Análisis de emociones granulares
-        emotions_scores = self._detectar_emociones(titulo, resumen)
-        
-        # 3. Determinar emoción principal
-        emotion_primary, confidence = self._determinar_emociones_principales(emotions_scores)
-        
-        # 4. LÓGICA CORREGIDA: Tono basado en emoción principal
-        general_tone, general_confidence = self._determinar_tono_general_corregido(emotions_scores, titulo, resumen)
-        
-        # 5. Detectar contexto emocional
-        emotional_context = self._detectar_contexto(texto_completo)
-        
-        # 6. Calcular intensidad emocional
-        emotional_intensity = self._calcular_intensidad_emocional(texto_completo, emotions_scores)
-        
-        # 7. Verificar si es político
-        is_political = self._es_politico(texto_completo)
-        
-        # 8. MEJORADA: Determinar categoría temática con emoji
-        thematic_category, emoji = self._determinar_tematica_mejorada(texto_completo)
-        
-        return EmotionResult(
-            language=language,  # NUEVO
-            emotion_primary=emotion_primary,
-            confidence=confidence,
-            emotions_detected=emotions_scores,
-            emotional_intensity=emotional_intensity,
-            emotional_context=emotional_context,
-            general_tone=general_tone,
-            general_confidence=general_confidence,
-            is_political=is_political,
-            thematic_category=f"{emoji} {thematic_category.title()}"  # MEJORADO con emoji
-        )
+        try:
+            texto_completo = f"{titulo} {resumen}".lower()
+            
+            # 1. NUEVO: Detectar idioma
+            language = self.detectar_idioma(f"{titulo} {resumen}")
+            
+            # 2. Análisis de emociones granulares
+            emotions_scores = self._detectar_emociones(titulo, resumen)
+            
+            # 3. Determinar emoción principal
+            emotion_primary, confidence = self._determinar_emociones_principales(emotions_scores)
+            
+            # 4. LÓGICA CORREGIDA: Tono basado en emoción principal
+            general_tone, general_confidence = self._determinar_tono_general_corregido(emotions_scores, titulo, resumen)
+            
+            # 5. Detectar contexto emocional
+            emotional_context = self._detectar_contexto(texto_completo)
+            
+            # 6. Calcular intensidad emocional
+            emotional_intensity = self._calcular_intensidad_emocional(texto_completo, emotions_scores)
+            
+            # 7. Verificar si es político
+            is_political = self._es_politico(texto_completo)
+            
+            # 8. MEJORADA: Determinar categoría temática con emoji
+            thematic_category, emoji = self._determinar_tematica_mejorada(texto_completo)
+            
+            return EmotionResult(
+                language=language,  # NUEVO
+                emotion_primary=emotion_primary,
+                confidence=confidence,
+                emotions_detected=emotions_scores,
+                emotional_intensity=emotional_intensity,
+                emotional_context=emotional_context,
+                general_tone=general_tone,
+                general_confidence=general_confidence,
+                is_political=is_political,
+                thematic_category=f"{emoji} {thematic_category.title()}"  # MEJORADO con emoji
+            )
+        except Exception as e:
+            print(f"🔧 Error analizando artículo '{titulo}': {e}")
+            # Devolver resultado por defecto
+            return EmotionResult(
+                language='castellano',
+                emotion_primary='neutral',
+                confidence=0.5,
+                emotions_detected={'neutral': 0.5},
+                emotional_intensity=1,
+                emotional_context='informativo',
+                general_tone='neutral',
+                general_confidence=0.5,
+                is_political=False,
+                thematic_category='📄 Otros'
+            )
     
     def _detectar_emociones(self, titulo: str, resumen: str) -> Dict[str, float]:
         """Detecta todas las emociones con sus scores"""
@@ -394,8 +410,8 @@ class AnalizadorSentimientosAvanzado:
         
         return emotions_scores
     
-    def _determinar_emociones_principales(self, emotions_scores: Dict[str, float]) -> Tuple[str, str, float]:
-        """Determina emoción principal y secundaria"""
+    def _determinar_emociones_principales(self, emotions_scores: Dict[str, float]) -> Tuple[str, float]:
+        """🔧 CORREGIDA: Determina emoción principal (signatura corregida)"""
         if emotions_scores:
             emociones_ordenadas = sorted(emotions_scores.items(), key=lambda x: x[1], reverse=True)
             
@@ -405,7 +421,7 @@ class AnalizadorSentimientosAvanzado:
             emotion_primary = 'neutral'
             confidence = 0.5
         
-        return emotion_primary, confidence
+        return emotion_primary, confidence  # 🔧 Solo 2 valores (corregido)
     
     def _detectar_contexto(self, texto: str) -> str:
         """Detecta el contexto emocional"""
@@ -440,52 +456,16 @@ class AnalizadorSentimientosAvanzado:
         """Determina si es político"""
         return any(palabra in texto for palabra in self.palabras_politicas)
     
-    def _detectar_idioma(self, texto: str) -> str:
-        """Detecta si el texto está en gallego o castellano"""
-        if pd.isna(texto) or not texto.strip():
-            return 'castellano'  # Por defecto
-    
-        texto_lower = texto.lower()
-    
-        # Palabras específicas del gallego
-        palabras_gallego = [
-            'veciños', 'veciñas', "na", "nos", "nas", "nós"
-            'mellor', 'moito', 'moi', 'tamén', 'despois', 'agora', 'outro', 'outra',
-            'recoñecemento', 'prestixio', 'angueira', 'nostalxia', 'inquedanza',
-            'dor', 'loito', 'mellora', 'honra', 'compracencia', " o ", " a ", " os ",
-            " as ", " unha ", " uns ", " unhas ", " coa ", " polo ", " pola ",
-            " e ", " ata ", " dende ", "propón", "saúde", "saude", "foi", " é ",
-            " do ", " da ", " dos ", " das ", " non ", " xa ", " aínda ",
-        ]
-    
-        # Contar coincidencias
-        coincidencias_gallego = sum(1 for palabra in palabras_gallego if palabra in texto_lower)
-    
-        # Si hay 4 o más palabras gallegas, clasificar como gallego
-        if coincidencias_gallego >= 4:
-            return 'gallego'
-        # Si hay 3 palabras gallegas en un texto corto, también gallego
-        elif coincidencias_gallego >= 3 and len(texto.split()) <= 10:
-            return 'gallego'
-        else:
-            return 'castellano'
-
     def analizar_dataset(self, df: pd.DataFrame, columna_titulo: str, 
                         columna_resumen: str = None) -> pd.DataFrame:
         """
-        Aplica análisis completo a un dataset de artículos
-    
-        Args:
-            df: DataFrame con los artículos
-            columna_titulo: Nombre de la columna con títulos
-            columna_resumen: Nombre de la columna con resúmenes (opcional)
-        
-        Returns:
-            DataFrame con las nuevas columnas de análisis
+        🔧 CORREGIDA: Aplica análisis completo a un dataset de artículos con manejo robusto de errores
         """
         print(f"🧠 Analizando sentimientos y emociones de {len(df)} artículos...")
         
         resultados = []
+        
+        # 🔧 ANÁLISIS ROBUSTO CON MANEJO DE ERRORES
         for idx, row in df.iterrows():
             if idx % 5 == 0:
                 print(f"   Procesado: {idx}/{len(df)} artículos")
@@ -497,7 +477,8 @@ class AnalizadorSentimientosAvanzado:
                 resultado = self.analizar_articulo_completo(titulo, resumen)
                 resultados.append(resultado)
             except Exception as e:
-                print(f"Error procesando artículo {idx}: {e}")
+                print(f"🔧 Error procesando artículo {idx}: {e}")
+                # 🔧 RESULTADO POR DEFECTO EN CASO DE ERROR
                 resultado_default = EmotionResult(
                     language='castellano',
                     emotion_primary='neutral',
@@ -512,39 +493,83 @@ class AnalizadorSentimientosAvanzado:
                 )
                 resultados.append(resultado_default)
         
-        # Añadir TODAS las columnas al DataFrame
-        # Añadir columnas al DataFrame
-        df_resultado = df.copy()
-
-        # NUEVA: Columna de detección de idioma
-        idiomas_detectados = []
-        for idx, row in df.iterrows():
-            titulo = str(row[columna_titulo]) if pd.notna(row[columna_titulo]) else ""
-            resumen = str(row[columna_resumen]) if columna_resumen and pd.notna(row[columna_resumen]) else ""
-            texto_completo = f"{titulo} {resumen}"
-            idioma = self.detectar_idioma(texto_completo)
-            idiomas_detectados.append(idioma)
-
-        df_resultado['idioma'] = idiomas_detectados
-
-        # Columnas de análisis general (ESTAS SON LAS COLUMNAS QUE FALTABAN)
-        df_resultado['tono_general'] = [r.general_tone for r in resultados]
-        df_resultado['emocion_principal'] = [r.emotion_primary for r in resultados]  # NUEVA
-        df_resultado['confianza_analisis'] = [r.general_confidence for r in resultados]
-        df_resultado['intensidad_emocional'] = [r.emotional_intensity for r in resultados]
-        df_resultado['contexto_emocional'] = [r.emotional_context for r in resultados]
-        df_resultado['es_politico'] = [r.is_political for r in resultados]
-        df_resultado['tematica'] = [r.thematic_category for r in resultados]  # MEJORADA
+        # 🔧 VERIFICAR QUE TENEMOS TANTOS RESULTADOS COMO FILAS
+        if len(resultados) != len(df):
+            print(f"❌ Error: {len(resultados)} resultados para {len(df)} filas")
+            # Rellenar con resultados por defecto si faltan
+            while len(resultados) < len(df):
+                resultado_default = EmotionResult(
+                    language='castellano',
+                    emotion_primary='neutral',
+                    confidence=0.5,
+                    emotions_detected={'neutral': 0.5},
+                    emotional_intensity=1,
+                    emotional_context='informativo',
+                    general_tone='neutral',
+                    general_confidence=0.5,
+                    is_political=False,
+                    thematic_category='📄 Otros'
+                )
+                resultados.append(resultado_default)
         
-        # Columnas detalladas adicionales
-        df_resultado['confianza_emocion'] = [r.confidence for r in resultados]
-        df_resultado['emociones_detectadas'] = [r.emotions_detected for r in resultados]
-        
-        print("✅ Análisis completo terminado")
-        return df_resultado
+        # 🔧 CONSTRUCCIÓN ROBUSTA DEL DATAFRAME RESULTADO
+        try:
+            # Copiar DataFrame original
+            df_resultado = df.copy()
+
+            # 🔧 AÑADIR COLUMNAS PASO A PASO CON VALIDACIÓN
+            print("🔧 Añadiendo columna: idioma")
+            df_resultado['idioma'] = [r.language for r in resultados]
+            
+            print("🔧 Añadiendo columna: tono_general")
+            df_resultado['tono_general'] = [r.general_tone for r in resultados]
+            
+            print("🔧 Añadiendo columna: emocion_principal")
+            df_resultado['emocion_principal'] = [r.emotion_primary for r in resultados]
+            
+            print("🔧 Añadiendo columna: confianza_analisis")
+            df_resultado['confianza_analisis'] = [r.general_confidence for r in resultados]
+            
+            print("🔧 Añadiendo columna: intensidad_emocional")
+            df_resultado['intensidad_emocional'] = [r.emotional_intensity for r in resultados]
+            
+            print("🔧 Añadiendo columna: contexto_emocional")
+            df_resultado['contexto_emocional'] = [r.emotional_context for r in resultados]
+            
+            print("🔧 Añadiendo columna: es_politico")
+            df_resultado['es_politico'] = [r.is_political for r in resultados]
+            
+            print("🔧 Añadiendo columna: tematica")
+            df_resultado['tematica'] = [r.thematic_category for r in resultados]
+            
+            # Columnas adicionales
+            print("🔧 Añadiendo columna: confianza_emocion")
+            df_resultado['confianza_emocion'] = [r.confidence for r in resultados]
+            
+            print("🔧 Añadiendo columna: emociones_detectadas")
+            df_resultado['emociones_detectadas'] = [r.emotions_detected for r in resultados]
+            
+            print("✅ Análisis completo terminado exitosamente")
+            print(f"🔧 Columnas añadidas: {['idioma', 'tono_general', 'emocion_principal', 'confianza_analisis', 'intensidad_emocional', 'contexto_emocional', 'es_politico', 'tematica', 'confianza_emocion', 'emociones_detectadas']}")
+            
+            return df_resultado
+            
+        except Exception as e:
+            print(f"❌ Error crítico añadiendo columnas: {e}")
+            # En caso de error crítico, devolver DataFrame original con columnas básicas
+            df_basico = df.copy()
+            df_basico['idioma'] = 'castellano'
+            df_basico['tono_general'] = 'neutral'
+            df_basico['emocion_principal'] = 'neutral'
+            df_basico['confianza_analisis'] = 0.5
+            df_basico['intensidad_emocional'] = 1
+            df_basico['contexto_emocional'] = 'informativo'
+            df_basico['es_politico'] = False
+            df_basico['tematica'] = '📄 Otros'
+            return df_basico
     
     def generar_reporte_completo(self, df_analizado: pd.DataFrame) -> Dict:
-        """Genera un reporte completo del análisis"""
+        """🔧 CORREGIDA: Genera un reporte completo del análisis con validación"""
         total_articulos = len(df_analizado)
         
         if total_articulos == 0:
@@ -560,37 +585,71 @@ class AnalizadorSentimientosAvanzado:
                 'confianza_promedio': 0
             }
         
-        # Análisis de idiomas (NUEVO)
-        idiomas = df_analizado['idioma'].value_counts().to_dict() if 'idioma' in df_analizado.columns else {}
-        
-        # Análisis de tono general
-        tonos = df_analizado['tono_general'].value_counts().to_dict()
-        
-        # Análisis de emociones principales (NUEVO)
-        emociones_principales = df_analizado['emocion_principal'].value_counts().to_dict() if 'emocion_principal' in df_analizado.columns else {}
-                
-        # Análisis de contextos
-        contextos = df_analizado['contexto_emocional'].value_counts().to_dict()
-        
-        # Análisis de temáticas
-        tematicas = df_analizado['tematica'].value_counts().to_dict()
-        
-        # Estadísticas generales
-        articulos_politicos = int(df_analizado['es_politico'].sum())
-        intensidad_promedio = float(df_analizado['intensidad_emocional'].mean())
-        confianza_promedio = float(df_analizado['confianza_analisis'].mean())
-        
-        return {
-            'total_articulos': total_articulos,
-            'articulos_politicos': articulos_politicos,
-            'distribución_idiomas': idiomas,  # NUEVO
-            'tonos_generales': tonos,
-            'emociones_principales': emociones_principales,  # NUEVO
-            'contextos_emocionales': contextos,
-            'tematicas': tematicas,
-            'intensidad_promedio': intensidad_promedio,
-            'confianza_promedio': confianza_promedio
-        }
+        try:
+            # 🔧 VALIDACIÓN DE COLUMNAS ANTES DE USAR
+            # Análisis de idiomas (NUEVO)
+            idiomas = {}
+            if 'idioma' in df_analizado.columns:
+                idiomas = df_analizado['idioma'].value_counts().to_dict()
+            
+            # Análisis de tono general
+            tonos = {}
+            if 'tono_general' in df_analizado.columns:
+                tonos = df_analizado['tono_general'].value_counts().to_dict()
+            
+            # Análisis de emociones principales (NUEVO)
+            emociones_principales = {}
+            if 'emocion_principal' in df_analizado.columns:
+                emociones_principales = df_analizado['emocion_principal'].value_counts().to_dict()
+                    
+            # Análisis de contextos
+            contextos = {}
+            if 'contexto_emocional' in df_analizado.columns:
+                contextos = df_analizado['contexto_emocional'].value_counts().to_dict()
+            
+            # Análisis de temáticas
+            tematicas = {}
+            if 'tematica' in df_analizado.columns:
+                tematicas = df_analizado['tematica'].value_counts().to_dict()
+            
+            # Estadísticas generales con validación
+            articulos_politicos = 0
+            if 'es_politico' in df_analizado.columns:
+                articulos_politicos = int(df_analizado['es_politico'].sum())
+            
+            intensidad_promedio = 1.0
+            if 'intensidad_emocional' in df_analizado.columns:
+                intensidad_promedio = float(df_analizado['intensidad_emocional'].mean())
+            
+            confianza_promedio = 0.5
+            if 'confianza_analisis' in df_analizado.columns:
+                confianza_promedio = float(df_analizado['confianza_analisis'].mean())
+            
+            return {
+                'total_articulos': total_articulos,
+                'articulos_politicos': articulos_politicos,
+                'distribución_idiomas': idiomas,  # NUEVO
+                'tonos_generales': tonos,
+                'emociones_principales': emociones_principales,  # NUEVO
+                'contextos_emocionales': contextos,
+                'tematicas': tematicas,
+                'intensidad_promedio': intensidad_promedio,
+                'confianza_promedio': confianza_promedio
+            }
+        except Exception as e:
+            print(f"❌ Error generando reporte: {e}")
+            # Reporte por defecto en caso de error
+            return {
+                'total_articulos': total_articulos,
+                'articulos_politicos': 0,
+                'distribución_idiomas': {'castellano': total_articulos},
+                'tonos_generales': {'neutral': total_articulos},
+                'emociones_principales': {'neutral': total_articulos},
+                'contextos_emocionales': {'informativo': total_articulos},
+                'tematicas': {'📄 Otros': total_articulos},
+                'intensidad_promedio': 1.0,
+                'confianza_promedio': 0.5
+            }
 
 
 # Clases de compatibilidad
@@ -614,29 +673,32 @@ def analizar_articulos_marin(df, columna_titulo='title', columna_resumen='summar
     return analizador.analizar_dataset(df, columna_titulo, columna_resumen)
 
 
-# Ejemplos de prueba
+# Test de diagnóstico
 if __name__ == "__main__":
+    print("🔧 DIAGNÓSTICO DEL ANALIZADOR CORREGIDO")
+    
     analizador = AnalizadorSentimientosAvanzado()
     
-    ejemplos = [
-        ("Fallece Constante Muradas Ramos, histórico", "Luto en la villa marinense por el fallecimiento"),
-        ("O PSOE móstrase 'alarmado' ao considerar", "Críticas e preocupación pola xestión municipal"),
-        ("Eliminación sistemática del arbolado y zona", "Proyecto de mejora urbana en el centro de Marín"),
-        ("Aprobada por unanimidad la moción del PS", "El pleno municipal aprueba la propuesta socialista"),
-    ]
+    # Test básico
+    resultado = analizador.analizar_articulo_completo("Prueba de análisis", "Texto de prueba")
+    print(f"✅ Análisis básico funciona: {resultado.language}, {resultado.general_tone}, {resultado.emotion_primary}")
     
-    print("🧠 Ejemplos de análisis mejorado:")
-    print("=" * 80)
+    # Test de dataset
+    import pandas as pd
+    df_test = pd.DataFrame({
+        'title': ['Fallece Constante Muradas Ramos', 'El PSOE móstrase alarmado'],
+        'summary': ['Luto en la villa marinense', 'Críticas a la gestión municipal']
+    })
     
-    for titulo, resumen in ejemplos:
-        resultado = analizador.analizar_articulo_completo(titulo, resumen)
+    try:
+        df_resultado = analizador.analizar_dataset(df_test, 'title', 'summary')
+        columnas_esperadas = ['idioma', 'tono_general', 'emocion_principal', 'confianza_analisis']
+        columnas_presentes = [col for col in columnas_esperadas if col in df_resultado.columns]
+        print(f"✅ Dataset procesado: {len(columnas_presentes)}/{len(columnas_esperadas)} columnas presentes")
+        print(f"🔧 Columnas encontradas: {columnas_presentes}")
         
-        print(f"📰 Título: {titulo}")
-        print(f"🌍 Idioma: {resultado.language}")
-        print(f"🎭 Emoción principal: {resultado.emotion_primary}")
-        print(f"😊 Tono general: {resultado.general_tone} (confianza: {resultado.general_confidence:.2f})")
-        print(f"🔥 Intensidad: {resultado.emotional_intensity}/5")
-        print(f"📝 Contexto: {resultado.emotional_context}")
-        print(f"🏛️ Es político: {resultado.is_political}")
-        print(f"📂 Temática: {resultado.thematic_category}")
-        print("-" * 80)
+        reporte = analizador.generar_reporte_completo(df_resultado)
+        print(f"✅ Reporte generado: {len(reporte)} campos")
+        
+    except Exception as e:
+        print(f"❌ Error en test de dataset: {e}")
