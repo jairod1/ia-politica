@@ -291,7 +291,7 @@ def cargar_datos_comentarios():
 
     st.write("🔍 BASE_DIR:", BASE_DIR)
     st.write("🔍 Carpeta esperada:", ruta_archivo)
-    st.write("📋 listdir folder:", os.listdir(ruta_archivo) if os.path.exists(ruta_archivo) else "❌ No existe esa carpeta")
+    #st.write("📋 listdir folder:", os.listdir(ruta_archivo) if os.path.exists(ruta_archivo) else "❌ No existe esa carpeta")
 
     st.write(f"DEBUG: ruta_archivo = {ruta_archivo}")
     st.write(f"DEBUG: existe? = {os.path.exists(ruta_archivo)}")
