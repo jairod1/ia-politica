@@ -14,53 +14,28 @@ import importlib.util
 def cargar_analizador_sentimientos():
     """
     Carga el analizador de sentimientos avanzado mejorado de forma robusta
-    
-    Returns:
-        Tuple con (AnalizadorArticulosMarin, analizar_articulos_marin, mensaje_carga)
     """
     try:
-        # Buscar el archivo en diferentes ubicaciones posibles
-        posibles_rutas = [
-            # "./advanced_sentiment_analyzer.py",  # ✅ Relativo a donde está este archivo (utils/)
-            # "advanced_sentiment_analyzer.py",  # Directorio actual
-            # "../advanced_sentiment_analyzer.py",  # Directorio padre
-            "utils/advanced_sentiment_analyzer.py",  # En utils
-            # "../utils/advanced_sentiment_analyzer.py",  # Utils en padre
-            # "feelings-visualizations.py",  # Archivo original como fallback
-            # "../feelings-visualizations.py",  # Directorio padre
-            # "../src/feelings-analyzers/feelings-visualizations.py",  # Estructura propuesta
-            # "src/feelings-analyzers/feelings-visualizations.py",  # Variación
-            # "utils/advanced_sentiment_analyzer.py"
-        ]
+        # RUTA DIRECTA - sin complicaciones
+        archivo_path = "utils/advanced_sentiment_analyzer.py"
         
-        archivo_encontrado = None
-        for ruta in posibles_rutas:
-            if os.path.exists(ruta):
-                archivo_encontrado = ruta
-                break
+        if not os.path.exists(archivo_path):
+            return None, None, f"❌ No encontrado: {archivo_path}"
         
-        if archivo_encontrado is None:
-            return None, None, "❌ No se encontró el archivo de análisis de sentimientos"
-        
-        # Cargar el módulo dinámicamente
-        spec = importlib.util.spec_from_file_location("sentiment_analyzer", archivo_encontrado)
+        # Cargar módulo
+        spec = importlib.util.spec_from_file_location("sentiment_analyzer", archivo_path)
         modulo_sentimientos = importlib.util.module_from_spec(spec)
-        
-        # Añadir al sys.modules para que las importaciones internas funcionen
-        sys.modules["sentiment_analyzer"] = modulo_sentimientos
-        
-        # Ejecutar el módulo
         spec.loader.exec_module(modulo_sentimientos)
         
-        # Extraer las clases/funciones que necesitamos
+        # Extraer clases
         AnalizadorArticulosMarin = getattr(modulo_sentimientos, 'AnalizadorArticulosMarin')
         analizar_articulos_marin = getattr(modulo_sentimientos, 'analizar_articulos_marin')
         
-        return AnalizadorArticulosMarin, analizar_articulos_marin, f"✅ Analizador mejorado cargado desde: {archivo_encontrado}"
+        return AnalizadorArticulosMarin, analizar_articulos_marin, f"✅ Cargado desde: {archivo_path}"
         
     except Exception as e:
-        return None, None, f"❌ Error cargando analizador: {str(e)}"
-
+        return None, None, f"❌ Error: {e}"
+    
 @st.cache_resource
 def inicializar_analizador(AnalizadorArticulosMarin):
     """
