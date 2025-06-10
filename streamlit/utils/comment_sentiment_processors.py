@@ -74,12 +74,12 @@ def mostrar_comentarios_con_sentimientos(df_comentarios, reporte, titulo_seccion
 
 def resumir_sentimientos_por_articulo(df_analizado):
     """
-    🚨 ARREGLO: Forzar columnas básicas antes de agrupar
+    🚨 SOLUCIÓN DEFINITIVA: Forzar columnas antes de agrupar
     """
     if len(df_analizado) == 0:
         return pd.DataFrame()
     
-    # 🚨 FORZAR COLUMNAS NECESARIAS
+    # FORZAR COLUMNAS NECESARIAS PRIMERO
     df_fixed = df_analizado.copy()
     
     columnas_basicas = {
@@ -88,112 +88,54 @@ def resumir_sentimientos_por_articulo(df_analizado):
         'intensidad_emocional': 1,
         'confianza_analisis': 0.5,
         'es_politico': False,
-        'idioma': 'castellano'
+        'idioma': 'castellano',
+        'title_original': df_fixed.get('title', 'Sin título'),
+        'link': 'sin_enlace',
+        'date': '2025-01-01',
+        'source': 'Sin fuente',
+        'n_visualizations': 0
     }
     
     for col, valor in columnas_basicas.items():
         if col not in df_fixed.columns:
-            df_fixed[col] = valor
-
-    def moda_o_neutral(col):
-        """Función auxiliar segura para calcular moda"""
-        try:
-            conteo = col.value_counts()
-            if len(conteo) == 0:
-                return 'neutral'
-            return conteo.idxmax()
-        except:
-            return 'neutral'
-    
-    try:
-        # Verificar columnas esenciales con valores por defecto
-        columnas_verificacion = {
-            'tono_general': 'neutral',
-            'emocion_principal': 'neutral', 
-            'intensidad_emocional': 1,
-            'confianza_analisis': 0.5,
-            'es_politico': False,
-            'idioma': 'castellano'
-        }
-        
-        # Añadir columnas faltantes con valores por defecto
-        for col, valor_default in columnas_verificacion.items():
-            if col not in df_fixed.columns:
-                st.write(f"🔧 **EMERGENCY**: Añadiendo columna faltante '{col}' con valor '{valor_default}'")
-                df_fixed[col] = valor_default
-        
-        # Verificar columnas de agrupación
-        if 'title_original' not in df_fixed.columns:
-            if 'title' in df_fixed.columns:
-                df_fixed['title_original'] = df_fixed['title']
+            if col == 'title_original' and 'title' in df_fixed.columns:
+                df_fixed[col] = df_fixed['title']
             else:
-                st.error("❌ No se puede agrupar: falta columna de título")
-                return pd.DataFrame()
-        
-        if 'link' not in df_fixed.columns:
-            df_fixed['link'] = 'sin_enlace'
-        
-        # Realizar agrupación
-        st.write("🔧 **EMERGENCY**: Realizando agrupación...")
-        
-        agrupado = df_fixed.groupby(['link', 'title_original']).agg({
-            'tono_general': moda_o_neutral,
-            'emocion_principal': moda_o_neutral,
-            'intensidad_emocional': 'mean',
-            'confianza_analisis': 'mean', 
-            'es_politico': lambda x: x.sum() > len(x) / 2,
-            'idioma': moda_o_neutral,
-            'date': 'first',
-            'n_visualizations': 'first',
-            'source': 'first'
-        }).reset_index()
-        
-        # Renombrar columnas
-        agrupado.rename(columns={
-            'title_original': 'title',
-            'tono_general': 'tono_comentarios',
-            'emocion_principal': 'emocion_dominante',
-            'intensidad_emocional': 'intensidad_media',
-            'confianza_analisis': 'confianza_media',
-            'es_politico': 'es_politico_por_comentarios',
-            'idioma': 'idioma_dominante',
-            'link': 'article_link',
-            'date': 'article_date'
-        }, inplace=True)
-        
-        st.write(f"🔧 **EMERGENCY**: Agrupación completada. {len(agrupado)} artículos resumidos")
-        st.write(f"🔧 **EMERGENCY**: Columnas finales: {list(agrupado.columns)}")
-        
-        return agrupado
-        
-    except Exception as e:
-        st.error(f"❌ Error crítico en agrupación: {e}")
-        st.write(f"🔧 **EMERGENCY**: Tipo de error: {type(e)}")
-        
-        # Crear DataFrame mínimo de emergencia
-        try:
-            # Tomar primer comentario por artículo como representativo
-            df_minimo = df_fixed.groupby('title_original' if 'title_original' in df_fixed.columns else 'title').first().reset_index()
-            
-            # Asegurar columnas necesarias
-            df_minimo['tono_comentarios'] = df_minimo.get('tono_general', 'neutral')
-            df_minimo['emocion_dominante'] = df_minimo.get('emocion_principal', 'neutral')
-            df_minimo['intensidad_media'] = df_minimo.get('intensidad_emocional', 1)
-            df_minimo['confianza_media'] = df_minimo.get('confianza_analisis', 0.5)
-            df_minimo['es_politico_por_comentarios'] = df_minimo.get('es_politico', False)
-            df_minimo['idioma_dominante'] = df_minimo.get('idioma', 'castellano')
-            df_minimo['article_link'] = df_minimo.get('link', 'sin_enlace')
-            df_minimo['article_date'] = df_minimo.get('date', '2025-01-01')
-            
-            if 'title_original' in df_minimo.columns:
-                df_minimo['title'] = df_minimo['title_original']
-            
-            st.write("🔧 **EMERGENCY**: DataFrame mínimo creado como fallback")
-            return df_minimo
-            
-        except Exception as e2:
-            st.error(f"❌ Error crítico en fallback: {e2}")
-            return pd.DataFrame()
+                df_fixed[col] = valor
+    
+    def moda_o_neutral(col):
+        conteo = col.value_counts()
+        if len(conteo) == 0:
+            return 'neutral'
+        return conteo.idxmax()
+    
+    # AGRUPACIÓN SIMPLIFICADA
+    agrupado = df_fixed.groupby(['link', 'title_original']).agg({
+        'tono_general': moda_o_neutral,
+        'emocion_principal': moda_o_neutral,
+        'intensidad_emocional': 'mean',
+        'confianza_analisis': 'mean', 
+        'es_politico': lambda x: x.sum() > len(x) / 2,
+        'idioma': moda_o_neutral,
+        'date': 'first',
+        'n_visualizations': 'first',
+        'source': 'first'
+    }).reset_index()
+    
+    # RENOMBRAR COLUMNAS
+    agrupado.rename(columns={
+        'title_original': 'title',
+        'tono_general': 'tono_comentarios',
+        'emocion_principal': 'emocion_dominante',
+        'intensidad_emocional': 'intensidad_media',
+        'confianza_analisis': 'confianza_media',
+        'es_politico': 'es_politico_por_comentarios',
+        'idioma': 'idioma_dominante',
+        'link': 'article_link',
+        'date': 'article_date'
+    }, inplace=True)
+    
+    return agrupado
 
 def procesar_comentarios_politicos_con_sentimientos(df, aplicar_analisis_sentimientos, analizador, top_n=20, filtro_popularidad=None):
     """
