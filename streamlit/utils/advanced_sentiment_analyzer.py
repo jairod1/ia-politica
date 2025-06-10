@@ -522,7 +522,7 @@ class AnalizadorSentimientosAvanzado:
             titulo = str(row[columna_titulo]) if pd.notna(row[columna_titulo]) else ""
             resumen = str(row[columna_resumen]) if columna_resumen and pd.notna(row[columna_resumen]) else ""
             texto_completo = f"{titulo} {resumen}"
-            idioma = self._detectar_idioma(texto_completo)
+            idioma = self.detectar_idioma(texto_completo)
             idiomas_detectados.append(idioma)
 
         df_resultado['idioma'] = idiomas_detectados
