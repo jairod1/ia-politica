@@ -73,6 +73,10 @@ def aplicar_analisis_sentimientos(df, analizador):
     """
     🚨 SOLUCIÓN DEFINITIVA: SIEMPRE devuelve columnas correctas
     """
+    st.write("🔍 DEBUG: aplicar_analisis_sentimientos INICIADA")
+    st.write(f"🔍 DEBUG: Input DF tiene {len(df)} filas")
+    st.write(f"🔍 DEBUG: Columnas input: {list(df.columns)}")
+
     if len(df) == 0:
         return df, None
     
@@ -103,6 +107,10 @@ def aplicar_analisis_sentimientos(df, analizador):
         'intensidad_promedio': 1.0,
         'confianza_promedio': 0.5
     }
+
+    st.write(f"🔍 DEBUG: Resultado DF tiene {len(df_resultado)} filas")
+    st.write(f"🔍 DEBUG: Columnas output: {list(df_resultado.columns)}")
+    st.write("🔍 DEBUG: aplicar_analisis_sentimientos TERMINADA")
     
     return df_resultado, reporte
     

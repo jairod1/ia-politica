@@ -190,6 +190,10 @@ def procesar_comentarios_con_sentimientos_directo(df, analizador, top_n=20, filt
     
     # Aplicar análisis de sentimientos
     st.write("🔍 **DEBUG**: Aplicando análisis de sentimientos...")
+    st.write("🔍 DEBUG: ANTES de aplicar_analisis_sentimientos")
+    st.write(f"🔍 DEBUG: df_comentarios_filtrados tiene {len(df_comentarios_filtrados)} filas")
+    st.write(f"🔍 DEBUG: Columnas antes del análisis: {list(df_comentarios_filtrados.columns)}")
+
     try:
         df_analizado, reporte = aplicar_analisis_sentimientos(df_comentarios_filtrados, analizador)
         st.write(f"🔍 **DEBUG**: Análisis completado. Filas resultado: {len(df_analizado) if df_analizado is not None else 'None'}")

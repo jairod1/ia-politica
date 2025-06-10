@@ -76,6 +76,10 @@ def resumir_sentimientos_por_articulo(df_analizado):
     """
     🚨 SOLUCIÓN DEFINITIVA: Forzar columnas antes de agrupar
     """
+    st.write("🔍 DEBUG: resumir_sentimientos_por_articulo INICIADA")
+    st.write(f"🔍 DEBUG: Input tiene {len(df_analizado)} comentarios")
+    st.write(f"🔍 DEBUG: Columnas input: {list(df_analizado.columns)}")
+
     if len(df_analizado) == 0:
         return pd.DataFrame()
     
@@ -134,6 +138,10 @@ def resumir_sentimientos_por_articulo(df_analizado):
         'link': 'article_link',
         'date': 'article_date'
     }, inplace=True)
+
+    st.write(f"🔍 DEBUG: Output tiene {len(agrupado)} artículos")
+    st.write(f"🔍 DEBUG: Columnas output: {list(agrupado.columns)}")
+    st.write("🔍 DEBUG: resumir_sentimientos_por_articulo TERMINADA")
     
     return agrupado
 
