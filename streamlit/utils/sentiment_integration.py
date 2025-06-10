@@ -19,17 +19,17 @@ def cargar_analizador_sentimientos():
         Tuple con (AnalizadorArticulosMarin, analizar_articulos_marin, mensaje_carga)
     """
     try:
-        # Buscar el archivo en diferentes ubicaciones posibles
         posibles_rutas = [
             "./advanced_sentiment_analyzer.py",  # ✅ Relativo a donde está este archivo (utils/)
             "advanced_sentiment_analyzer.py",  # Directorio actual
             "../advanced_sentiment_analyzer.py",  # Directorio padre
             "utils/advanced_sentiment_analyzer.py",  # En utils
             "../utils/advanced_sentiment_analyzer.py",  # Utils en padre
-            "feelings-visualizations.py",  # Archivo original como fallback
-            "../feelings-visualizations.py",  # Directorio padre
-            "../src/feelings-analyzers/feelings-visualizations.py",  # Estructura propuesta
-            "src/feelings-analyzers/feelings-visualizations.py",  # Variación
+            # ❌ ELIMINAR ESTAS LÍNEAS:
+            # "feelings-visualizations.py",  # Archivo original como fallback
+            # "../feelings-visualizations.py",  # Directorio padre
+            # "../src/feelings-analyzers/feelings-visualizations.py",  # Estructura propuesta
+            # "src/feelings-analyzers/feelings-visualizations.py",  # Variación
             "utils/advanced_sentiment_analyzer.py"
         ]
         
