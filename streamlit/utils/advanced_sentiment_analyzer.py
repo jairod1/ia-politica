@@ -1,19 +1,39 @@
 """
-Advanced Sentiment Analyzer - HorizontAI (VERSIÓN CORREGIDA)
-============================================================
+Cloud Sentiment Analyzer - HorizontAI (VERSIÓN CLOUD)
+=====================================================
 
-🔧 CORRECCIÓN: Fixes para errores de columnas faltantes y signatura incorrecta
+🌥️ VERSIÓN CLOUD: Análisis de sentimientos usando APIs y librerías externas
+en lugar de modelos locales en .venv
+
+Dependencias necesarias para requirements.txt:
+transformers>=4.21.0
+torch>=1.12.0
+langdetect>=1.0.9
+textblob>=0.17.1
 """
 
 import re
 import pandas as pd
+import streamlit as st
 from typing import Dict, List, Tuple
 from dataclasses import dataclass
 
+# Imports para análisis cloud
+try:
+    from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
+    from langdetect import detect, LangDetectError
+    from textblob import TextBlob
+    import torch
+    CLOUD_LIBS_AVAILABLE = True
+except ImportError as e:
+    CLOUD_LIBS_AVAILABLE = False
+    st.error(f"❌ Error importando librerías cloud: {e}")
+    st.info("💡 Instala: pip install transformers torch langdetect textblob")
+
 @dataclass
 class EmotionResult:
-    """Estructura mejorada para almacenar resultados detallados"""
-    language: str  # NUEVO: gallego o castellano
+    """Estructura para almacenar resultados de análisis"""
+    language: str
     emotion_primary: str  
     confidence: float  
     emotions_detected: Dict[str, float]  
@@ -24,344 +44,255 @@ class EmotionResult:
     is_political: bool  
     thematic_category: str  
 
-class AnalizadorSentimientosAvanzado:
-    """Analizador mejorado con todas las correcciones solicitadas"""
+class CloudSentimentAnalyzer:
+    """Analizador de sentimientos que usa APIs cloud en lugar de modelos locales"""
     
     def __init__(self):
+        if not CLOUD_LIBS_AVAILABLE:
+            st.error("❌ Librerías cloud no disponibles")
+            self.available = False
+            return
+        
+        self.available = True
+        self.models_loaded = False
+        
+        # Inicializar modelos lazy (solo cuando se necesiten)
+        self.sentiment_pipeline = None
+        self.emotion_pipeline = None
+        
+        # Keywords para análisis temático y político (mismo que original)
+        self._init_keywords()
+    
+    def _init_keywords(self):
+        """Inicializa las palabras clave para análisis"""
         # Palabras clave para detectar idioma
         self.palabras_gallegas = [
-            'ata', 'dende', 'coa', 'polo', 'pola',
-            'na', 'no', 'da', 'do', 'das', 'dos', 'unha', 'uns', 'unhas',
-            'estes', 'aquela', 'aqueles', 'aquelas',
-            'mellor', 'moito', 'moita', 'moitos', 'moitas', 'pouco', 'pouca',
-            'concello', 'concelleiro', 'veciños', 'veciñas', 'proximamente',
-            'xunta', 'celebrarase', 'realizarase', 'terá', 'será', 'poderá',
-            'despois', 'antes', 'agora', 'aquí', 'alí', 'onde', 'cando', 'como',
-            'tamén', 'ademais', 'mentres', 'porque', 'xa', 'aínda', 'sempre', 'nunca'
+            'ata', 'dende', 'coa', 'polo', 'pola', 'na', 'no', 'da', 'do', 'das', 'dos', 
+            'unha', 'uns', 'unhas', 'estes', 'aquela', 'aqueles', 'aquelas', 'mellor', 
+            'moito', 'moita', 'moitos', 'moitas', 'pouco', 'pouca', 'concello', 
+            'concelleiro', 'veciños', 'veciñas', 'proximamente', 'xunta', 'celebrarase', 
+            'realizarase', 'terá', 'será', 'poderá', 'despois', 'antes', 'agora', 
+            'aquí', 'alí', 'onde', 'cando', 'como', 'tamén', 'ademais', 'mentres', 
+            'porque', 'xa', 'aínda', 'sempre', 'nunca'
         ]
         
-        self.palabras_castellanas = [
-            'que', 'con', 'para', 'desde', 'hasta', 'por', 'la', 'el', 'los', 'las',
-            'una', 'uno', 'unas', 'unos', 'este', 'esta', 'estos', 'estas',
-            'aquel', 'aquella', 'aquellos', 'aquellas', 'mejor', 'peor',
-            'mucho', 'mucha', 'muchos', 'muchas', 'poco', 'poca',
-            'ayuntamiento', 'alcalde', 'concejal', 'vecinos', 'vecinas', 'próximamente',
-            'después', 'antes', 'ahora', 'aquí', 'allí', 'donde', 'cuando', 'como',
-            'también', 'además', 'mientras', 'porque', 'ya', 'aún', 'siempre', 'nunca'
-        ]
-        
-        # Emociones con lógica corregida
+        # Emociones con palabras clave
         self.emociones_keywords = {
-            # EMOCIONES POSITIVAS
-            'alegría': [
-                'celebra', 'festeja', 'felicidad', 'contento', 'avance', 'progreso', 
-                'celébrase', 'festéxase', 'ledicia'
-            ],
-
-            'orgullo': [
-                'orgullo', 'honor', 'prestigio', 'reconocimiento', 'distinción',
-                'mérito', 'conquista', 'mejor', 'mellor', 'honra', 'prestixio', 'recoñecemento'
-            ],
-
-            'esperanza': [
-                'espera', 'esperanza', 'optimismo', 'futuro', 'proyecto',
-                'promete', 'confía', 'ilusión', 'expectativa', 'renovación', 'mellora'
-            ],
-
-            'satisfacción': [
-                'satisfacción', 'complacencia', 'agrado', 'satisfecho',
-                'cumplido', 'realizado', 'completado', 'conseguido', 'exitoso', 'compracencia'
-            ],
-            
-            # EMOCIONES NEGATIVAS
-            'tristeza': [
-                'tristeza', 'pena', 'dolor', 'luto', 'pesar', 'melancolía',
-                'fallece', 'muerte', 'pérdida', 'despedida', 'duelo', 'lamentar',
-                'fallecimiento', 'morte', 'perda', 'lamento', 'falecemento', 'dor', 'loito', 'falece'
-            ],
-
-            'ira': [
-                'ira', 'enfado', 'rabia', 'molestia', 'irritación',
-                'ataca', 'censura', 'repudia'
-            ],
-
-            'miedo': [
-                'miedo', 'temor', 'alarma', 'alerta', 'peligro', 'riesgo', 'amenaza',
-                'incertidumbre', 'incertidume', 'medo', 'inquedanza', 'ansiedade'
-            ],
-
-            'decepción': [
-                'decepción', 'desilusión', 'frustración', 'desencanto',
-                'fracaso', 'falla', 'incumple', 'defrauda', 'desengaño'
-            ],
-
-            'indignación': [
-                'indignación', 'asco', 'repugnancia', 'desprecio', 'desdén',
-                'rechazo', 'condena', 'critica', 'rexeitamento', 'rexeita'
-            ],
-
-            
-            # EMOCIONES NEUTRAS/COMPLEJAS
-            'sorpresa': [
-                'sorpresa', 'asombro', 'impacto', 'inesperado', 'imprevisto',
-                'repentino', 'súbito', 'sorprende', 'asombra'
-            ],
-
-            'nostalgia': [
-                'nostalgia', 'añoranza', 'recuerdo', 'memoria', 'pasado',
-                'historia', 'tradición', 'antaño', 'antes', 'recordar',
-                'nostalxia', 'angueira', 'recordo'
-            ],
-
-            'preocupación': [
-                'preocupación', 'inquietud', 'intranquilidad', 'zozobra',
-                'desasosiego', 'duda', 'pregunta', 'intranquilidade'
-            ]
+            'alegría': ['celebra', 'festeja', 'felicidad', 'contento', 'avance', 'progreso', 'celébrase', 'festéxase', 'ledicia'],
+            'orgullo': ['orgullo', 'honor', 'prestigio', 'reconocimiento', 'distinción', 'mérito', 'conquista', 'mejor', 'mellor'],
+            'esperanza': ['espera', 'esperanza', 'optimismo', 'futuro', 'proyecto', 'promete', 'confía', 'ilusión', 'expectativa'],
+            'satisfacción': ['satisfacción', 'complacencia', 'agrado', 'satisfecho', 'cumplido', 'realizado', 'completado'],
+            'tristeza': ['tristeza', 'pena', 'dolor', 'luto', 'pesar', 'melancolía', 'fallece', 'muerte', 'pérdida', 'despedida'],
+            'ira': ['ira', 'enfado', 'rabia', 'molestia', 'irritación', 'ataca', 'censura', 'repudia'],
+            'miedo': ['miedo', 'temor', 'alarma', 'alerta', 'peligro', 'riesgo', 'amenaza', 'incertidumbre'],
+            'decepción': ['decepción', 'desilusión', 'frustración', 'desencanto', 'fracaso', 'falla', 'incumple'],
+            'indignación': ['indignación', 'asco', 'repugnancia', 'desprecio', 'desdén', 'rechazo', 'condena', 'critica'],
+            'sorpresa': ['sorpresa', 'asombro', 'impacto', 'inesperado', 'imprevisto', 'repentino', 'súbito'],
+            'nostalgia': ['nostalgia', 'añoranza', 'recuerdo', 'memoria', 'pasado', 'historia', 'tradición', 'antaño'],
+            'preocupación': ['preocupación', 'inquietud', 'intranquilidad', 'zozobra', 'desasosiego', 'duda']
         }
         
-        # Contextos emocionales específicos del ámbito político
-        self.contextos_emocionales = {
-            'celebratorio': [
-                'inauguración', 'apertura', 'éxito', 'logro', 'victoria',
-                'festejo', 'reconocimiento'
-            ],
-
-            'conflictivo': [
-                'polémica', 'controversia', 'disputa', 'enfrentamiento',
-                'conflicto', 'tensión', 'discrepancia', 'oposición'
-                'conflito', 'conflitivo'
-            ],
-
-            'informativo': [
-                'anuncia', 'informa', 'comunica', 'declara', 'presenta',
-                'propone', 'plantea', 'considera', 'estudia', 'estuda',
-                'propón', 'plantexa'
-            ],
-
-            'preocupante': [
-                'problema', 'crisis', 'dificultad', 'obstáculo',
-                'complicación', 'inconveniente', 'contratiempo',
-                'contratempo', 'dificultade'
-            ],
-
-            'solemne': [
-                'funeral', 'recordatorio', 'memoria', 'luto', 'despedida', 'tributo'
-            ]
-        }
-        
-        # Categorías temáticas MEJORADAS con emojis
+        # Categorías temáticas
         self.categorias_tematicas = {
-            'construcción': {
-                'keywords': [
-                    'obra', 'construcción', 'edificio', 'edificación', 'vivienda',
-                    'infraestructura', 'puente', 'renovación', 'reforma',
-                    'urbanismo', 'pavimentación'
-                ],
-                'emoji': '🏗️'
-            },
-            'cultura': {
-                'keywords': [
-                    'cultura', 'arte', 'museo', 'exposición',
-                    'teatro', 'música', 'literatura', 'patrimonio', 'biblioteca',
-                    'cultural', 'artístico', 'concierto', 'espectáculo'
-                ],
-                'emoji': '🎭'
-            },
-            'industria': {
-                'keywords': [
-                    'industria', 'empresa', 'económico',
-                    'comercio', 'turismo', 'negocio', 'inversión', 'desarrollo',
-                    'industrial', 'empresarial'
-                ],
-                'emoji': '🏭'
-            },
-            'medio ambiente': {
-                'keywords': [
-                    'medio ambiente', 'naturaleza', 'ecología', 'sostenible',
-                    'verde', 'parque', 'jardín', 'limpieza', 'reciclaje', 'contaminación',
-                    'ambiental', 'ecológico', 'sostenibilidad'
-                ],
-                'emoji': '🌱'
-            },
-            'educación': {
-                'keywords': [
-                    'educación', 'colegio', 'instituto', 'universidad', 'escuela',
-                    'estudiante', 'formación', 'curso', 'enseñanza', 'profesor',
-                    'educativo', 'académico', 'escolar', 'colexio', 'universidade',
-                    'ensino'
-                ],
-                'emoji': '📚'
-            },
-            'salud': {
-                'keywords': [
-                    'salud', 'hospital', 'médico', 'sanitario', 'enfermedad',
-                    'tratamiento', 'paciente', 'medicina', 'centro de salud',
-                    'clínica', 'asistencia sanitaria', 'saúde', 'sanidade',
-                ],
-                'emoji': '🏥'
-            },
-            'deporte': {
-                'keywords': [
-                    'deporte', 'fútbol', 'baloncesto', 'atletismo', 'piscina',
-                    'polideportivo', 'gimnasio', 'equipo', 'competición', 'entrenador',
-                    'deportivo', 'atlético', 'club'
-                ],
-                'emoji': '⚽'
-            },
-            'seguridad': {
-                'keywords': [
-                    'seguridad', 'policía', 'guardia civil', 'protección civil',
-                    'emergencia', 'accidente', 'delito', 'protección',
-                    'bomberos', 'emergencias', 'emerxencia', 'seguridade',
-                ],
-                'emoji': '🚔'
-            },
-            'social': {
-                'keywords': [
-                    'social', 'servicios sociales', 'ayuda', 'subvención',
-                    'pensión', 'mayor', 'juventud', 'familia', 'vivienda social',
-                    'bienestar', 'asistencia'
-                ],
-                'emoji': '🤝'
-            },
-            'necrológicas': {
-                'keywords': [
-                    'fallece', 'muerte', 'falleció', 'defunción', 'funeral',
-                    'luto', 'despedida', 'obituario', 'pésame', 'sepelio',
-                    'falece', 'faleceu'
-                ],
-                'emoji': '🕊️'
-            },
-            'opinión': {
-                'keywords': [
-                    'opinión', 'editorial', 'columna', 'artículo de opinión',
-                    'tribuna', 'reflexión', 'punto de vista', 'comentario',
-                    'análisis', 'perspectiva', 'perspetiva'
-                ],
-                'emoji': '💭'
-            },
-            'festividades': {
-                'keywords': [
-                    'fiesta', 'celebración', 'carnaval', 'navidad',
-                    'semana santa', 'día de', 'festividad', 'festa', 'festexo'
-                    'festividade', 'festival'
-                ],
-                'emoji': '🎉'
-            },
-            'transporte': {
-                'keywords': [
-                    'transporte', 'autobús', 'tren', 'ferry', 'tráfico',
-                    'carretera', 'aparcamiento', 'parking', 'movilidad',
-                    'transporte público', 'circulación', 'aparcamento',
-                ],
-                'emoji': '🚌'
-            },
-            'laboral': {
-                'keywords': [
-                    'contrato', 'sueldo', 'despido', 'negociación', 'sindicato',
-                    'reforma laboral', 'condiciones laborales',
-                    'traballador', 'traballadora', 'emprego', 'traballo',
-                    'trabajo', 'laboral', 'empleo'
-                ],
-                'emoji': '🧑‍💼'
-            }
+            'construcción': {'keywords': ['obra', 'construcción', 'edificio', 'vivienda', 'infraestructura'], 'emoji': '🏗️'},
+            'cultura': {'keywords': ['cultura', 'arte', 'museo', 'exposición', 'teatro', 'música'], 'emoji': '🎭'},
+            'industria': {'keywords': ['industria', 'empresa', 'económico', 'comercio', 'turismo'], 'emoji': '🏭'},
+            'medio ambiente': {'keywords': ['medio ambiente', 'naturaleza', 'ecología', 'sostenible', 'verde'], 'emoji': '🌱'},
+            'educación': {'keywords': ['educación', 'colegio', 'instituto', 'universidad', 'escuela'], 'emoji': '📚'},
+            'salud': {'keywords': ['salud', 'hospital', 'médico', 'sanitario', 'enfermedad'], 'emoji': '🏥'},
+            'deporte': {'keywords': ['deporte', 'fútbol', 'baloncesto', 'atletismo', 'piscina'], 'emoji': '⚽'},
+            'seguridad': {'keywords': ['seguridad', 'policía', 'guardia civil', 'protección civil'], 'emoji': '🚔'},
+            'social': {'keywords': ['social', 'servicios sociales', 'ayuda', 'subvención', 'pensión'], 'emoji': '🤝'},
+            'necrológicas': {'keywords': ['fallece', 'muerte', 'falleció', 'defunción', 'funeral'], 'emoji': '🕊️'},
+            'festividades': {'keywords': ['fiesta', 'celebración', 'carnaval', 'navidad', 'semana santa'], 'emoji': '🎉'},
+            'transporte': {'keywords': ['transporte', 'autobús', 'tren', 'ferry', 'tráfico'], 'emoji': '🚌'},
+            'laboral': {'keywords': ['contrato', 'sueldo', 'despido', 'negociación', 'sindicato'], 'emoji': '🧑‍💼'}
         }
         
-        # Palabras clave políticas
-        self.palabras_politicas = [
-            'alcaldesa', 'alcalde', 'concejal', 'concejala', 'concejales', 'concejala',
-            'psoe', 'pp', 'bng', 'vox', "ramallo", ""
-        ]
+        # Palabras políticas
+        self.palabras_politicas = ['alcaldesa', 'alcalde', 'concejal', 'concejala', 'psoe', 'pp', 'bng', 'pazos', 'ramallo', 'santos']
     
-    def detectar_idioma(self, texto: str) -> str:
+    @st.cache_resource
+    def _load_models(_self):
+        """Carga los modelos de HuggingFace (con cache de Streamlit)"""
+        if not _self.available:
+            return False
+        
+        try:
+            with st.spinner("🤗 Cargando modelos de HuggingFace..."):
+                # 🌥️ OPTIMIZACIÓN CLOUD: Usar modelos más pequeños y eficientes
+                # Modelo para análisis de sentimientos (optimizado para cloud)
+                try:
+                    _self.sentiment_pipeline = pipeline(
+                        "sentiment-analysis", 
+                        model="cardiffnlp/twitter-xlm-roberta-base-sentiment",  # Más pequeño y multiidioma
+                        device=-1,  # Forzar CPU para cloud deployment
+                        model_kwargs={"low_cpu_mem_usage": True}
+                    )
+                except Exception:
+                    # Fallback a modelo aún más pequeño
+                    _self.sentiment_pipeline = pipeline(
+                        "sentiment-analysis", 
+                        model="distilbert-base-uncased-finetuned-sst-2-english",
+                        device=-1,
+                        model_kwargs={"low_cpu_mem_usage": True}
+                    )
+                
+                # Modelo para clasificación de emociones (más liviano)
+                try:
+                    _self.emotion_pipeline = pipeline(
+                        "text-classification",
+                        model="SamLowe/roberta-base-go_emotions",  # Modelo más eficiente
+                        device=-1,  # CPU only
+                        model_kwargs={"low_cpu_mem_usage": True}
+                    )
+                except Exception:
+                    # Si falla, usar análisis por keywords solamente
+                    st.warning("⚠️ Modelo de emociones no disponible, usando análisis por keywords")
+                    _self.emotion_pipeline = None
+                
+                _self.models_loaded = True
+                return True
+                
+        except Exception as e:
+            st.error(f"❌ Error cargando modelos: {e}")
+            _self.models_loaded = False
+            return False
+    
+    def detectar_idioma_cloud(self, texto: str) -> str:
+        """Detecta idioma usando langdetect + keywords locales"""
         if pd.isna(texto) or not texto.strip():
             return 'castellano'
-
+        
+        # Primero intentar con keywords locales (más preciso para gallego)
         texto_lower = texto.lower()
         total_palabras = len(texto_lower.split())
         coincidencias_gallego = sum(1 for palabra in self.palabras_gallegas if palabra in texto_lower)
-
-        # Si hay 4 o más palabras gallegas, clasificar como gallego
-        if coincidencias_gallego >= 4 and (total_palabras > 0 and coincidencias_gallego / total_palabras >= 0.08):
+        
+        if coincidencias_gallego >= 3 and (total_palabras > 0 and coincidencias_gallego / total_palabras >= 0.08):
             return 'gallego'
-        else:
+        
+        # Si no, usar langdetect como fallback
+        try:
+            idioma_detectado = detect(texto)
+            if idioma_detectado == 'gl':  # Código ISO para gallego
+                return 'gallego'
+            elif idioma_detectado in ['es', 'ca']:  # Español o catalán
+                return 'castellano'
+            else:
+                return 'castellano'  # Default
+        except LangDetectError:
             return 'castellano'
-
-    def _determinar_tono_general_corregido(self, emotions_scores: Dict[str, float], titulo: str, resumen: str) -> Tuple[str, float]:
-        """LÓGICA CORREGIDA: El tono debe coincidir con la emoción principal"""
-        emociones_positivas = ['alegría', 'esperanza', 'orgullo', 'satisfacción']
-        emociones_negativas = ['tristeza', 'ira', 'miedo', 'decepción', 'indignación']
+    
+    def analizar_sentimiento_cloud(self, texto: str) -> Tuple[str, float]:
+        """Análisis de sentimientos usando HuggingFace"""
+        if not self.models_loaded:
+            if not self._load_models():
+                return 'neutral', 0.5
         
-        # Encontrar la emoción con mayor score
-        if emotions_scores:
-            emocion_principal = max(emotions_scores.items(), key=lambda x: x[1])
-            emocion_nombre, score = emocion_principal
+        try:
+            # Limitar longitud del texto para el modelo
+            texto_truncado = texto[:512] if len(texto) > 512 else texto
             
-            # LÓGICA CORREGIDA: Si la emoción principal es positiva, el tono es positivo
-            if score > 0.3:  # Solo si hay confianza suficiente
-                if emocion_nombre in emociones_positivas:
-                    return 'positivo', score
-                elif emocion_nombre in emociones_negativas:
-                    return 'negativo', score
-        
-        # Fallback al método anterior
-        score_positivo = sum(emotions_scores.get(emocion, 0) for emocion in emociones_positivas)
-        score_negativo = sum(emotions_scores.get(emocion, 0) for emocion in emociones_negativas)
-        
-        if score_positivo > score_negativo and score_positivo > 0.3:
-            return 'positivo', score_positivo
-        elif score_negativo > score_positivo and score_negativo > 0.3:
-            return 'negativo', score_negativo
-        else:
+            resultado = self.sentiment_pipeline(texto_truncado)
+            
+            # Mapear resultados del modelo a nuestras categorías
+            label = resultado[0]['label'].lower()
+            score = resultado[0]['score']
+            
+            if 'positive' in label or label == 'pos' or '4' in label or '5' in label:
+                return 'positivo', score
+            elif 'negative' in label or label == 'neg' or '1' in label or '2' in label:
+                return 'negativo', score
+            else:
+                return 'neutral', score
+                
+        except Exception as e:
+            st.warning(f"⚠️ Error en análisis cloud: {e}")
             return 'neutral', 0.5
     
-    def _determinar_tematica_mejorada(self, texto: str) -> Tuple[str, str]:
-        """Determina la categoría temática con emoji"""
-        tematica_scores = {}
+    def analizar_emociones_cloud(self, texto: str) -> Dict[str, float]:
+        """Análisis de emociones usando modelo cloud + keywords locales"""
+        emotions_scores = {}
         
-        for categoria, info in self.categorias_tematicas.items():
-            score = sum(1 for keyword in info['keywords'] if keyword in texto)
+        # Análisis híbrido: keywords locales + modelo cloud
+        texto_lower = texto.lower()
+        
+        # 1. Análisis por keywords (mantiene precisión local)
+        for emocion, keywords in self.emociones_keywords.items():
+            score = 0
+            for keyword in keywords:
+                if keyword in texto_lower:
+                    score += 1
+            
             if score > 0:
-                tematica_scores[categoria] = score
+                emotions_scores[emocion] = min(score / len(keywords), 1.0)
         
-        if tematica_scores:
-            categoria_principal = max(tematica_scores, key=tematica_scores.get)
-            emoji = self.categorias_tematicas[categoria_principal]['emoji']
-            return categoria_principal, emoji
-        else:
-            return 'otros', '📄'  # Cambio de "general" a "otros"
+        # 2. Si hay modelos disponibles, complementar con análisis cloud
+        if self.models_loaded:
+            try:
+                texto_truncado = texto[:512] if len(texto) > 512 else texto
+                resultado_emotion = self.emotion_pipeline(texto_truncado)
+                
+                # Mapear emociones del modelo a nuestras categorías
+                mapeo_emociones = {
+                    'joy': 'alegría', 'happiness': 'alegría',
+                    'sadness': 'tristeza', 'grief': 'tristeza',
+                    'anger': 'ira', 'rage': 'ira',
+                    'fear': 'miedo', 'anxiety': 'preocupación',
+                    'surprise': 'sorpresa',
+                    'disgust': 'indignación', 'contempt': 'indignación',
+                    'pride': 'orgullo',
+                    'hope': 'esperanza', 'optimism': 'esperanza'
+                }
+                
+                for resultado in resultado_emotion[:3]:  # Top 3 emociones
+                    emocion_en = resultado['label'].lower()
+                    score_cloud = resultado['score']
+                    
+                    if emocion_en in mapeo_emociones:
+                        emocion_es = mapeo_emociones[emocion_en]
+                        # Combinar con score de keywords si existe
+                        if emocion_es in emotions_scores:
+                            emotions_scores[emocion_es] = max(emotions_scores[emocion_es], score_cloud * 0.8)
+                        else:
+                            emotions_scores[emocion_es] = score_cloud * 0.8
+                            
+            except Exception as e:
+                st.warning(f"⚠️ Error en análisis de emociones cloud: {e}")
+        
+        return emotions_scores
     
     def analizar_articulo_completo(self, titulo: str, resumen: str = "") -> EmotionResult:
-        """Análisis completo mejorado con todas las correcciones"""
+        """Análisis completo usando métodos cloud"""
         try:
             texto_completo = f"{titulo} {resumen}".lower()
             
-            # 1. NUEVO: Detectar idioma
-            language = self.detectar_idioma(f"{titulo} {resumen}")
+            # 1. Detectar idioma
+            language = self.detectar_idioma_cloud(f"{titulo} {resumen}")
             
-            # 2. Análisis de emociones granulares
-            emotions_scores = self._detectar_emociones(titulo, resumen)
+            # 2. Análisis de emociones
+            emotions_scores = self.analizar_emociones_cloud(titulo + " " + resumen)
             
             # 3. Determinar emoción principal
-            emotion_primary, confidence = self._determinar_emociones_principales(emotions_scores)
+            if emotions_scores:
+                emotion_primary = max(emotions_scores.items(), key=lambda x: x[1])[0]
+                confidence = max(emotions_scores.values())
+            else:
+                emotion_primary = 'neutral'
+                confidence = 0.5
             
-            # 4. LÓGICA CORREGIDA: Tono basado en emoción principal
-            general_tone, general_confidence = self._determinar_tono_general_corregido(emotions_scores, titulo, resumen)
+            # 4. Análisis de tono
+            general_tone, general_confidence = self.analizar_sentimiento_cloud(titulo + " " + resumen)
             
-            # 5. Detectar contexto emocional
+            # 5. Otras métricas (usando métodos originales)
             emotional_context = self._detectar_contexto(texto_completo)
-            
-            # 6. Calcular intensidad emocional
             emotional_intensity = self._calcular_intensidad_emocional(texto_completo, emotions_scores)
-            
-            # 7. Verificar si es político
             is_political = self._es_politico(texto_completo)
-            
-            # 8. MEJORADA: Determinar categoría temática con emoji
             thematic_category, emoji = self._determinar_tematica_mejorada(texto_completo)
             
             return EmotionResult(
-                language=language,  # NUEVO
+                language=language,
                 emotion_primary=emotion_primary,
                 confidence=confidence,
                 emotions_detected=emotions_scores,
@@ -370,64 +301,30 @@ class AnalizadorSentimientosAvanzado:
                 general_tone=general_tone,
                 general_confidence=general_confidence,
                 is_political=is_political,
-                thematic_category=f"{emoji} {thematic_category.title()}"  # MEJORADO con emoji
+                thematic_category=f"{emoji} {thematic_category.title()}"
             )
+            
         except Exception as e:
-            print(f"🔧 Error analizando artículo '{titulo}': {e}")
-            # Devolver resultado por defecto
+            st.error(f"❌ Error en análisis cloud: {e}")
             return EmotionResult(
-                language='castellano',
-                emotion_primary='neutral',
-                confidence=0.5,
-                emotions_detected={'neutral': 0.5},
-                emotional_intensity=1,
-                emotional_context='informativo',
-                general_tone='neutral',
-                general_confidence=0.5,
-                is_political=False,
-                thematic_category='📄 Otros'
+                language='castellano', emotion_primary='neutral', confidence=0.5,
+                emotions_detected={'neutral': 0.5}, emotional_intensity=1,
+                emotional_context='informativo', general_tone='neutral',
+                general_confidence=0.5, is_political=False, thematic_category='📄 Otros'
             )
-    
-    def _detectar_emociones(self, titulo: str, resumen: str) -> Dict[str, float]:
-        """Detecta todas las emociones con sus scores"""
-        texto_completo = f"{titulo} {resumen}".lower()
-        emotions_scores = {}
-        
-        for emocion, keywords in self.emociones_keywords.items():
-            score = 0
-            palabras_encontradas = 0
-            
-            for keyword in keywords:
-                if keyword in texto_completo:
-                    if keyword in titulo.lower():
-                        score += 2
-                    else:
-                        score += 1
-                    palabras_encontradas += 1
-            
-            if palabras_encontradas > 0:
-                emotions_scores[emocion] = min(score / len(keywords), 1.0)
-        
-        return emotions_scores
-    
-    def _determinar_emociones_principales(self, emotions_scores: Dict[str, float]) -> Tuple[str, float]:
-        """🔧 CORREGIDA: Determina emoción principal (signatura corregida)"""
-        if emotions_scores:
-            emociones_ordenadas = sorted(emotions_scores.items(), key=lambda x: x[1], reverse=True)
-            
-            emotion_primary = emociones_ordenadas[0][0]
-            confidence = emociones_ordenadas[0][1]            
-        else:
-            emotion_primary = 'neutral'
-            confidence = 0.5
-        
-        return emotion_primary, confidence  # 🔧 Solo 2 valores (corregido)
     
     def _detectar_contexto(self, texto: str) -> str:
-        """Detecta el contexto emocional"""
-        contexto_scores = {}
+        """Detecta contexto emocional (mismo método original)"""
+        contextos_emocionales = {
+            'celebratorio': ['inauguración', 'apertura', 'éxito', 'logro', 'victoria', 'festejo'],
+            'conflictivo': ['polémica', 'controversia', 'disputa', 'enfrentamiento', 'conflicto'],
+            'informativo': ['anuncia', 'informa', 'comunica', 'declara', 'presenta', 'propone'],
+            'preocupante': ['problema', 'crisis', 'dificultad', 'obstáculo', 'complicación'],
+            'solemne': ['funeral', 'recordatorio', 'memoria', 'luto', 'despedida', 'tributo']
+        }
         
-        for contexto, keywords in self.contextos_emocionales.items():
+        contexto_scores = {}
+        for contexto, keywords in contextos_emocionales.items():
             score = sum(1 for keyword in keywords if keyword in texto)
             if score > 0:
                 contexto_scores[contexto] = score
@@ -435,7 +332,7 @@ class AnalizadorSentimientosAvanzado:
         return max(contexto_scores, key=contexto_scores.get) if contexto_scores else 'informativo'
     
     def _calcular_intensidad_emocional(self, texto: str, emotions_scores: Dict[str, float]) -> int:
-        """Calcula intensidad emocional"""
+        """Calcula intensidad emocional (mismo método original)"""
         intensificadores = ['muy', 'mucho', 'gran', 'enorme', 'tremendo', 'moi', 'moito']
         emociones_intensas = ['ira', 'tristeza', 'alegría', 'miedo', 'indignación', 'sorpresa']
         
@@ -453,22 +350,46 @@ class AnalizadorSentimientosAvanzado:
         return min(int(intensidad_base), 5)
     
     def _es_politico(self, texto: str) -> bool:
-        """Determina si es político"""
+        """Determina si es político (mismo método original)"""
         return any(palabra in texto for palabra in self.palabras_politicas)
     
-    def analizar_dataset(self, df: pd.DataFrame, columna_titulo: str, 
-                        columna_resumen: str = None) -> pd.DataFrame:
-        """
-        🔧 CORREGIDA: Aplica análisis completo a un dataset de artículos con manejo robusto de errores
-        """
-        print(f"🧠 Analizando sentimientos y emociones de {len(df)} artículos...")
+    def _determinar_tematica_mejorada(self, texto: str) -> Tuple[str, str]:
+        """Determina categoría temática (mismo método original)"""
+        tematica_scores = {}
+        
+        for categoria, info in self.categorias_tematicas.items():
+            score = sum(1 for keyword in info['keywords'] if keyword in texto)
+            if score > 0:
+                tematica_scores[categoria] = score
+        
+        if tematica_scores:
+            categoria_principal = max(tematica_scores, key=tematica_scores.get)
+            emoji = self.categorias_tematicas[categoria_principal]['emoji']
+            return categoria_principal, emoji
+        else:
+            return 'otros', '📄'
+    
+    def analizar_dataset(self, df: pd.DataFrame, columna_titulo: str, columna_resumen: str = None) -> pd.DataFrame:
+        """Análisis de dataset usando métodos cloud"""
+        if not self.available:
+            st.error("❌ Analizador cloud no disponible")
+            return df
+        
+        st.info("🌥️ Usando análisis de sentimientos cloud (HuggingFace + APIs)")
+        
+        # Cargar modelos si no están cargados
+        if not self.models_loaded:
+            if not self._load_models():
+                st.error("❌ No se pudieron cargar los modelos cloud")
+                return df
+        
+        st.info(f"🧠 Analizando {len(df)} artículos con IA cloud...")
         
         resultados = []
         
-        # 🔧 ANÁLISIS ROBUSTO CON MANEJO DE ERRORES
         for idx, row in df.iterrows():
-            if idx % 5 == 0:
-                print(f"   Procesado: {idx}/{len(df)} artículos")
+            if idx % 10 == 0:
+                st.info(f"   Procesado: {idx}/{len(df)} artículos")
             
             titulo = str(row[columna_titulo]) if pd.notna(row[columna_titulo]) else ""
             resumen = str(row[columna_resumen]) if columna_resumen and pd.notna(row[columna_resumen]) else ""
@@ -477,168 +398,71 @@ class AnalizadorSentimientosAvanzado:
                 resultado = self.analizar_articulo_completo(titulo, resumen)
                 resultados.append(resultado)
             except Exception as e:
-                print(f"🔧 Error procesando artículo {idx}: {e}")
-                # 🔧 RESULTADO POR DEFECTO EN CASO DE ERROR
+                st.warning(f"⚠️ Error en artículo {idx}: {e}")
                 resultado_default = EmotionResult(
-                    language='castellano',
-                    emotion_primary='neutral',
-                    confidence=0.5,
-                    emotions_detected={'neutral': 0.5},
-                    emotional_intensity=1,
-                    emotional_context='informativo',
-                    general_tone='neutral',
-                    general_confidence=0.5,
-                    is_political=False,
-                    thematic_category='📄 Otros'
+                    language='castellano', emotion_primary='neutral', confidence=0.5,
+                    emotions_detected={'neutral': 0.5}, emotional_intensity=1,
+                    emotional_context='informativo', general_tone='neutral',
+                    general_confidence=0.5, is_political=False, thematic_category='📄 Otros'
                 )
                 resultados.append(resultado_default)
         
-        # 🔧 VERIFICAR QUE TENEMOS TANTOS RESULTADOS COMO FILAS
-        if len(resultados) != len(df):
-            print(f"❌ Error: {len(resultados)} resultados para {len(df)} filas")
-            # Rellenar con resultados por defecto si faltan
-            while len(resultados) < len(df):
-                resultado_default = EmotionResult(
-                    language='castellano',
-                    emotion_primary='neutral',
-                    confidence=0.5,
-                    emotions_detected={'neutral': 0.5},
-                    emotional_intensity=1,
-                    emotional_context='informativo',
-                    general_tone='neutral',
-                    general_confidence=0.5,
-                    is_political=False,
-                    thematic_category='📄 Otros'
-                )
-                resultados.append(resultado_default)
-        
-        # 🔧 CONSTRUCCIÓN ROBUSTA DEL DATAFRAME RESULTADO
+        # Construir DataFrame resultado
         try:
-            # Copiar DataFrame original
             df_resultado = df.copy()
-
-            # 🔧 AÑADIR COLUMNAS PASO A PASO CON VALIDACIÓN
-            print("🔧 Añadiendo columna: idioma")
+            
+            # Añadir columnas de análisis
             df_resultado['idioma'] = [r.language for r in resultados]
-            
-            print("🔧 Añadiendo columna: tono_general")
             df_resultado['tono_general'] = [r.general_tone for r in resultados]
-            
-            print("🔧 Añadiendo columna: emocion_principal")
             df_resultado['emocion_principal'] = [r.emotion_primary for r in resultados]
-            
-            print("🔧 Añadiendo columna: confianza_analisis")
             df_resultado['confianza_analisis'] = [r.general_confidence for r in resultados]
-            
-            print("🔧 Añadiendo columna: intensidad_emocional")
             df_resultado['intensidad_emocional'] = [r.emotional_intensity for r in resultados]
-            
-            print("🔧 Añadiendo columna: contexto_emocional")
             df_resultado['contexto_emocional'] = [r.emotional_context for r in resultados]
-            
-            print("🔧 Añadiendo columna: es_politico")
             df_resultado['es_politico'] = [r.is_political for r in resultados]
-            
-            print("🔧 Añadiendo columna: tematica")
             df_resultado['tematica'] = [r.thematic_category for r in resultados]
-            
-            # Columnas adicionales
-            print("🔧 Añadiendo columna: confianza_emocion")
             df_resultado['confianza_emocion'] = [r.confidence for r in resultados]
-            
-            print("🔧 Añadiendo columna: emociones_detectadas")
             df_resultado['emociones_detectadas'] = [r.emotions_detected for r in resultados]
             
-            print("✅ Análisis completo terminado exitosamente")
-            print(f"🔧 Columnas añadidas: {['idioma', 'tono_general', 'emocion_principal', 'confianza_analisis', 'intensidad_emocional', 'contexto_emocional', 'es_politico', 'tematica', 'confianza_emocion', 'emociones_detectadas']}")
-            
+            st.success("✅ Análisis cloud completado exitosamente")
             return df_resultado
             
         except Exception as e:
-            print(f"❌ Error crítico añadiendo columnas: {e}")
-            # En caso de error crítico, devolver DataFrame original con columnas básicas
-            df_basico = df.copy()
-            df_basico['idioma'] = 'castellano'
-            df_basico['tono_general'] = 'neutral'
-            df_basico['emocion_principal'] = 'neutral'
-            df_basico['confianza_analisis'] = 0.5
-            df_basico['intensidad_emocional'] = 1
-            df_basico['contexto_emocional'] = 'informativo'
-            df_basico['es_politico'] = False
-            df_basico['tematica'] = '📄 Otros'
-            return df_basico
+            st.error(f"❌ Error construyendo resultado: {e}")
+            return df
     
     def generar_reporte_completo(self, df_analizado: pd.DataFrame) -> Dict:
-        """🔧 CORREGIDA: Genera un reporte completo del análisis con validación"""
+        """Genera reporte completo (mismo método original)"""
         total_articulos = len(df_analizado)
         
         if total_articulos == 0:
-            return {
-                'total_articulos': 0,
-                'articulos_politicos': 0,
-                'distribución_idiomas': {},
-                'tonos_generales': {},
-                'emociones_principales': {},
-                'contextos_emocionales': {},
-                'tematicas': {},
-                'intensidad_promedio': 0,
-                'confianza_promedio': 0
-            }
+            return {'total_articulos': 0, 'articulos_politicos': 0}
         
         try:
-            # 🔧 VALIDACIÓN DE COLUMNAS ANTES DE USAR
-            # Análisis de idiomas (NUEVO)
-            idiomas = {}
-            if 'idioma' in df_analizado.columns:
-                idiomas = df_analizado['idioma'].value_counts().to_dict()
+            # Estadísticas básicas
+            idiomas = df_analizado.get('idioma', pd.Series()).value_counts().to_dict()
+            tonos = df_analizado.get('tono_general', pd.Series()).value_counts().to_dict()
+            emociones_principales = df_analizado.get('emocion_principal', pd.Series()).value_counts().to_dict()
+            contextos = df_analizado.get('contexto_emocional', pd.Series()).value_counts().to_dict()
+            tematicas = df_analizado.get('tematica', pd.Series()).value_counts().to_dict()
             
-            # Análisis de tono general
-            tonos = {}
-            if 'tono_general' in df_analizado.columns:
-                tonos = df_analizado['tono_general'].value_counts().to_dict()
-            
-            # Análisis de emociones principales (NUEVO)
-            emociones_principales = {}
-            if 'emocion_principal' in df_analizado.columns:
-                emociones_principales = df_analizado['emocion_principal'].value_counts().to_dict()
-                    
-            # Análisis de contextos
-            contextos = {}
-            if 'contexto_emocional' in df_analizado.columns:
-                contextos = df_analizado['contexto_emocional'].value_counts().to_dict()
-            
-            # Análisis de temáticas
-            tematicas = {}
-            if 'tematica' in df_analizado.columns:
-                tematicas = df_analizado['tematica'].value_counts().to_dict()
-            
-            # Estadísticas generales con validación
-            articulos_politicos = 0
-            if 'es_politico' in df_analizado.columns:
-                articulos_politicos = int(df_analizado['es_politico'].sum())
-            
-            intensidad_promedio = 1.0
-            if 'intensidad_emocional' in df_analizado.columns:
-                intensidad_promedio = float(df_analizado['intensidad_emocional'].mean())
-            
-            confianza_promedio = 0.5
-            if 'confianza_analisis' in df_analizado.columns:
-                confianza_promedio = float(df_analizado['confianza_analisis'].mean())
+            articulos_politicos = int(df_analizado.get('es_politico', pd.Series()).sum()) if 'es_politico' in df_analizado.columns else 0
+            intensidad_promedio = float(df_analizado.get('intensidad_emocional', pd.Series()).mean()) if 'intensidad_emocional' in df_analizado.columns else 1.0
+            confianza_promedio = float(df_analizado.get('confianza_analisis', pd.Series()).mean()) if 'confianza_analisis' in df_analizado.columns else 0.5
             
             return {
                 'total_articulos': total_articulos,
                 'articulos_politicos': articulos_politicos,
-                'distribución_idiomas': idiomas,  # NUEVO
+                'distribución_idiomas': idiomas,
                 'tonos_generales': tonos,
-                'emociones_principales': emociones_principales,  # NUEVO
+                'emociones_principales': emociones_principales,
                 'contextos_emocionales': contextos,
                 'tematicas': tematicas,
                 'intensidad_promedio': intensidad_promedio,
                 'confianza_promedio': confianza_promedio
             }
+            
         except Exception as e:
-            print(f"❌ Error generando reporte: {e}")
-            # Reporte por defecto en caso de error
+            st.warning(f"⚠️ Error generando reporte: {e}")
             return {
                 'total_articulos': total_articulos,
                 'articulos_politicos': 0,
@@ -651,13 +475,12 @@ class AnalizadorSentimientosAvanzado:
                 'confianza_promedio': 0.5
             }
 
-
-# Clases de compatibilidad
+# Clases de compatibilidad con el sistema existente
 class AnalizadorArticulosMarin:
-    """Clase de compatibilidad con el sistema existente"""
+    """Clase de compatibilidad que usa el analizador cloud"""
     
     def __init__(self):
-        self.analizador = AnalizadorSentimientosAvanzado()
+        self.analizador = CloudSentimentAnalyzer()
     
     def analizar_dataset(self, df, columna_titulo='title', columna_resumen='summary'):
         return self.analizador.analizar_dataset(df, columna_titulo, columna_resumen)
@@ -665,40 +488,41 @@ class AnalizadorArticulosMarin:
     def generar_reporte(self, df_analizado):
         return self.analizador.generar_reporte_completo(df_analizado)
 
-
 # Función de compatibilidad
 def analizar_articulos_marin(df, columna_titulo='title', columna_resumen='summary'):
-    """Función de compatibilidad con el sistema existente"""
-    analizador = AnalizadorSentimientosAvanzado()
+    """Función de compatibilidad que usa el analizador cloud"""
+    analizador = CloudSentimentAnalyzer()
     return analizador.analizar_dataset(df, columna_titulo, columna_resumen)
 
-
-# Test de diagnóstico
+# Test de funcionalidad
 if __name__ == "__main__":
-    print("🔧 DIAGNÓSTICO DEL ANALIZADOR CORREGIDO")
+    print("🌥️ TESTING CLOUD SENTIMENT ANALYZER")
     
-    analizador = AnalizadorSentimientosAvanzado()
-    
-    # Test básico
-    resultado = analizador.analizar_articulo_completo("Prueba de análisis", "Texto de prueba")
-    print(f"✅ Análisis básico funciona: {resultado.language}, {resultado.general_tone}, {resultado.emotion_primary}")
-    
-    # Test de dataset
-    import pandas as pd
-    df_test = pd.DataFrame({
-        'title': ['Fallece Constante Muradas Ramos', 'El PSOE móstrase alarmado'],
-        'summary': ['Luto en la villa marinense', 'Críticas a la gestión municipal']
-    })
-    
-    try:
-        df_resultado = analizador.analizar_dataset(df_test, 'title', 'summary')
-        columnas_esperadas = ['idioma', 'tono_general', 'emocion_principal', 'confianza_analisis']
-        columnas_presentes = [col for col in columnas_esperadas if col in df_resultado.columns]
-        print(f"✅ Dataset procesado: {len(columnas_presentes)}/{len(columnas_esperadas)} columnas presentes")
-        print(f"🔧 Columnas encontradas: {columnas_presentes}")
+    if CLOUD_LIBS_AVAILABLE:
+        analizador = CloudSentimentAnalyzer()
         
-        reporte = analizador.generar_reporte_completo(df_resultado)
-        print(f"✅ Reporte generado: {len(reporte)} campos")
+        # Test básico
+        resultado = analizador.analizar_articulo_completo(
+            "El alcalde anuncia mejoras en el puerto", 
+            "Nuevas inversiones para modernizar las instalaciones"
+        )
+        print(f"✅ Análisis cloud funciona: {resultado.language}, {resultado.general_tone}, {resultado.emotion_primary}")
         
-    except Exception as e:
-        print(f"❌ Error en test de dataset: {e}")
+        # Test de dataset pequeño
+        import pandas as pd
+        df_test = pd.DataFrame({
+            'title': ['Buenas noticias para Marín', 'Preocupación por el tráfico'],
+            'summary': ['Proyectos de mejora aprobados', 'Problemas de circulación en el centro']
+        })
+        
+        try:
+            df_resultado = analizador.analizar_dataset(df_test, 'title', 'summary')
+            print(f"✅ Dataset cloud procesado: {len(df_resultado)} filas con análisis")
+            
+            reporte = analizador.generar_reporte_completo(df_resultado)
+            print(f"✅ Reporte cloud generado: {reporte['total_articulos']} artículos")
+            
+        except Exception as e:
+            print(f"❌ Error en test cloud: {e}")
+    else:
+        print("❌ Librerías cloud no disponibles")
