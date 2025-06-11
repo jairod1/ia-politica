@@ -12,6 +12,7 @@ import pandas as pd
 from typing import Dict, List, Tuple
 from dataclasses import dataclass
 
+
 # Intentar importar librerías cloud (opcional)
 try:
     from transformers import pipeline
@@ -49,6 +50,31 @@ except ImportError:
         def __exit__(self, *args): pass
     
     st = MockStreamlit()
+
+# ===== DEBUG TEMPORAL =====
+print("🔍 INICIANDO DEBUG...")
+
+try:
+    from transformers import pipeline
+    print("✅ transformers importado OK")
+except Exception as e:
+    print(f"❌ transformers ERROR: {e}")
+
+try:
+    from langdetect import detect
+    print("✅ langdetect importado OK")
+except Exception as e:
+    print(f"❌ langdetect ERROR: {e}")
+
+try:
+    import torch
+    print("✅ torch importado OK")
+except Exception as e:
+    print(f"❌ torch ERROR: {e}")
+
+print(f"🎯 CLOUD_LIBS_AVAILABLE: {CLOUD_LIBS_AVAILABLE}")
+
+# ===== FIN DEBUG =====
 
 @dataclass
 class EmotionResult:
