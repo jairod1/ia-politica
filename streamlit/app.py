@@ -13,27 +13,6 @@ import os
 nest_asyncio.apply()
 os.environ["STREAMLIT_USE_WATCHMAN"] = "false"
 
-# ===== DEBUG CARGA =====
-st.write("🔍 DEBUG: Iniciando app.py...")
-
-try:
-    st.write("🔍 DEBUG: Intentando importar sentiment_integration...")
-    from utils.sentiment_integration import cargar_analizador_sentimientos
-    st.write("✅ DEBUG: sentiment_integration importado OK")
-except Exception as e:
-    st.write(f"❌ DEBUG: Error importando sentiment_integration: {e}")
-
-try:
-    st.write("🔍 DEBUG: Intentando cargar analizador...")
-    AnalizadorClass, _, mensaje = cargar_analizador_sentimientos()
-    st.write(f"🎯 DEBUG: Resultado carga: {mensaje}")
-    st.write(f"🎯 DEBUG: AnalizadorClass: {AnalizadorClass}")
-except Exception as e:
-    st.write(f"❌ DEBUG: Error cargando analizador: {e}")
-
-st.write("🔍 DEBUG: Fin debug app.py")
-# ===== FIN DEBUG =====
-
 # Importar módulos utils
 try:
     from utils.data_loaders import cargar_metricas, cargar_datos_comentarios, cargar_datos_comentarios_morrazo, cargar_datos_comentarios_marin
