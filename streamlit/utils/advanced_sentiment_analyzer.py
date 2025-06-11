@@ -1,34 +1,54 @@
 """
-Cloud Sentiment Analyzer - HorizontAI (VERSIÓN CLOUD)
-=====================================================
+Hybrid Sentiment Analyzer - HorizontAI 
+======================================
 
-🌥️ VERSIÓN CLOUD: Análisis de sentimientos usando APIs y librerías externas
-en lugar de modelos locales en .venv
-
-Dependencias necesarias para requirements.txt:
-transformers>=4.21.0
-torch>=1.12.0
-langdetect>=1.0.9
-textblob>=0.17.1
+🎯 VERSIÓN HÍBRIDA: Funciona con o sin dependencias cloud
+- CON dependencias cloud → Usa transformers + keywords
+- SIN dependencias cloud → Solo keywords (como tu versión original)
 """
 
 import re
 import pandas as pd
-import streamlit as st
 from typing import Dict, List, Tuple
 from dataclasses import dataclass
 
-# Imports para análisis cloud
+# Intentar importar librerías cloud (opcional)
 try:
-    from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
+    from transformers import pipeline
     from langdetect import detect, LangDetectError
-    from textblob import TextBlob
     import torch
     CLOUD_LIBS_AVAILABLE = True
-except ImportError as e:
+    print("✅ Librerías cloud disponibles")
+except ImportError:
     CLOUD_LIBS_AVAILABLE = False
-    st.error(f"❌ Error importando librerías cloud: {e}")
-    st.info("💡 Instala: pip install transformers torch langdetect textblob")
+    print("⚠️ Librerías cloud no disponibles, usando solo keywords")
+
+# Importar Streamlit solo si está disponible
+try:
+    import streamlit as st
+    STREAMLIT_AVAILABLE = True
+except ImportError:
+    STREAMLIT_AVAILABLE = False
+    # Mock de Streamlit para que no falle
+    class MockStreamlit:
+        @staticmethod
+        def error(msg): print(f"ERROR: {msg}")
+        @staticmethod
+        def warning(msg): print(f"WARNING: {msg}")
+        @staticmethod
+        def info(msg): print(f"INFO: {msg}")
+        @staticmethod
+        def success(msg): print(f"SUCCESS: {msg}")
+        @staticmethod
+        def spinner(msg): return MockContextManager()
+        @staticmethod
+        def cache_resource(func): return func  # No cache
+    
+    class MockContextManager:
+        def __enter__(self): return self
+        def __exit__(self, *args): pass
+    
+    st = MockStreamlit()
 
 @dataclass
 class EmotionResult:
@@ -44,24 +64,25 @@ class EmotionResult:
     is_political: bool  
     thematic_category: str  
 
-class CloudSentimentAnalyzer:
-    """Analizador de sentimientos que usa APIs cloud en lugar de modelos locales"""
+class HybridSentimentAnalyzer:
+    """Analizador híbrido que funciona con o sin dependencias cloud"""
     
     def __init__(self):
-        if not CLOUD_LIBS_AVAILABLE:
-            st.error("❌ Librerías cloud no disponibles")
-            self.available = False
-            return
-        
-        self.available = True
+        self.available = True  # Siempre disponible
+        self.cloud_mode = CLOUD_LIBS_AVAILABLE
         self.models_loaded = False
         
-        # Inicializar modelos lazy (solo cuando se necesiten)
+        # Inicializar modelos cloud solo si están disponibles
         self.sentiment_pipeline = None
         self.emotion_pipeline = None
         
-        # Keywords para análisis temático y político (mismo que original)
+        # Keywords para análisis (siempre disponibles)
         self._init_keywords()
+        
+        if self.cloud_mode:
+            print("🌥️ Modo cloud habilitado")
+        else:
+            print("🔧 Modo keywords únicamente")
     
     def _init_keywords(self):
         """Inicializa las palabras clave para análisis"""
@@ -92,6 +113,19 @@ class CloudSentimentAnalyzer:
             'preocupación': ['preocupación', 'inquietud', 'intranquilidad', 'zozobra', 'desasosiego', 'duda']
         }
         
+        # Tono por keywords
+        self.palabras_positivas = [
+            'celebra', 'festeja', 'éxito', 'logro', 'mejor', 'bueno', 'excelente', 
+            'progreso', 'avance', 'felicidad', 'alegría', 'satisfacción', 'honor',
+            'reconocimiento', 'premio', 'inauguración', 'apertura', 'mejora'
+        ]
+        
+        self.palabras_negativas = [
+            'problema', 'crisis', 'malo', 'peor', 'fracaso', 'error', 'falla',
+            'tristeza', 'pena', 'muerte', 'fallece', 'luto', 'dolor', 'ira',
+            'enfado', 'critica', 'censura', 'repudia', 'ataca', 'alarma'
+        ]
+        
         # Categorías temáticas
         self.categorias_tematicas = {
             'construcción': {'keywords': ['obra', 'construcción', 'edificio', 'vivienda', 'infraestructura'], 'emoji': '🏗️'},
@@ -112,59 +146,48 @@ class CloudSentimentAnalyzer:
         # Palabras políticas
         self.palabras_politicas = ['alcaldesa', 'alcalde', 'concejal', 'concejala', 'psoe', 'pp', 'bng', 'pazos', 'ramallo', 'santos']
     
-    @st.cache_resource
-    def _load_models(_self):
-        """Carga los modelos de HuggingFace (con cache de Streamlit)"""
-        if not _self.available:
+    def _load_models(self):
+        """Carga los modelos cloud si están disponibles"""
+        if not self.cloud_mode:
             return False
         
+        if self.models_loaded:
+            return True
+        
         try:
-            with st.spinner("🤗 Cargando modelos de HuggingFace..."):
-                # 🌥️ OPTIMIZACIÓN CLOUD: Usar modelos más pequeños y eficientes
-                # Modelo para análisis de sentimientos (optimizado para cloud)
+            with st.spinner("🤗 Cargando modelos cloud..."):
+                # Usar modelos pequeños para cloud
+                self.sentiment_pipeline = pipeline(
+                    "sentiment-analysis", 
+                    model="distilbert-base-uncased-finetuned-sst-2-english",
+                    device=-1,  # CPU only
+                    model_kwargs={"low_cpu_mem_usage": True}
+                )
+                
                 try:
-                    _self.sentiment_pipeline = pipeline(
-                        "sentiment-analysis", 
-                        model="cardiffnlp/twitter-xlm-roberta-base-sentiment",  # Más pequeño y multiidioma
-                        device=-1,  # Forzar CPU para cloud deployment
-                        model_kwargs={"low_cpu_mem_usage": True}
-                    )
-                except Exception:
-                    # Fallback a modelo aún más pequeño
-                    _self.sentiment_pipeline = pipeline(
-                        "sentiment-analysis", 
-                        model="distilbert-base-uncased-finetuned-sst-2-english",
+                    self.emotion_pipeline = pipeline(
+                        "text-classification",
+                        model="SamLowe/roberta-base-go_emotions",
                         device=-1,
                         model_kwargs={"low_cpu_mem_usage": True}
                     )
+                except:
+                    st.warning("⚠️ Modelo de emociones no disponible, usando keywords")
+                    self.emotion_pipeline = None
                 
-                # Modelo para clasificación de emociones (más liviano)
-                try:
-                    _self.emotion_pipeline = pipeline(
-                        "text-classification",
-                        model="SamLowe/roberta-base-go_emotions",  # Modelo más eficiente
-                        device=-1,  # CPU only
-                        model_kwargs={"low_cpu_mem_usage": True}
-                    )
-                except Exception:
-                    # Si falla, usar análisis por keywords solamente
-                    st.warning("⚠️ Modelo de emociones no disponible, usando análisis por keywords")
-                    _self.emotion_pipeline = None
-                
-                _self.models_loaded = True
+                self.models_loaded = True
                 return True
-                
         except Exception as e:
-            st.error(f"❌ Error cargando modelos: {e}")
-            _self.models_loaded = False
+            st.warning(f"⚠️ Error cargando modelos cloud: {e}")
+            self.models_loaded = False
             return False
     
-    def detectar_idioma_cloud(self, texto: str) -> str:
-        """Detecta idioma usando langdetect + keywords locales"""
+    def detectar_idioma(self, texto: str) -> str:
+        """Detecta idioma usando keywords + langdetect (si disponible)"""
         if pd.isna(texto) or not texto.strip():
             return 'castellano'
         
-        # Primero intentar con keywords locales (más preciso para gallego)
+        # Método 1: Keywords locales (siempre disponible)
         texto_lower = texto.lower()
         total_palabras = len(texto_lower.split())
         coincidencias_gallego = sum(1 for palabra in self.palabras_gallegas if palabra in texto_lower)
@@ -172,53 +195,60 @@ class CloudSentimentAnalyzer:
         if coincidencias_gallego >= 3 and (total_palabras > 0 and coincidencias_gallego / total_palabras >= 0.08):
             return 'gallego'
         
-        # Si no, usar langdetect como fallback
-        try:
-            idioma_detectado = detect(texto)
-            if idioma_detectado == 'gl':  # Código ISO para gallego
-                return 'gallego'
-            elif idioma_detectado in ['es', 'ca']:  # Español o catalán
-                return 'castellano'
-            else:
-                return 'castellano'  # Default
-        except LangDetectError:
-            return 'castellano'
-    
-    def analizar_sentimiento_cloud(self, texto: str) -> Tuple[str, float]:
-        """Análisis de sentimientos usando HuggingFace"""
-        if not self.models_loaded:
-            if not self._load_models():
-                return 'neutral', 0.5
+        # Método 2: langdetect (si está disponible)
+        if self.cloud_mode:
+            try:
+                idioma_detectado = detect(texto)
+                if idioma_detectado == 'gl':
+                    return 'gallego'
+                elif idioma_detectado in ['es', 'ca']:
+                    return 'castellano'
+            except:
+                pass
         
-        try:
-            # Limitar longitud del texto para el modelo
-            texto_truncado = texto[:512] if len(texto) > 512 else texto
-            
-            resultado = self.sentiment_pipeline(texto_truncado)
-            
-            # Mapear resultados del modelo a nuestras categorías
-            label = resultado[0]['label'].lower()
-            score = resultado[0]['score']
-            
-            if 'positive' in label or label == 'pos' or '4' in label or '5' in label:
-                return 'positivo', score
-            elif 'negative' in label or label == 'neg' or '1' in label or '2' in label:
-                return 'negativo', score
-            else:
-                return 'neutral', score
-                
-        except Exception as e:
-            st.warning(f"⚠️ Error en análisis cloud: {e}")
-            return 'neutral', 0.5
+        return 'castellano'
     
-    def analizar_emociones_cloud(self, texto: str) -> Dict[str, float]:
-        """Análisis de emociones usando modelo cloud + keywords locales"""
-        emotions_scores = {}
-        
-        # Análisis híbrido: keywords locales + modelo cloud
+    def analizar_sentimiento(self, texto: str) -> Tuple[str, float]:
+        """Análisis de sentimientos híbrido"""
+        # Método 1: Keywords (siempre disponible)
         texto_lower = texto.lower()
         
-        # 1. Análisis por keywords (mantiene precisión local)
+        score_positivo = sum(1 for palabra in self.palabras_positivas if palabra in texto_lower)
+        score_negativo = sum(1 for palabra in self.palabras_negativas if palabra in texto_lower)
+        
+        # Método 2: Modelo cloud (si disponible)
+        if self.cloud_mode and self.models_loaded and self.sentiment_pipeline:
+            try:
+                texto_truncado = texto[:512] if len(texto) > 512 else texto
+                resultado = self.sentiment_pipeline(texto_truncado)
+                
+                label = resultado[0]['label'].lower()
+                score_cloud = resultado[0]['score']
+                
+                # Combinar resultados
+                if 'positive' in label or '4' in label or '5' in label:
+                    score_positivo += score_cloud * 2
+                elif 'negative' in label or '1' in label or '2' in label:
+                    score_negativo += score_cloud * 2
+            except:
+                pass
+        
+        # Determinar tono final
+        if score_positivo > score_negativo and score_positivo > 0.3:
+            confidence = min(score_positivo / (score_positivo + score_negativo + 0.1), 0.95)
+            return 'positivo', confidence
+        elif score_negativo > score_positivo and score_negativo > 0.3:
+            confidence = min(score_negativo / (score_positivo + score_negativo + 0.1), 0.95)
+            return 'negativo', confidence
+        else:
+            return 'neutral', 0.5
+    
+    def analizar_emociones(self, texto: str) -> Dict[str, float]:
+        """Análisis de emociones híbrido"""
+        emotions_scores = {}
+        texto_lower = texto.lower()
+        
+        # Método 1: Keywords (siempre disponible)
         for emocion, keywords in self.emociones_keywords.items():
             score = 0
             for keyword in keywords:
@@ -228,13 +258,12 @@ class CloudSentimentAnalyzer:
             if score > 0:
                 emotions_scores[emocion] = min(score / len(keywords), 1.0)
         
-        # 2. Si hay modelos disponibles, complementar con análisis cloud
-        if self.models_loaded:
+        # Método 2: Modelo cloud (si disponible)
+        if self.cloud_mode and self.models_loaded and self.emotion_pipeline:
             try:
                 texto_truncado = texto[:512] if len(texto) > 512 else texto
                 resultado_emotion = self.emotion_pipeline(texto_truncado)
                 
-                # Mapear emociones del modelo a nuestras categorías
                 mapeo_emociones = {
                     'joy': 'alegría', 'happiness': 'alegría',
                     'sadness': 'tristeza', 'grief': 'tristeza',
@@ -246,33 +275,35 @@ class CloudSentimentAnalyzer:
                     'hope': 'esperanza', 'optimism': 'esperanza'
                 }
                 
-                for resultado in resultado_emotion[:3]:  # Top 3 emociones
+                for resultado in resultado_emotion[:3]:
                     emocion_en = resultado['label'].lower()
                     score_cloud = resultado['score']
                     
                     if emocion_en in mapeo_emociones:
                         emocion_es = mapeo_emociones[emocion_en]
-                        # Combinar con score de keywords si existe
                         if emocion_es in emotions_scores:
                             emotions_scores[emocion_es] = max(emotions_scores[emocion_es], score_cloud * 0.8)
                         else:
                             emotions_scores[emocion_es] = score_cloud * 0.8
-                            
-            except Exception as e:
-                st.warning(f"⚠️ Error en análisis de emociones cloud: {e}")
+            except:
+                pass
         
         return emotions_scores
     
     def analizar_articulo_completo(self, titulo: str, resumen: str = "") -> EmotionResult:
-        """Análisis completo usando métodos cloud"""
+        """Análisis completo híbrido"""
         try:
+            # Cargar modelos cloud si están disponibles (lazy loading)
+            if self.cloud_mode and not self.models_loaded:
+                self._load_models()
+            
             texto_completo = f"{titulo} {resumen}".lower()
             
             # 1. Detectar idioma
-            language = self.detectar_idioma_cloud(f"{titulo} {resumen}")
+            language = self.detectar_idioma(f"{titulo} {resumen}")
             
             # 2. Análisis de emociones
-            emotions_scores = self.analizar_emociones_cloud(titulo + " " + resumen)
+            emotions_scores = self.analizar_emociones(titulo + " " + resumen)
             
             # 3. Determinar emoción principal
             if emotions_scores:
@@ -283,9 +314,9 @@ class CloudSentimentAnalyzer:
                 confidence = 0.5
             
             # 4. Análisis de tono
-            general_tone, general_confidence = self.analizar_sentimiento_cloud(titulo + " " + resumen)
+            general_tone, general_confidence = self.analizar_sentimiento(titulo + " " + resumen)
             
-            # 5. Otras métricas (usando métodos originales)
+            # 5. Otras métricas
             emotional_context = self._detectar_contexto(texto_completo)
             emotional_intensity = self._calcular_intensidad_emocional(texto_completo, emotions_scores)
             is_political = self._es_politico(texto_completo)
@@ -305,7 +336,7 @@ class CloudSentimentAnalyzer:
             )
             
         except Exception as e:
-            st.error(f"❌ Error en análisis cloud: {e}")
+            print(f"❌ Error en análisis: {e}")
             return EmotionResult(
                 language='castellano', emotion_primary='neutral', confidence=0.5,
                 emotions_detected={'neutral': 0.5}, emotional_intensity=1,
@@ -314,7 +345,7 @@ class CloudSentimentAnalyzer:
             )
     
     def _detectar_contexto(self, texto: str) -> str:
-        """Detecta contexto emocional (mismo método original)"""
+        """Detecta contexto emocional"""
         contextos_emocionales = {
             'celebratorio': ['inauguración', 'apertura', 'éxito', 'logro', 'victoria', 'festejo'],
             'conflictivo': ['polémica', 'controversia', 'disputa', 'enfrentamiento', 'conflicto'],
@@ -332,7 +363,7 @@ class CloudSentimentAnalyzer:
         return max(contexto_scores, key=contexto_scores.get) if contexto_scores else 'informativo'
     
     def _calcular_intensidad_emocional(self, texto: str, emotions_scores: Dict[str, float]) -> int:
-        """Calcula intensidad emocional (mismo método original)"""
+        """Calcula intensidad emocional"""
         intensificadores = ['muy', 'mucho', 'gran', 'enorme', 'tremendo', 'moi', 'moito']
         emociones_intensas = ['ira', 'tristeza', 'alegría', 'miedo', 'indignación', 'sorpresa']
         
@@ -350,11 +381,11 @@ class CloudSentimentAnalyzer:
         return min(int(intensidad_base), 5)
     
     def _es_politico(self, texto: str) -> bool:
-        """Determina si es político (mismo método original)"""
+        """Determina si es político"""
         return any(palabra in texto for palabra in self.palabras_politicas)
     
     def _determinar_tematica_mejorada(self, texto: str) -> Tuple[str, str]:
-        """Determina categoría temática (mismo método original)"""
+        """Determina categoría temática"""
         tematica_scores = {}
         
         for categoria, info in self.categorias_tematicas.items():
@@ -370,26 +401,22 @@ class CloudSentimentAnalyzer:
             return 'otros', '📄'
     
     def analizar_dataset(self, df: pd.DataFrame, columna_titulo: str, columna_resumen: str = None) -> pd.DataFrame:
-        """Análisis de dataset usando métodos cloud"""
-        if not self.available:
-            st.error("❌ Analizador cloud no disponible")
-            return df
-        
-        st.info("🌥️ Usando análisis de sentimientos cloud (HuggingFace + APIs)")
-        
-        # Cargar modelos si no están cargados
-        if not self.models_loaded:
-            if not self._load_models():
-                st.error("❌ No se pudieron cargar los modelos cloud")
-                return df
-        
-        st.info(f"🧠 Analizando {len(df)} artículos con IA cloud...")
+        """Análisis de dataset híbrido"""
+        modo_text = "🌥️ cloud + keywords" if self.cloud_mode else "🔧 solo keywords"
+        if STREAMLIT_AVAILABLE:
+            st.info(f"🧠 Analizando {len(df)} artículos con modo {modo_text}...")
+        else:
+            print(f"🧠 Analizando {len(df)} artículos con modo {modo_text}...")
         
         resultados = []
         
         for idx, row in df.iterrows():
             if idx % 10 == 0:
-                st.info(f"   Procesado: {idx}/{len(df)} artículos")
+                progress_msg = f"   Procesado: {idx}/{len(df)} artículos"
+                if STREAMLIT_AVAILABLE:
+                    st.info(progress_msg)
+                else:
+                    print(progress_msg)
             
             titulo = str(row[columna_titulo]) if pd.notna(row[columna_titulo]) else ""
             resumen = str(row[columna_resumen]) if columna_resumen and pd.notna(row[columna_resumen]) else ""
@@ -398,7 +425,7 @@ class CloudSentimentAnalyzer:
                 resultado = self.analizar_articulo_completo(titulo, resumen)
                 resultados.append(resultado)
             except Exception as e:
-                st.warning(f"⚠️ Error en artículo {idx}: {e}")
+                print(f"⚠️ Error en artículo {idx}: {e}")
                 resultado_default = EmotionResult(
                     language='castellano', emotion_primary='neutral', confidence=0.5,
                     emotions_detected={'neutral': 0.5}, emotional_intensity=1,
@@ -423,15 +450,24 @@ class CloudSentimentAnalyzer:
             df_resultado['confianza_emocion'] = [r.confidence for r in resultados]
             df_resultado['emociones_detectadas'] = [r.emotions_detected for r in resultados]
             
-            st.success("✅ Análisis cloud completado exitosamente")
+            success_msg = f"✅ Análisis híbrido completado ({modo_text})"
+            if STREAMLIT_AVAILABLE:
+                st.success(success_msg)
+            else:
+                print(success_msg)
+            
             return df_resultado
             
         except Exception as e:
-            st.error(f"❌ Error construyendo resultado: {e}")
+            error_msg = f"❌ Error construyendo resultado: {e}"
+            if STREAMLIT_AVAILABLE:
+                st.error(error_msg)
+            else:
+                print(error_msg)
             return df
     
     def generar_reporte_completo(self, df_analizado: pd.DataFrame) -> Dict:
-        """Genera reporte completo (mismo método original)"""
+        """Genera reporte completo"""
         total_articulos = len(df_analizado)
         
         if total_articulos == 0:
@@ -462,7 +498,7 @@ class CloudSentimentAnalyzer:
             }
             
         except Exception as e:
-            st.warning(f"⚠️ Error generando reporte: {e}")
+            print(f"⚠️ Error generando reporte: {e}")
             return {
                 'total_articulos': total_articulos,
                 'articulos_politicos': 0,
@@ -475,12 +511,12 @@ class CloudSentimentAnalyzer:
                 'confianza_promedio': 0.5
             }
 
-# Clases de compatibilidad con el sistema existente
+# Clases de compatibilidad
 class AnalizadorArticulosMarin:
-    """Clase de compatibilidad que usa el analizador cloud"""
+    """Clase de compatibilidad híbrida"""
     
     def __init__(self):
-        self.analizador = CloudSentimentAnalyzer()
+        self.analizador = HybridSentimentAnalyzer()
     
     def analizar_dataset(self, df, columna_titulo='title', columna_resumen='summary'):
         return self.analizador.analizar_dataset(df, columna_titulo, columna_resumen)
@@ -490,39 +526,38 @@ class AnalizadorArticulosMarin:
 
 # Función de compatibilidad
 def analizar_articulos_marin(df, columna_titulo='title', columna_resumen='summary'):
-    """Función de compatibilidad que usa el analizador cloud"""
-    analizador = CloudSentimentAnalyzer()
+    """Función de compatibilidad híbrida"""
+    analizador = HybridSentimentAnalyzer()
     return analizador.analizar_dataset(df, columna_titulo, columna_resumen)
 
 # Test de funcionalidad
 if __name__ == "__main__":
-    print("🌥️ TESTING CLOUD SENTIMENT ANALYZER")
+    print("🎯 TESTING HYBRID SENTIMENT ANALYZER")
     
-    if CLOUD_LIBS_AVAILABLE:
-        analizador = CloudSentimentAnalyzer()
+    analizador = HybridSentimentAnalyzer()
+    
+    # Test básico
+    resultado = analizador.analizar_articulo_completo(
+        "El alcalde anuncia mejoras en el puerto", 
+        "Nuevas inversiones para modernizar las instalaciones"
+    )
+    print(f"✅ Análisis híbrido funciona: {resultado.language}, {resultado.general_tone}, {resultado.emotion_primary}")
+    
+    # Test de dataset pequeño
+    df_test = pd.DataFrame({
+        'title': ['Buenas noticias para Marín', 'Preocupación por el tráfico'],
+        'summary': ['Proyectos de mejora aprobados', 'Problemas de circulación en el centro']
+    })
+    
+    try:
+        df_resultado = analizador.analizar_dataset(df_test, 'title', 'summary')
+        print(f"✅ Dataset híbrido procesado: {len(df_resultado)} filas con análisis")
         
-        # Test básico
-        resultado = analizador.analizar_articulo_completo(
-            "El alcalde anuncia mejoras en el puerto", 
-            "Nuevas inversiones para modernizar las instalaciones"
-        )
-        print(f"✅ Análisis cloud funciona: {resultado.language}, {resultado.general_tone}, {resultado.emotion_primary}")
+        reporte = analizador.generar_reporte_completo(df_resultado)
+        print(f"✅ Reporte híbrido generado: {reporte['total_articulos']} artículos")
         
-        # Test de dataset pequeño
-        import pandas as pd
-        df_test = pd.DataFrame({
-            'title': ['Buenas noticias para Marín', 'Preocupación por el tráfico'],
-            'summary': ['Proyectos de mejora aprobados', 'Problemas de circulación en el centro']
-        })
-        
-        try:
-            df_resultado = analizador.analizar_dataset(df_test, 'title', 'summary')
-            print(f"✅ Dataset cloud procesado: {len(df_resultado)} filas con análisis")
-            
-            reporte = analizador.generar_reporte_completo(df_resultado)
-            print(f"✅ Reporte cloud generado: {reporte['total_articulos']} artículos")
-            
-        except Exception as e:
-            print(f"❌ Error en test cloud: {e}")
-    else:
-        print("❌ Librerías cloud no disponibles")
+    except Exception as e:
+        print(f"❌ Error en test híbrido: {e}")
+    
+    print(f"🔧 Modo cloud: {analizador.cloud_mode}")
+    print(f"🎯 Sistema disponible: {analizador.available}")
