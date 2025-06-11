@@ -26,10 +26,9 @@ def cargar_metricas():
     """
     Carga todos los archivos de métricas y devuelve los top 20 de cada categoría con filtros de fecha correctos
     """
-    # Definir rutas base (desde el directorio del script de streamlit)
-    # Asumiendo que app.py está en streamlit/ y data/ está en la raíz del proyecto
-    vis_path = os.path.join("..", "data", "processed", "metrics-data", "visualizaciones_totales.csv")
-    pol_path = os.path.join("..", "data", "processed", "metrics-advanced", "politicos_totales.csv")
+    project_root = get_project_root()
+    vis_path = os.path.join(project_root, "data", "processed", "metrics-data", "visualizaciones_totales.csv")
+    pol_path = os.path.join(project_root, "data", "processed", "metrics-advanced", "politicos_totales.csv")    
     
     try:
         # Rutas de archivos de visualizaciones generales
