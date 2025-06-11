@@ -52,27 +52,27 @@ except ImportError:
     st = MockStreamlit()
 
 # ===== DEBUG TEMPORAL =====
-print("🔍 INICIANDO DEBUG...")
+st.write("🔍 INICIANDO DEBUG...")
 
 try:
     from transformers import pipeline
-    print("✅ transformers importado OK")
+    st.write("✅ transformers importado OK")
 except Exception as e:
-    print(f"❌ transformers ERROR: {e}")
+    st.write(f"❌ transformers ERROR: {e}")
 
 try:
     from langdetect import detect
-    print("✅ langdetect importado OK")
+    st.write("✅ langdetect importado OK")
 except Exception as e:
-    print(f"❌ langdetect ERROR: {e}")
+    st.write(f"❌ langdetect ERROR: {e}")
 
 try:
     import torch
-    print("✅ torch importado OK")
+    st.write("✅ torch importado OK")
 except Exception as e:
-    print(f"❌ torch ERROR: {e}")
+    st.write(f"❌ torch ERROR: {e}")
 
-print(f"🎯 CLOUD_LIBS_AVAILABLE: {CLOUD_LIBS_AVAILABLE}")
+st.write(f"🎯 CLOUD_LIBS_AVAILABLE: {CLOUD_LIBS_AVAILABLE}")
 
 # ===== FIN DEBUG =====
 
