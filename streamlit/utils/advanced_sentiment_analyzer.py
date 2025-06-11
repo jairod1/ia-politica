@@ -51,31 +51,6 @@ except ImportError:
     
     st = MockStreamlit()
 
-# ===== DEBUG TEMPORAL =====
-st.write("🔍 INICIANDO DEBUG...")
-
-try:
-    from transformers import pipeline
-    st.write("✅ transformers importado OK")
-except Exception as e:
-    st.write(f"❌ transformers ERROR: {e}")
-
-try:
-    from langdetect import detect
-    st.write("✅ langdetect importado OK")
-except Exception as e:
-    st.write(f"❌ langdetect ERROR: {e}")
-
-try:
-    import torch
-    st.write("✅ torch importado OK")
-except Exception as e:
-    st.write(f"❌ torch ERROR: {e}")
-
-st.write(f"🎯 CLOUD_LIBS_AVAILABLE: {CLOUD_LIBS_AVAILABLE}")
-
-# ===== FIN DEBUG =====
-
 @dataclass
 class EmotionResult:
     """Estructura para almacenar resultados de análisis"""
