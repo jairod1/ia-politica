@@ -19,6 +19,13 @@ def cargar_analizador_sentimientos():
         Tuple con (AnalizadorArticulosMarin, analizar_articulos_marin, mensaje_carga)
     """
     try:
+        # DEBUG: Ver dónde estamos y qué hay
+        import os
+        st.write(f"🔍 Working directory: {os.getcwd()}")
+        st.write(f"🔍 __file__ location: {__file__}")
+        st.write(f"🔍 Archivos en directorio actual: {os.listdir('.')}")
+        st.write(f"🔍 Archivos en utils/: {os.listdir('utils') if os.path.exists('utils') else 'No existe utils/'}")
+        
         # Buscar el archivo en diferentes ubicaciones posibles
         posibles_rutas = [
             "./advanced_sentiment_analyzer.py",  # ✅ Relativo a donde está este archivo (utils/)
@@ -35,9 +42,15 @@ def cargar_analizador_sentimientos():
         
         archivo_encontrado = None
         for ruta in posibles_rutas:
-            if os.path.exists(ruta):
+            st.write(f"🔍 DEBUG: Probando ruta: {ruta}")
+            existe = os.path.exists(ruta)
+            st.write(f"🔍 DEBUG: ¿Existe {ruta}? {existe}")
+            if existe:
                 archivo_encontrado = ruta
+                st.write(f"🔍 DEBUG: ¡Archivo encontrado en: {archivo_encontrado}!")
                 break
+
+        st.write(f"🔍 DEBUG: Resultado final - archivo_encontrado: {archivo_encontrado}")
         
         if archivo_encontrado is None:
             return None, None, "❌ No se encontró el archivo de análisis de sentimientos"
