@@ -1083,7 +1083,7 @@ elif opcion == "🏘️ Visión General del Municipio":
         **🏛️ Reparto de concejalías:**<br>
         🏢 **2023:** 🔵 12 PP / 🔴 5 PSOE / 🟡 4 BNG<br>
         📒 **2019:** 🔵 15 PP / 🔴 5 PSOE / 🟡 1 BNG
-        """)
+        """, unsafe_allow_html=True)
     
     with col2:
         st.subheader("🗳️ Panorama Político")
