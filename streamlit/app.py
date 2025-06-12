@@ -1079,8 +1079,7 @@ elif opcion == "🏘️ Visión General del Municipio":
         st.subheader("🏛️ Gobierno Local")
         st.markdown("""
         **🗳️ Últimas elecciones:** 28 de mayo de 2023  
-        **👤 Alcaldesa:** María Ramallo  
-        **👤 Partido de la Alcaldesa:** Partido Popular  
+        **👤 Partido Gobernante:** Partido Popular  
         **🏢 Reparto de concejalías 2023:** 12 PP / 5 PSOE / 4 BNG
         **🏢 Reparto de concejalías 2019:** 15 PP / 5 PSOE / 1 BNG
         **📅 Próximas elecciones:** 2027
