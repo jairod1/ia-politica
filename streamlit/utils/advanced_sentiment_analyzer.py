@@ -403,22 +403,10 @@ class HybridSentimentAnalyzer:
     
     def analizar_dataset(self, df: pd.DataFrame, columna_titulo: str, columna_resumen: str = None) -> pd.DataFrame:
         """Análisis de dataset híbrido"""
-        modo_text = "🌥️ cloud + keywords" if self.cloud_mode else "🔧 solo keywords"
-        if STREAMLIT_AVAILABLE:
-            st.info(f"🧠 Analizando {len(df)} artículos con modo {modo_text}...")
-        else:
-            print(f"🧠 Analizando {len(df)} artículos con modo {modo_text}...")
-        
+
         resultados = []
         
-        for idx, row in df.iterrows():
-            if idx % 10 == 0:
-                progress_msg = f"   Procesado: {idx}/{len(df)} artículos"
-                if STREAMLIT_AVAILABLE:
-                    st.info(progress_msg)
-                else:
-                    print(progress_msg)
-            
+        for idx, row in df.iterrows():        
             titulo = str(row[columna_titulo]) if pd.notna(row[columna_titulo]) else ""
             resumen = str(row[columna_resumen]) if columna_resumen and pd.notna(row[columna_resumen]) else ""
             
@@ -450,13 +438,7 @@ class HybridSentimentAnalyzer:
             df_resultado['tematica'] = [r.thematic_category for r in resultados]
             df_resultado['confianza_emocion'] = [r.confidence for r in resultados]
             df_resultado['emociones_detectadas'] = [r.emotions_detected for r in resultados]
-            
-            success_msg = f"✅ Análisis híbrido completado ({modo_text})"
-            if STREAMLIT_AVAILABLE:
-                st.success(success_msg)
-            else:
-                print(success_msg)
-            
+                        
             return df_resultado
             
         except Exception as e:
@@ -530,35 +512,3 @@ def analizar_articulos_marin(df, columna_titulo='title', columna_resumen='summar
     """Función de compatibilidad híbrida"""
     analizador = HybridSentimentAnalyzer()
     return analizador.analizar_dataset(df, columna_titulo, columna_resumen)
-
-# Test de funcionalidad
-if __name__ == "__main__":
-    print("🎯 TESTING HYBRID SENTIMENT ANALYZER")
-    
-    analizador = HybridSentimentAnalyzer()
-    
-    # Test básico
-    resultado = analizador.analizar_articulo_completo(
-        "El alcalde anuncia mejoras en el puerto", 
-        "Nuevas inversiones para modernizar las instalaciones"
-    )
-    print(f"✅ Análisis híbrido funciona: {resultado.language}, {resultado.general_tone}, {resultado.emotion_primary}")
-    
-    # Test de dataset pequeño
-    df_test = pd.DataFrame({
-        'title': ['Buenas noticias para Marín', 'Preocupación por el tráfico'],
-        'summary': ['Proyectos de mejora aprobados', 'Problemas de circulación en el centro']
-    })
-    
-    try:
-        df_resultado = analizador.analizar_dataset(df_test, 'title', 'summary')
-        print(f"✅ Dataset híbrido procesado: {len(df_resultado)} filas con análisis")
-        
-        reporte = analizador.generar_reporte_completo(df_resultado)
-        print(f"✅ Reporte híbrido generado: {reporte['total_articulos']} artículos")
-        
-    except Exception as e:
-        print(f"❌ Error en test híbrido: {e}")
-    
-    print(f"🔧 Modo cloud: {analizador.cloud_mode}")
-    print(f"🎯 Sistema disponible: {analizador.available}")
