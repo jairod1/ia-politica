@@ -1076,11 +1076,15 @@ elif opcion == "🏘️ Visión General del Municipio":
         **⚓ Características:** Villa marinera con tradición naval y comercial
         """)
         
-        st.markdown("**🗳️ Últimas elecciones:** 28 de mayo de 2023")
-        st.markdown("**👤 Próximas elecciones:** 2027") 
-        st.markdown("**🏛️ Reparto de concejalías:**")
-        st.write("    **2023:** 🔵 12 PP / 🔴 5 PSOE / 🌀 4 BNG")
-        st.write("    **2019:** 🔵 15 PP / 🔴 5 PSOE / 🌀 1 BNG")
+        st.markdown("""
+        **🗳️ Últimas elecciones:** 28 de mayo de 2023  
+        **👤 Próximas elecciones:** 2027  
+        **🏛️ Reparto de concejalías:**
+        <p style="margin: 0; padding-left: 1em; margin-bottom: 0;">
+        <strong>2023:</strong> 🔵 12 PP / 🔴 5 PSOE / 🌀 4 BNG<br>
+        <strong>2019:</strong> 🔵 15 PP / 🔴 5 PSOE / 🌀 1 BNG
+        </p>
+        """, unsafe_allow_html=True)
 
     with col2:
         st.subheader("🗳️ Panorama Político")
