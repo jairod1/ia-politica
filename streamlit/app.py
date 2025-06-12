@@ -1101,16 +1101,34 @@ elif opcion == "🏘️ Visión General del Municipio":
         """)
 
 
-    # 🗺️ Insertar iframe de Datawrapper con panorama político
+    st.markdown("### 🗺️ Entorno político inmediato de Marín")
+
     st.components.v1.html(
-        '''
-        <iframe title="Entorno político inmediato de Marín" aria-label="Map" id="datawrapper-chart-9YDQ6" src="https://datawrapper.dwcdn.net/9YDQ6/1/" scrolling="no" frameborder="0" style="width: 100%; border: none;" height="524" data-external="1"></iframe>
+        """
+        <div style="display: flex; justify-content: center;">
+            <iframe title="Entorno político inmediato de Marín"
+                src="https://datawrapper.dwcdn.net/9YDQ6/1/"
+                frameborder="0"
+                scrolling="no"
+                style="width: 100%; max-width: 800px; border: none;"
+                height="550"
+                data-external="1">
+            </iframe>
+        </div>
         <script type="text/javascript">
-        !function(){"use strict";window.addEventListener("message",(function(a){if(void 0!==a.data["datawrapper-height"]){var e=document.querySelectorAll("iframe");for(var t in a.data["datawrapper-height"])for(var r,i=0;r=e[i];i++)if(r.contentWindow===a.source){var d=a.data["datawrapper-height"][t]+"px";r.style.height=d}}}))}();
+            window.addEventListener("message", function(event) {
+                if (event.data["datawrapper-height"]) {
+                    for (const chartId in event.data["datawrapper-height"]) {
+                        const iframe = document.getElementById("datawrapper-chart-" + chartId) || document.querySelector("iframe");
+                        if (iframe) {
+                            iframe.style.height = event.data["datawrapper-height"][chartId] + "px";
+                        }
+                    }
+                }
+            });
         </script>
-        ''',
-        height=550,
-        scrolling=False
+        """,
+        height=570
     )
 
 elif opcion == "📊 Análisis de Visualizaciones":
