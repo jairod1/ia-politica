@@ -405,15 +405,14 @@ with col1:
 st.divider()
 
 # Sidebar con opciones principales
-st.sidebar.title("🧭 Navegación")
-st.sidebar.caption("Selecciona una sección para explorar")
+st.sidebar.title("🧭 Menú principal")
 
 opciones_principales = [
     "🏠 Inicio", 
     "🏘️ Visión General del Municipio", 
     "📊 Análisis de Visualizaciones", 
     "💬 Análisis de Comentarios", 
-    "📞 Contacto"
+    "📞 Información y Contacto"
 ]
 
 opcion = st.sidebar.radio(
