@@ -70,6 +70,58 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Estilo personalizado dorado + azul oscuro
+
+st.markdown("""
+<style>
+/* Sidebar - fondo azul marino */
+section[data-testid="stSidebar"] {
+    background-color: #0A1F44;
+}
+
+/* Texto del sidebar */
+section[data-testid="stSidebar"] .css-1v0mbdj, 
+section[data-testid="stSidebar"] .css-1cpxqw2, 
+section[data-testid="stSidebar"] .css-16idsys {
+    color: #FFFFFF !important;
+}
+
+/* Texto de opciones seleccionadas */
+div[data-baseweb="radio"] label {
+    color: #FFFFFF !important;
+}
+
+/* Opción activa en dorado */
+div[data-baseweb="radio"] input:checked + div {
+    color: #E6B800 !important;
+}
+
+/* Subrayado del título principal */
+h1 {
+    color: #0A1F44;
+    border-bottom: 2px solid #E6B800;
+    padding-bottom: 0.2em;
+    margin-bottom: 0.4em;
+}
+
+/* Subtítulos */
+h2, h3 {
+    color: #0A1F44;
+}
+
+/* Botones */
+button[kind="primary"] {
+    background-color: #E6B800;
+    color: #0A1F44;
+}
+
+/* Divider y fondo claro */
+body {
+    background-color: #F7F6F2;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # Inicialización de variables globales
 SENTIMENTS_AVAILABLE = False
 AnalizadorArticulosMarin = None
