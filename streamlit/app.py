@@ -74,9 +74,9 @@ st.set_page_config(
 #E6B800
 st.markdown("""
 <style>
-/* Sidebar - verde oscuro */
+/* Sidebar - azul */
 section[data-testid="stSidebar"] {
-    background-color: #2E7D32;
+    background-color: #0056B3;
 }
 
 /* Texto sidebar: títulos, subtítulos, radio labels */
@@ -88,7 +88,7 @@ section[data-testid="stSidebar"] * {
 section[data-testid="stSidebar"] h1,
 section[data-testid="stSidebar"] h2,
 section[data-testid="stSidebar"] h3 {
-    color: #E6B800 !important; /* Dorado para títulos */
+    color: #E20613 !important; /* Rojo para títulos */
     font-weight: bold;
 }
 
