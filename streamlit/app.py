@@ -1108,7 +1108,7 @@ elif opcion == "🏘️ Visión General del Municipio":
         <script type="text/javascript" defer src="https://datawrapper.dwcdn.net/9YDQ6/embed.js" charset="utf-8" data-target="#datawrapper-vis-9YDQ6"></script>
         <noscript><img src="https://datawrapper.dwcdn.net/9YDQ6/full.png" alt="" /></noscript></div>
         ''',
-        height=600
+        height=680
     )
 
 elif opcion == "📊 Análisis de Visualizaciones":
