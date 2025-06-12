@@ -76,7 +76,7 @@ st.markdown("""
 <style>
 /* Sidebar - azul claro bandera gallega */
 section[data-testid="stSidebar"] {
-    background-color: #00B0F0;
+    background-color: #E6B800;
 }
 
 /* Texto sidebar: títulos, subtítulos, radio labels */
@@ -86,7 +86,7 @@ section[data-testid="stSidebar"] * {
 
 /* Texto de opciones seleccionadas en dorado */
 div[data-baseweb="radio"] input:checked + div {
-    color: #E6B800 !important;
+    color: #00B0F0 !important;
 }
 
 /* Subrayado del título principal */
