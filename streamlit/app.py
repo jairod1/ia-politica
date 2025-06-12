@@ -1105,19 +1105,33 @@ elif opcion == "🏘️ Visión General del Municipio":
 
     st.components.v1.html(
         '''
-        <div style="min-height:524px" id="datawrapper-vis-9YDQ6">
-            <script type="text/javascript" defer 
-                src="https://datawrapper.dwcdn.net/9YDQ6/embed.js" 
-                charset="utf-8" 
-                data-target="#datawrapper-vis-9YDQ6">
-            </script>
-            <noscript>
-                <img src="https://datawrapper.dwcdn.net/9YDQ6/full.png" alt="Mapa político inmediato de Marín" />
-            </noscript>
-        </div>
+        <iframe title="Entorno político inmediato de Marín" 
+                aria-label="Mapa" 
+                id="datawrapper-chart-9YDQ6" 
+                src="https://datawrapper.dwcdn.net/9YDQ6/1/" 
+                scrolling="no" 
+                frameborder="0" 
+                style="width: 0; min-width: 100% !important; border: none;" 
+                height="650" 
+                data-external="1">
+        </iframe>
+        
+        <script type="text/javascript">
+            !function(){"use strict";window.addEventListener("message",(function(a){
+                if(void 0!==a.data["datawrapper-height"]){
+                    var e=document.querySelectorAll("iframe");
+                    for(var t in a.data["datawrapper-height"])
+                        for(var r=0;r<e.length;r++)
+                            if(e[r].contentWindow===a.source){
+                                var i=a.data["datawrapper-height"][t]+"px";
+                                e[r].style.height=i
+                            }
+                }
+            }))
+        }();
+        </script>
         ''',
-        height=600,
-        scrolling=False
+        height=680
     )
 
 elif opcion == "📊 Análisis de Visualizaciones":
