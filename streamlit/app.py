@@ -86,7 +86,7 @@ section[data-testid="stSidebar"] * {
 
 /* Texto de opciones seleccionadas en dorado */
 div[data-baseweb="radio"] input:checked + div {
-    color: #00B0F0 !important;
+    color: #E6B800 !important;
 }
 
 /* Subrayado del título principal */
