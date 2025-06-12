@@ -1073,7 +1073,7 @@ elif opcion == "🏘️ Visión General del Municipio":
         **👥 Población:** ~25.000 habitantes  
         **🏛️ Comarca:** O Morrazo  
         **🌍 Provincia:** Pontevedra, Galicia  
-        **⚓ Característica:** Villa marinera con tradición naval y comercial
+        **⚓ Características:** Villa marinera con tradición naval y comercial
         """)
         
         st.subheader("🏛️ Gobierno Local")
@@ -1089,18 +1089,18 @@ elif opcion == "🏘️ Visión General del Municipio":
         st.subheader("🗳️ Panorama Político")
         st.markdown("""
         **Principales partidos activos:**
-        - 🔴 **PSdeG-PSOE Marín**: Partido Socialista de Galicia
-        - 🔵 **Partido Popular de Marín**: Partido Popular
+        - 🔴 **PSdeG-PSOE Marín**: Partido Socialista de Galicia - Partido Socialista Obrero Español
+        - 🔵 **PP de Marín**: Partido Popular
         - 🌀 **BNG - Marín**: Bloque Nacionalista Galego
         
         **👥 Políticos locales relevantes:**
         - 🔵 **María Ramallo**: Alcaldesa de Marín, PP
-        - 🔴 **Manuel Pazos**: Secretario Local PSOE Marín 
+        - 🔴 **Manuel Pazos**: Secretario Local PSdeG-PSOE Marín 
         - 🌀 **Lucía Santos**: Secretaria Local BNG Marín
         """)
 
 
-    st.markdown("### 🗺️ Entorno político inmediato de Marín")
+    st.title("### 🗺️ Entorno político inmediato de Marín")
 
     st.components.v1.html(
         '''
