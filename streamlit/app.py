@@ -1080,6 +1080,7 @@ elif opcion == "🏘️ Visión General del Municipio":
         st.markdown("""
         **🗳️ Últimas elecciones:** 28 de mayo de 2023  
         **👤 Próximas elecciones:** 2027  
+        **🏛️ Reparto de concejalías:**
         - 🏢 **Reparto de concejalías 2023:** 12 PP / 5 PSOE / 4 BNG
         - 🗂️ **Reparto de concejalías 2019:** 15 PP / 5 PSOE / 1 BNG
         """)
@@ -1099,7 +1100,7 @@ elif opcion == "🏘️ Visión General del Municipio":
         """)
 
 
-    st.title("### 🗺️ Entorno político inmediato de Marín")
+    st.title("🗺️ Entorno político inmediato de Marín")
 
     st.components.v1.html(
         '''
