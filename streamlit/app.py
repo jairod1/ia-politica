@@ -1081,8 +1081,8 @@ elif opcion == "🏘️ Visión General del Municipio":
         **🗳️ Últimas elecciones:** 28 de mayo de 2023  
         **👤 Próximas elecciones:** 2027  
         **🏛️ Reparto de concejalías:**<br>
-        🏢 **2023:** 🔵 12 PP / 🔴 5 PSOE / 🟡 4 BNG<br>
-        📒 **2019:** 🔵 15 PP / 🔴 5 PSOE / 🟡 1 BNG
+          **2023:** 🔵 12 PP / 🔴 5 PSOE / 🌀 4 BNG<br>
+          **2019:** 🔵 15 PP / 🔴 5 PSOE / 🌀 1 BNG
         """, unsafe_allow_html=True)
     
     with col2:
@@ -1229,8 +1229,8 @@ elif opcion == "💬 Análisis de Comentarios":
         except Exception as e:
             st.error(f"❌ Error cargando datos de comentarios de Marín: {e}")
 
-elif opcion == "📞 Contacto":
-    st.title("📞 Contacto")
+elif opcion == "📞 Información y Contacto":
+    st.title("📞 Información y Contacto")
     
     col1, col2 = st.columns(2)
     
