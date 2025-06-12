@@ -74,9 +74,9 @@ st.set_page_config(
 #E6B800
 st.markdown("""
 <style>
-/* Sidebar - azul claro bandera gallega */
+/* Sidebar - verde oscuro */
 section[data-testid="stSidebar"] {
-    background-color: #2E7D32; 
+    background-color: #2E7D32;
 }
 
 /* Texto sidebar: títulos, subtítulos, radio labels */
@@ -84,9 +84,23 @@ section[data-testid="stSidebar"] * {
     color: #002B4E !important;
 }
 
-/* Texto de opciones seleccionadas en dorado */
+/* 🔧 NUEVO: Leyendas específicas del sidebar */
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3 {
+    color: #E6B800 !important; /* Dorado para títulos */
+    font-weight: bold;
+}
+
+section[data-testid="stSidebar"] p,
+section[data-testid="stSidebar"] .css-1d391kg {
+    color: #FFFFFF !important; /* Blanco para texto descriptivo */
+    font-size: 0.9em;
+}
+
+/* Texto de opciones seleccionadas en azul */
 div[data-baseweb="radio"] input:checked + div {
-    color: #E6B800 !important;
+    color: #00B0F0 !important;
 }
 
 /* Subrayado del título principal */
@@ -102,18 +116,32 @@ h2, h3 {
     color: #002B4E;
 }
 
-/* Botones primarios en dorado */
-button[kind="primary"] {
+/* 🔧 NUEVO: Botones mejorados con forma y colores */
+button[kind="primary"],
+.stButton > button {
     background-color: #E6B800;
     color: #002B4E;
+    border: 2px solid #002B4E;
+    border-radius: 8px; /* Esquinas redondeadas */
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+/* Hover de botones */
+button[kind="primary"]:hover,
+.stButton > button:hover {
+    background-color: #002B4E;
+    color: #E6B800;
+    transform: translateY(-2px); /* Efecto elevación */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
 /* Fondo general claro */
 body {
     background-color: #F7F6F2;
 }
-</style>
-""", unsafe_allow_html=True)
+</style>""", unsafe_allow_html=True)
 
 # Inicialización de variables globales
 SENTIMENTS_AVAILABLE = False
