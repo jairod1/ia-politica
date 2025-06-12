@@ -94,7 +94,7 @@ section[data-testid="stSidebar"] h3 {
 
 section[data-testid="stSidebar"] p,
 section[data-testid="stSidebar"] .css-1d391kg {
-    color: #00B0F0 !important; /* Blanco para texto descriptivo */
+    color: #FFFFFF !important; /* Blanco para texto descriptivo */
     font-size: 0.9em;
 }
 
