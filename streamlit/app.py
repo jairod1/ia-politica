@@ -1062,16 +1062,16 @@ if opcion == "🏠 Inicio":
             """)
 
 elif opcion == "🏘️ Visión General del Municipio":
-    st.title("🏘️ Visión General del Municipio de Marín")
+    st.title("Visión General del Municipio de Marín")
     
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("📍 Información General")
+        st.subheader("Información General")
         st.markdown("""
-        **🏙️ Municipio:** Marín, Pontevedra  
+        **📍 Municipio:** Marín, Pontevedra  
         **👥 Población:** ~25.000 habitantes  
-        **🏛️ Comarca:** O Morrazo  
+        **🏘️ Comarca:** O Morrazo  
         **🌍 Provincia:** Pontevedra, Galicia  
         **⚓ Características:** Villa marinera con tradición naval y comercial
         """)
@@ -1079,8 +1079,8 @@ elif opcion == "🏘️ Visión General del Municipio":
         st.markdown("""
         **🗳️ Últimas elecciones:** 28 de mayo de 2023  
         **👤 Próximas elecciones:** 2027  
-        **🏛️ Reparto de concejalías en 2023:** 🔵 12 PP / 🔴 5 PSOE / 🌀 4 BNG<br>
-        **🏛️ Reparto de concejalías en 2019:** 🔵 15 PP / 🔴 5 PSOE / 🌀 1 BNG
+        **🏙️ Reparto de concejalías en 2023:** 🔵 12 PP / 🔴 5 PSOE / 🌀 4 BNG<br>
+        **📒 Reparto de concejalías en 2019:** 🔵 15 PP / 🔴 5 PSOE / 🌀 1 BNG
         """, unsafe_allow_html=True)
 
     with col2:
@@ -1091,14 +1091,14 @@ elif opcion == "🏘️ Visión General del Municipio":
         - 🔵 **PP de Marín**: Partido Popular
         - 🌀 **BNG - Marín**: Bloque Nacionalista Galego
         
-        **👥 Políticos locales relevantes:**
+        **Políticos locales relevantes:**
         - 🔵 **María Ramallo**: Alcaldesa de Marín, PP
         - 🔴 **Manuel Pazos**: Secretario Local PSdeG-PSOE Marín 
         - 🌀 **Lucía Santos**: Secretaria Local BNG Marín
         """)
 
 
-    st.title("🗺️ Entorno político inmediato de Marín")
+    st.title("🗺️ Entorno político inmediato de Marín 🗺️")
 
     st.components.v1.html(
         '''
