@@ -71,12 +71,12 @@ st.set_page_config(
 )
 
 # Estilo personalizado dorado + azul oscuro
-
+#E6B800
 st.markdown("""
 <style>
 /* Sidebar - azul claro bandera gallega */
 section[data-testid="stSidebar"] {
-    background-color: #E6B800;
+    background-color: #2E7D32; 
 }
 
 /* Texto sidebar: títulos, subtítulos, radio labels */
