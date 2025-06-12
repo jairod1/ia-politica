@@ -1080,7 +1080,7 @@ elif opcion == "🏘️ Visión General del Municipio":
         st.markdown("""
         **🗳️ Últimas elecciones:** 28 de mayo de 2023  
         **👤 Próximas elecciones:** 2027  
-        **🏛️ Reparto de concejalías:**
+        **🏛️ Reparto de concejalías:**<br>
         <div style="margin-left: 2em;">
             <strong>2023:</strong> 🔵 12 PP / 🔴 5 PSOE / 🌀 4 BNG<br>
             <strong>2019:</strong> 🔵 15 PP / 🔴 5 PSOE / 🌀 1 BNG
