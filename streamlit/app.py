@@ -94,7 +94,7 @@ section[data-testid="stSidebar"] h3 {
 
 section[data-testid="stSidebar"] p,
 section[data-testid="stSidebar"] .css-1d391kg {
-    color: #FFFFFF !important; /* Blanco para texto descriptivo */
+    color: #00B0F0 !important; /* Blanco para texto descriptivo */
     font-size: 0.9em;
 }
 
@@ -116,7 +116,7 @@ h2, h3 {
     color: #002B4E;
 }
 
-/* 🔧 NUEVO: Botones mejorados con forma y colores */
+/* NUEVO: Botones mejorados con forma y colores */
 button[kind="primary"],
 .stButton > button {
     background-color: #E6B800;
@@ -137,11 +137,12 @@ button[kind="primary"]:hover,
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-/* Fondo general azul claro */
+/* Fondo general claro */
 body {
-    background-color: #00B0F0;
+    background-color: #F7F6F2;
 }
-</style>""", unsafe_allow_html=True)
+</style>
+""", unsafe_allow_html=True)
 
 # Inicialización de variables globales
 SENTIMENTS_AVAILABLE = False
