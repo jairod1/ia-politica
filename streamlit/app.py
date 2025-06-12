@@ -137,9 +137,9 @@ button[kind="primary"]:hover,
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-/* Fondo general claro */
+/* Fondo general azul claro */
 body {
-    background-color: #F7F6F2;
+    background-color: #00B0F0;
 }
 </style>""", unsafe_allow_html=True)
 
