@@ -1071,16 +1071,18 @@ elif opcion == "🏘️ Visión General del Municipio":
         st.markdown("""
         **🏙️ Municipio:** Marín, Pontevedra  
         **👥 Población:** ~25.000 habitantes  
+        **🏛️ Comarca:** O Morrazo  
         **🌍 Provincia:** Pontevedra, Galicia  
-        **🏛️ Tipo:** Municipio costero  
-        **⚓ Característica:** Villa marinense con tradición naval
+        **⚓ Característica:** Villa marinera con tradición naval y comercial
         """)
         
         st.subheader("🏛️ Gobierno Local")
         st.markdown("""
         **🗳️ Últimas elecciones:** 28 de mayo de 2023  
-        **👤 Alcalde:** [Información del sistema]  
-        **🏢 Pleno municipal:** Representación proporcional  
+        **👤 Alcaldesa:** María Ramallo  
+        **👤 Partido de la Alcaldesa:** Partido Popular  
+        **🏢 Reparto de concejalías 2023:** 12 PP / 5 PSOE / 4 BNG
+        **🏢 Reparto de concejalías 2019:** 15 PP / 5 PSOE / 1 BNG
         **📅 Próximas elecciones:** 2027
         """)
     
@@ -1093,10 +1095,23 @@ elif opcion == "🏘️ Visión General del Municipio":
         - 🟡 **BNG - Marín**: Bloque Nacionalista Galego
         
         **👥 Políticos locales relevantes:**
-        - **Manuel Pazos**: [Cargo/Partido]
-        - **María Ramallo**: [Cargo/Partido]  
-        - **Lucía Santos**: [Cargo/Partido]
+        - **María Ramallo**: Alcaldesda de Marín, PP
+        - **Manuel Pazos**: Secretario Local PSOE Marín 
+        - **Lucía Santos**: Secretaria Local BNG Marín
         """)
+
+
+    # 🗺️ Insertar iframe de Datawrapper con panorama político
+    st.components.v1.html(
+        '''
+        <iframe title="Entorno político inmediato de Marín" aria-label="Map" id="datawrapper-chart-9YDQ6" src="https://datawrapper.dwcdn.net/9YDQ6/1/" scrolling="no" frameborder="0" style="width: 100%; border: none;" height="524" data-external="1"></iframe>
+        <script type="text/javascript">
+        !function(){"use strict";window.addEventListener("message",(function(a){if(void 0!==a.data["datawrapper-height"]){var e=document.querySelectorAll("iframe");for(var t in a.data["datawrapper-height"])for(var r,i=0;r=e[i];i++)if(r.contentWindow===a.source){var d=a.data["datawrapper-height"][t]+"px";r.style.height=d}}}))}();
+        </script>
+        ''',
+        height=550,
+        scrolling=False
+    )
 
 elif opcion == "📊 Análisis de Visualizaciones":
     try:
