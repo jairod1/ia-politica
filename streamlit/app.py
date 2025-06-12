@@ -74,31 +74,24 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-/* Sidebar - fondo azul marino */
+/* Sidebar - azul claro bandera gallega */
 section[data-testid="stSidebar"] {
-    background-color: #0A1F44;
+    background-color: #00B0F0;
 }
 
-/* Texto del sidebar */
-section[data-testid="stSidebar"] .css-1v0mbdj, 
-section[data-testid="stSidebar"] .css-1cpxqw2, 
-section[data-testid="stSidebar"] .css-16idsys {
-    color: #FFFFFF !important;
+/* Texto sidebar: títulos, subtítulos, radio labels */
+section[data-testid="stSidebar"] * {
+    color: #002B4E !important;
 }
 
-/* Texto de opciones seleccionadas */
-div[data-baseweb="radio"] label {
-    color: #FFFFFF !important;
-}
-
-/* Opción activa en dorado */
+/* Texto de opciones seleccionadas en dorado */
 div[data-baseweb="radio"] input:checked + div {
     color: #E6B800 !important;
 }
 
 /* Subrayado del título principal */
 h1 {
-    color: #0A1F44;
+    color: #002B4E;
     border-bottom: 2px solid #E6B800;
     padding-bottom: 0.2em;
     margin-bottom: 0.4em;
@@ -106,16 +99,16 @@ h1 {
 
 /* Subtítulos */
 h2, h3 {
-    color: #0A1F44;
+    color: #002B4E;
 }
 
-/* Botones */
+/* Botones primarios en dorado */
 button[kind="primary"] {
     background-color: #E6B800;
-    color: #0A1F44;
+    color: #002B4E;
 }
 
-/* Divider y fondo claro */
+/* Fondo general claro */
 body {
     background-color: #F7F6F2;
 }
