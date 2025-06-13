@@ -402,6 +402,28 @@ with col1:
         st.warning("⚠️ **Análisis de Sentimientos**: ❌ No disponible")
         st.caption("🔧 Revisa que el archivo advanced_sentiment_analyzer.py esté presente")
 
+with col2:
+    st.markdown("### 📊 Estado del Sistema")
+    
+    if SENTIMENTS_AVAILABLE:
+        st.success("""
+        ✅ **Sistema Completo Operativo**
+        
+        🧠 IA Emocional: Activa
+        🌍 Detección de Idioma: Activa  
+        🎭 Análisis Granular: Activo
+        📊 Métricas: Disponibles
+        💬 Comentarios: Disponibles
+        """)
+    else:
+        st.warning("""
+        ⚠️ **Sistema Parcialmente Operativo**
+        
+        📊 Métricas: Disponibles
+        💬 Comentarios: Disponibles
+        🧠 IA Emocional: No disponible
+        """)
+
 st.divider()
 
 # Sidebar con opciones principales
@@ -1026,7 +1048,8 @@ if opcion == "🏠 Inicio":
         - **🔍 Búsqueda Avanzada**: Filtros por términos políticos específicos
         - **🗺️ Análisis Geográfico**: Comentarios globales, de O Morrazo/Pontevedra y específicos de Marín
         """)
-        
+
+    with col2:      
         if SENTIMENTS_AVAILABLE:
             st.markdown("""
             #### 🧠 Análisis Avanzado con IA Emocional:
@@ -1039,28 +1062,6 @@ if opcion == "🏠 Inicio":
             - **📂 Clasificación Temática**: 9 categorías específicas de contenido local
             """)
     
-    with col2:
-        st.markdown("### 📊 Estado del Sistema")
-        
-        if SENTIMENTS_AVAILABLE:
-            st.success("""
-            ✅ **Sistema Completo Operativo**
-            
-            🧠 IA Emocional: Activa
-            🌍 Detección de Idioma: Activa  
-            🎭 Análisis Granular: Activo
-            📊 Métricas: Disponibles
-            💬 Comentarios: Disponibles
-            """)
-        else:
-            st.warning("""
-            ⚠️ **Sistema Parcialmente Operativo**
-            
-            📊 Métricas: Disponibles
-            💬 Comentarios: Disponibles
-            🧠 IA Emocional: No disponible
-            """)
-
 elif opcion == "🏘️ Visión General del Municipio":
     st.title("Visión General del Municipio de Marín")
     
