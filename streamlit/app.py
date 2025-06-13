@@ -396,15 +396,7 @@ st.caption("Sistema avanzado de análisis político con IA emocional")
 col1, col2 = st.columns([3, 1])
 
 with col1:
-    if SENTIMENTS_AVAILABLE:
-        pass
-    else:
-        st.warning("⚠️ **Análisis de Sentimientos**: ❌ No disponible")
-        st.caption("🔧 Revisa que el archivo advanced_sentiment_analyzer.py esté presente")
-
-with col2:
     st.markdown("### 📊 Estado del Sistema")
-    
     if SENTIMENTS_AVAILABLE:
         st.success("""
         ✅ **Sistema Completo Operativo**
@@ -415,6 +407,14 @@ with col2:
         📊 Métricas: Disponibles
         💬 Comentarios: Disponibles
         """)
+    else:
+        st.warning("⚠️ **Análisis de Sentimientos**: ❌ No disponible")
+        st.caption("🔧 Revisa que el archivo advanced_sentiment_analyzer.py esté presente")
+
+with col2:
+    
+    if SENTIMENTS_AVAILABLE:
+        pass
     else:
         st.warning("""
         ⚠️ **Sistema Parcialmente Operativo**
