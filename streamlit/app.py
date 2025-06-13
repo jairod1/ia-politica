@@ -675,7 +675,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                         "📆 Año 2025",
                         f"Comentarios populares {titulo_ubicacion.lower()} de 2025",
                         comentarios_anio_2025,
-                        f"el año 2025 ({titulo_ubicacion})",
+                        f"año 2025 ({titulo_ubicacion})",
                         procesar_comentarios_populares,
                         lambda df, titulo, key_suffix: mostrar_tabla_comentarios(df, titulo, es_popular=True, key_suffix=key_suffix),
                         f"populares_{ubicacion_key}_anio"
@@ -697,7 +697,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                         "🗳️ Desde las elecciones locales del 28 de mayo de 2023",
                         f"Todos los comentarios populares históricos {titulo_ubicacion.lower()}",
                         comentarios_historico,
-                        f"el período histórico ({titulo_ubicacion})",
+                        f"período histórico ({titulo_ubicacion})",
                         procesar_comentarios_populares,
                         lambda df, titulo, key_suffix: mostrar_tabla_comentarios(df, titulo, es_popular=True, key_suffix=key_suffix),
                         f"populares_{ubicacion_key}_total"
@@ -746,7 +746,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                         "📆 Año 2025",
                         f"Comentarios impopulares {titulo_ubicacion.lower()} de 2025",
                         comentarios_anio_2025,
-                        f"el año 2025 ({titulo_ubicacion})",
+                        f"año 2025 ({titulo_ubicacion})",
                         procesar_comentarios_impopulares,
                         lambda df, titulo, key_suffix: mostrar_tabla_comentarios(df, titulo, es_popular=False, key_suffix=key_suffix),
                         f"impopulares_{ubicacion_key}_anio"
@@ -768,7 +768,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                         "🗳️ Desde las elecciones locales del 28 de mayo de 2023",
                         f"Todos los comentarios impopulares históricos {titulo_ubicacion.lower()}",
                         comentarios_historico,
-                        f"el período histórico ({titulo_ubicacion})",
+                        f"período histórico ({titulo_ubicacion})",
                         procesar_comentarios_impopulares,
                         lambda df, titulo, key_suffix: mostrar_tabla_comentarios(df, titulo, es_popular=False, key_suffix=key_suffix),
                         f"impopulares_{ubicacion_key}_total"
@@ -1142,7 +1142,7 @@ elif opcion == "📊 Análisis de Visualizaciones":
                 "📆 Año 2025",
                 "Artículos publicados en 2025",
                 metricas["top10_vis"]["anio"],
-                "el año 2025",
+                "año 2025",
                 mostrar_sentimientos,
                 analizador,
                 es_articulos_populares=True
@@ -1153,7 +1153,7 @@ elif opcion == "📊 Análisis de Visualizaciones":
                 "🗳️ Desde las elecciones locales del 28 de mayo de 2023",
                 "Todos los artículos históricos ordenados por popularidad",
                 metricas["top10_vis"]["total"],
-                "el período histórico",
+                "período histórico",
                 mostrar_sentimientos,
                 analizador,
                 es_articulos_populares=True
@@ -1177,10 +1177,10 @@ elif opcion == "📊 Análisis de Visualizaciones":
             mostrar_seccion_temporal("📅 Mayo 2025", f"Artículos sobre {partido_especifico} publicados en mayo de 2025", datos["mes"], "mayo de 2025", mostrar_sentimientos, analizador, es_articulos_populares=False)
         
         with tab2:
-            mostrar_seccion_temporal("📆 Año 2025", f"Artículos sobre {partido_especifico} publicados en 2025", datos["anio"], "el año 2025", mostrar_sentimientos, analizador, es_articulos_populares=False)
+            mostrar_seccion_temporal("📆 Año 2025", f"Artículos sobre {partido_especifico} publicados en 2025", datos["anio"], "año 2025", mostrar_sentimientos, analizador, es_articulos_populares=False)
         
         with tab3:
-            mostrar_seccion_temporal("🗳️ Desde las elecciones locales del 28 de mayo de 2023", f"Todos los artículos sobre {partido_especifico} históricos", datos["total"], "el período histórico", mostrar_sentimientos, analizador, es_articulos_populares=False)
+            mostrar_seccion_temporal("🗳️ Desde las elecciones locales del 28 de mayo de 2023", f"Todos los artículos sobre {partido_especifico} históricos", datos["total"], "período histórico", mostrar_sentimientos, analizador, es_articulos_populares=False)
 
     elif sub_opcion == "👥 Artículos sobre Políticos Locales":
         mapeo_politicos = {
@@ -1200,10 +1200,10 @@ elif opcion == "📊 Análisis de Visualizaciones":
             mostrar_seccion_temporal("📅 Mayo 2025", f"Artículos sobre {politico_especifico} publicados en mayo de 2025", datos["mes"], "mayo de 2025", mostrar_sentimientos, analizador, es_articulos_populares=False)
         
         with tab2:
-            mostrar_seccion_temporal("📆 Año 2025", f"Artículos sobre {politico_especifico} publicados en 2025", datos["anio"], "el año 2025", mostrar_sentimientos, analizador, es_articulos_populares=False)
+            mostrar_seccion_temporal("📆 Año 2025", f"Artículos sobre {politico_especifico} publicados en 2025", datos["anio"], "año 2025", mostrar_sentimientos, analizador, es_articulos_populares=False)
         
         with tab3:
-            mostrar_seccion_temporal("🗳️ Desde las elecciones locales del 28 de mayo de 2023", f"Todos los artículos sobre {politico_especifico} históricos", datos["total"], "el período histórico", mostrar_sentimientos, analizador, es_articulos_populares=False)
+            mostrar_seccion_temporal("🗳️ Desde las elecciones locales del 28 de mayo de 2023", f"Todos los artículos sobre {politico_especifico} históricos", datos["total"], "período histórico", mostrar_sentimientos, analizador, es_articulos_populares=False)
 
 elif opcion == "💬 Análisis de Comentarios":
     if ubicacion_comentarios == "🌍 Comentarios Globales":

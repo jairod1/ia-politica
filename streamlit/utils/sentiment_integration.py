@@ -159,7 +159,6 @@ def mostrar_analisis_sentimientos_compacto(df_analizado, reporte, titulo_seccion
         return
     
     st.subheader(f"🧠 Análisis de Sentimientos y Emociones - {titulo_seccion}")
-    st.caption("Los números que importan, en cristiano")
     
     # Métricas en una sola fila
     col1, col2, col3, col4, col5 = st.columns(5)
