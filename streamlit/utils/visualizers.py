@@ -537,7 +537,7 @@ def mostrar_detalles_sentimientos_comentario(selected_comment):
     """
     Mostrar detalles de sentimientos de un comentario en formato horizontal
     """
-    st.title("**🧠 Análisis emocional:**")
+    st.write("**🧠 Análisis emocional:**")
     
     # Verificar que las columnas existen
     if 'idioma' in selected_comment:
@@ -593,7 +593,6 @@ def mostrar_analisis_sentimientos_comentarios_compacto(df_analizado, reporte, ti
         return
     
     st.subheader(f"🧠 Análisis Emocional de Comentarios - {titulo_seccion}")
-    st.caption("El sentir ciudadano, analizado comentario a comentario")
     
     # Métricas principales adaptadas para comentarios (IGUAL QUE ARTÍCULOS)
     col1, col2, col3, col4, col5 = st.columns(5)
@@ -727,7 +726,7 @@ def mostrar_analisis_sentimientos_compacto(df_analizado, reporte, titulo_seccion
         st.error("❌ No hay reporte disponible (se fue de vacaciones)")
         return
     
-    st.subheader(f"🧠 Análisis emocional - {titulo_seccion}")
+    st.title(f"🧠 Análisis emocional - {titulo_seccion}")
     
     # Métricas principales
     col1, col2, col3, col4, col5 = st.columns(5)
