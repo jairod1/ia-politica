@@ -69,6 +69,8 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
     3. Emoción primaria  
     4. Emoción secundaria
     5. Resto de columnas
+    
+    🔧 CORREGIDO: Panel de detalles del artículo ANTES que el análisis general
     """
     st.info("💡 Haz clic en la columna de la izquierda de la tabla para ver detalles del artículo")
 
@@ -226,13 +228,7 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
         st.error(f"💥 Error mostrando la tabla: {e}")
         return
     
-    # Mostrar análisis de sentimientos si está habilitado
-    if mostrar_sentimientos and reporte is not None:
-        st.divider()
-        mostrar_analisis_sentimientos_compacto(df_display, reporte, titulo_seccion)
-        mostrar_explicacion_parametros()
-    
-    # Panel de detalles si hay una fila seleccionada
+    # 🔧 CAMBIO PRINCIPAL: Panel de detalles PRIMERO (si hay una fila seleccionada)
     if event.selection.rows:
         selected_idx = event.selection.rows[0]
         selected_article = df_display.iloc[selected_idx]
@@ -264,7 +260,13 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
                 st.link_button("🔗 Ver artículo completo", selected_article['link'])
             else:
                 st.info("🤷‍♂️ Sin enlace disponible")
-
+    
+    # 🔧 CAMBIO PRINCIPAL: Análisis de sentimientos DESPUÉS de los detalles del artículo
+    if mostrar_sentimientos and reporte is not None:
+        st.divider()
+        mostrar_analisis_sentimientos_compacto(df_display, reporte, titulo_seccion)
+        mostrar_explicacion_parametros()
+        
 def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_sentimientos=False, analizador=None, es_popular=True, reporte=None):
     """
     FUNCIÓN CORREGIDA: Inicializa variables correctamente
