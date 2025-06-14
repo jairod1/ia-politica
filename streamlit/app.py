@@ -73,7 +73,7 @@ def aplicar_fondo_inicio():
         background-image: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.25)), 
                         url('{imagen_url}');
         background-size: content;
-        background-position: top center;
+        background-position: center;
         background-repeat: no-repeat;
         background-attachment: fixed;
         min-height: 100vh;
