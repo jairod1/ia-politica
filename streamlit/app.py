@@ -72,8 +72,8 @@ def aplicar_fondo_inicio():
     [data-testid="stAppViewContainer"] {{
         background-image: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.25)), 
                         url('{imagen_url}');
-        background-size: cover;
-        background-position: center;
+        background-size: content;
+        background-position: top center;
         background-repeat: no-repeat;
         background-attachment: fixed;
         min-height: 100vh;
