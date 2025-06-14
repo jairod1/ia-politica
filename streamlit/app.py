@@ -69,8 +69,8 @@ def aplicar_fondo_inicio():
     
     st.markdown(f"""
     <style>
-    [data-testid="stAppViewContainer"] {{
-        background-image: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.25)), 
+    html, body {{
+        background-image: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.25)),
                         url('{imagen_url}');
         background-size: content;
         background-position: left center;
