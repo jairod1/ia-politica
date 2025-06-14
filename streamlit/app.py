@@ -62,6 +62,117 @@ except ImportError as e:
     st.error("🔧 Asegúrate de que todos los archivos están en la carpeta 'utils/'")
     st.stop()
 
+def aplicar_fondo_inicio():
+    """Aplica la imagen de fondo desde GitHub solo en la página de Inicio"""
+    
+    # 🔧 CAMBIA 'TU-USUARIO' y 'TU-REPO' por tus datos reales de GitHub
+    imagen_url = "https://raw.githubusercontent.com/TU-USUARIO/TU-REPO/main/streamlit/images/20250614_0321_Logotipo%20en%20Horizonte_remix_01jpx0c1d9ee1sfcxhnkaks9f2.png"
+    
+    st.markdown(f"""
+    <style>
+    /* Fondo personalizado solo para la página de Inicio */
+    .main > div {{
+        background-image: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.25)), 
+                         url('{imagen_url}');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        min-height: 100vh;
+    }}
+    
+    /* Contenedor principal con fondo semi-transparente */
+    .main .block-container {{
+        background-color: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(5px);
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 1rem auto;
+        max-width: 95%;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }}
+    
+    /* Título principal con estilo especial */
+    .main .block-container h1 {{
+        color: #002B4E !important;
+        text-shadow: 2px 2px 6px rgba(255, 255, 255, 0.9);
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-size: 2.5rem;
+    }}
+    
+    /* Mejorar legibilidad del texto */
+    .main .block-container p, 
+    .main .block-container li,
+    .main .block-container h2,
+    .main .block-container h3,
+    .main .block-container h4 {{
+        color: #1e1e1e !important;
+        text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.8);
+        line-height: 1.6;
+    }}
+    
+    /* Estilo para subtítulos */
+    .main .block-container h3 {{
+        color: #002B4E !important;
+        font-weight: 600;
+        border-bottom: 2px solid #E6B800;
+        padding-bottom: 0.3rem;
+        margin-bottom: 1rem;
+    }}
+    
+    /* Cuadros de alerta/info más elegantes */
+    .main .block-container [data-testid="stAlert"] {{
+        background-color: rgba(255, 255, 255, 0.9) !important;
+        border: 1px solid rgba(0, 43, 78, 0.2) !important;
+        backdrop-filter: blur(3px);
+        border-radius: 10px;
+    }}
+    
+    /* Columnas con mejor espaciado */
+    .main .block-container [data-testid="column"] {{
+        padding: 0 1rem;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+
+def eliminar_fondo_inicio():
+    """Remueve el fondo personalizado para otras páginas"""
+    st.markdown("""
+    <style>
+    /* Restaurar fondo normal para otras páginas */
+    .main > div {{
+        background-image: none !important;
+        background-color: #F7F6F2 !important;
+    }}
+    
+    .main .block-container {{
+        background-color: transparent !important;
+        backdrop-filter: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        margin-top: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        max-width: 100% !important;
+    }}
+    
+    /* Restaurar estilos de texto normales */
+    .main .block-container h1,
+    .main .block-container h2,
+    .main .block-container h3,
+    .main .block-container h4,
+    .main .block-container p,
+    .main .block-container li {{
+        text-shadow: none !important;
+        text-align: left !important;
+        font-size: inherit !important;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+
 # Configuración de la página
 st.set_page_config(
     page_title="HorizontAI - Análisis Político Local",
@@ -1029,6 +1140,8 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
 
 # Contenido principal según la opción seleccionada
 if opcion == "🏠 Inicio":
+    aplicar_fondo_inicio()
+    
     st.title("🏠 Bienvenido a HorizontAI")
     
     col1, col2 = st.columns([2, 1])
@@ -1061,8 +1174,13 @@ if opcion == "🏠 Inicio":
             - **🔥 Intensidad Emocional**: Escala del 1 al 5
             - **📂 Clasificación Temática**: 9 categorías específicas de contenido local
             """)
+
+else:
+    # 🔧 REMOVER FONDO EN TODAS LAS DEMÁS PÁGINAS
+    eliminar_fondo_inicio()
+
     
-elif opcion == "🏘️ Visión General del Municipio":
+if opcion == "🏘️ Visión General del Municipio":
     st.title("Visión General del Municipio de Marín")
     
     col1, col2 = st.columns(2)
