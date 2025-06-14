@@ -67,13 +67,17 @@ def aplicar_fondo_inicio():
     
     imagen_url = "https://raw.githubusercontent.com/jairod1/ia-politica/master/streamlit/images/Logotipo-HorizontAI.png"
     
+    zoom_porcentual = "75%"         # tamaño
+    posicion_horizontal = "50%"     
+    posicion_vertical = "60%"       
+
     st.markdown(f"""
     <style>
     [data-testid="stAppViewContainer"] {{
         background-image: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.25)), 
                         url('{imagen_url}');
-        background-size: content;
-        background-position: center;
+        background-size: {zoom_porcentual} auto;
+        background-position: {posicion_horizontal} {posicion_vertical};
         background-repeat: no-repeat;
         background-attachment: fixed;
         min-height: 100vh;
