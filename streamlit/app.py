@@ -70,7 +70,6 @@ def aplicar_fondo_inicio():
     st.markdown(f"""
     <style>
     [data-testid="stAppViewContainer"] {{
-        max-width: 100% !important;
         background-image: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.25)), 
                         url('{imagen_url}');
         background-size: content;
@@ -87,7 +86,7 @@ def aplicar_fondo_inicio():
         border-radius: 15px;
         padding: 2rem;
         margin: 1rem auto;
-        max-width: 95%;
+        max-width: 100%;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
         border: 1px solid rgba(255, 255, 255, 0.2);
     }}
