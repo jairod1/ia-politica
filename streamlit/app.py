@@ -65,15 +65,13 @@ except ImportError as e:
 def aplicar_fondo_inicio():
     """Aplica la imagen de fondo desde GitHub solo en la página de Inicio"""
     
-    # 🔧 CAMBIA 'TU-USUARIO' y 'TU-REPO' por tus datos reales de GitHub
     imagen_url = "https://raw.githubusercontent.com/jairod1/ia-politica/master/streamlit/images/Logotipo-HorizontAI.png"
     
     st.markdown(f"""
     <style>
-    /* Fondo personalizado solo para la página de Inicio */
-    .main > div {{
+    [data-testid="stAppViewContainer"] {{
         background-image: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.25)), 
-                         url('{imagen_url}');
+                        url('{imagen_url}');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
