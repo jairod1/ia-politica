@@ -1174,13 +1174,10 @@ if opcion == "🏠 Inicio":
             - **🔥 Intensidad Emocional**: Escala del 1 al 5
             - **📂 Clasificación Temática**: 9 categorías específicas de contenido local
             """)
-
-else:
-    # 🔧 REMOVER FONDO EN TODAS LAS DEMÁS PÁGINAS
+    
+elif opcion == "🏘️ Visión General del Municipio":
     eliminar_fondo_inicio()
 
-    
-if opcion == "🏘️ Visión General del Municipio":
     st.title("Visión General del Municipio de Marín")
     
     col1, col2 = st.columns(2)
