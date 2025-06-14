@@ -67,7 +67,7 @@ def aplicar_fondo_inicio():
     
     imagen_url = "https://raw.githubusercontent.com/jairod1/ia-politica/master/streamlit/images/Logotipo-HorizontAI.jpg"
     
-    zoom_porcentual = "90%"         # tamaño
+    zoom_porcentual = "90%"         
     posicion_horizontal = "100%"     
     posicion_vertical = "90%"       
 
@@ -137,6 +137,37 @@ def aplicar_fondo_inicio():
     .main .block-container [data-testid="column"] {{
         padding: 0 1rem;
     }}
+
+        /* Título principal con estilo especial */
+    .main .block-container h1 {{
+        color: #ffffff !important;
+        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-size: 2.5rem;
+    }}
+    
+    /* Mejorar legibilidad del texto */
+    .main .block-container p, 
+    .main .block-container li,
+    .main .block-container h2,
+    .main .block-container h3,
+    .main .block-container h4 {{
+        color: #ffffff !important;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+        line-height: 1.6;
+    }}
+    
+    /* Estilo para subtítulos */
+    .main .block-container h3 {{
+        color: #ffffff !important;
+        font-weight: 600;
+        border-bottom: 2px solid #E6B800;
+        padding-bottom: 0.3rem;
+        margin-bottom: 1rem;
+    }}
+
     </style>
     """, unsafe_allow_html=True)
 
