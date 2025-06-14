@@ -83,9 +83,9 @@ def aplicar_fondo_inicio():
         min-height: 100vh;
     }}
     
-    /* Contenedor principal con fondo semi-transparente */
+    /* Contenedor principal con fondo semi-transparente OSCURO para texto blanco */
     .main .block-container {{
-        background-color: rgba(255, 255, 255, 0.96);
+        background-color: rgba(0, 0, 0, 0.25);
         backdrop-filter: blur(5px);
         border-radius: 15px;
         padding: 2rem;
@@ -95,50 +95,7 @@ def aplicar_fondo_inicio():
         border: 1px solid rgba(255, 255, 255, 0.2);
     }}
     
-    /* Título principal con estilo especial */
-    .main .block-container h1 {{
-        color: #002B4E !important;
-        text-shadow: 2px 2px 6px rgba(255, 255, 255, 0.9);
-        font-weight: bold;
-        text-align: center;
-        margin-bottom: 1.5rem;
-        font-size: 2.5rem;
-    }}
-    
-    /* Mejorar legibilidad del texto */
-    .main .block-container p, 
-    .main .block-container li,
-    .main .block-container h2,
-    .main .block-container h3,
-    .main .block-container h4 {{
-        color: #1e1e1e !important;
-        text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.8);
-        line-height: 1.6;
-    }}
-    
-    /* Estilo para subtítulos */
-    .main .block-container h3 {{
-        color: #002B4E !important;
-        font-weight: 600;
-        border-bottom: 2px solid #E6B800;
-        padding-bottom: 0.3rem;
-        margin-bottom: 1rem;
-    }}
-    
-    /* Cuadros de alerta/info más elegantes */
-    .main .block-container [data-testid="stAlert"] {{
-        background-color: rgba(255, 255, 255, 0.9) !important;
-        border: 1px solid rgba(0, 43, 78, 0.2) !important;
-        backdrop-filter: blur(3px);
-        border-radius: 10px;
-    }}
-    
-    /* Columnas con mejor espaciado */
-    .main .block-container [data-testid="column"] {{
-        padding: 0 1rem;
-    }}
-
-        /* Título principal con estilo especial */
+    /* Título principal con texto BLANCO */
     .main .block-container h1 {{
         color: #ffffff !important;
         text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
@@ -148,7 +105,7 @@ def aplicar_fondo_inicio():
         font-size: 2.5rem;
     }}
     
-    /* Mejorar legibilidad del texto */
+    /* Todo el texto en BLANCO */
     .main .block-container p, 
     .main .block-container li,
     .main .block-container h2,
@@ -159,7 +116,7 @@ def aplicar_fondo_inicio():
         line-height: 1.6;
     }}
     
-    /* Estilo para subtítulos */
+    /* Subtítulos en BLANCO */
     .main .block-container h3 {{
         color: #ffffff !important;
         font-weight: 600;
@@ -167,10 +124,28 @@ def aplicar_fondo_inicio():
         padding-bottom: 0.3rem;
         margin-bottom: 1rem;
     }}
-
+    
+    /* Cuadros de alerta con fondo oscuro para texto blanco */
+    .main .block-container [data-testid="stAlert"] {{
+        background-color: rgba(0, 0, 0, 0.4) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        backdrop-filter: blur(3px);
+        border-radius: 10px;
+        color: #ffffff !important;
+    }}
+    
+    /* Texto dentro de alertas también blanco */
+    .main .block-container [data-testid="stAlert"] * {{
+        color: #ffffff !important;
+    }}
+    
+    /* Columnas con mejor espaciado */
+    .main .block-container [data-testid="column"] {{
+        padding: 0 1rem;
+    }}
     </style>
     """, unsafe_allow_html=True)
-
+    
 def eliminar_fondo_inicio():
     """Remueve el fondo personalizado para otras páginas"""
     st.markdown("""
