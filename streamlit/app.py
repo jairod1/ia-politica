@@ -67,9 +67,9 @@ def aplicar_fondo_inicio():
     
     imagen_url = "https://raw.githubusercontent.com/jairod1/ia-politica/master/streamlit/images/Logotipo-HorizontAI.png"
     
-    zoom_porcentual = "90%"         # tamaño
+    zoom_porcentual = "100%"         # tamaño
     posicion_horizontal = "50%"     
-    posicion_vertical = "60%"       
+    posicion_vertical = "10%"       
 
     st.markdown(f"""
     <style>
