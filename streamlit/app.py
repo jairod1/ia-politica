@@ -66,7 +66,7 @@ def aplicar_fondo_inicio():
     """Aplica la imagen de fondo desde GitHub solo en la página de Inicio"""
     
     # 🔧 CAMBIA 'TU-USUARIO' y 'TU-REPO' por tus datos reales de GitHub
-    imagen_url = "https://raw.githubusercontent.com/jairod1/ia-politica/master/streamlit/images/20250614_0321_Logotipo%20en%20Horizonte_remix_01jpx0c1d9ee1sfcxhnkaks9f2.png"
+    imagen_url = "https://raw.githubusercontent.com/jairod1/ia-politica/master/streamlit/images/Logotipo-HorizontAI.png"
     
     st.markdown(f"""
     <style>
