@@ -1517,7 +1517,9 @@ elif opcion == "💬 Análisis de Comentarios":
     # Obtener nombre del fondo según las opciones seleccionadas
     fondo_especifico = None
     
-    if tipo_analisis_comentarios == "🗳️ Comentarios sobre Partidos Políticos":
+    if tipo_analisis_comentarios == "📊 Análisis General":
+        fondo_especifico = obtener_fondo_segun_opcion(tipo_analisis_comentarios)
+    elif tipo_analisis_comentarios == "🗳️ Comentarios sobre Partidos Políticos":
         fondo_especifico = obtener_fondo_segun_opcion(
             tipo_analisis_comentarios, 
             partido_especifico=partido_comentarios
