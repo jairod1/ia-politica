@@ -70,7 +70,7 @@ except ImportError as e:
 def aplicar_fondo_inicio():
     """Aplica la imagen de fondo desde GitHub solo en la página de Inicio - CORREGIDO"""
     
-    imagen_url = "https://raw.githubusercontent.com/jairod1/ia-politica/master/streamlit/images/Logotipo-HorizontAI.jpg"
+    imagen_url = "https://raw.githubusercontent.com/jairod1/ia-politica/master/streamlit/images/Logotipo-HorizontAI.jpeg"
     
     zoom_porcentual = "100%"         
     posicion_horizontal = "100%"     
