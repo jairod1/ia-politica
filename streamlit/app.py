@@ -5,8 +5,9 @@ HorizontAI - Análisis Político Local de Marín (CORREGIDO - CRITERIOS UNIFICAD
 🔧 CORRECCIÓN FINAL: Unificar criterios para artículos polémicos entre análisis
 con y sin sentimientos para obtener resultados consistentes.
 
-🎨 NUEVO: Fondos específicos para cada sección de análisis de comentarios.
+🎨 NUEVO: Fondos específicos para análisis de comentarios y visualizaciones.
 📁 SOPORTE: Imágenes en formato .jpg y .png según disponibilidad.
+🔄 AMPLIADO: Partidos/políticos funcionan en comentarios Y visualizaciones.
 """
 
 import streamlit as st
@@ -524,6 +525,25 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
             "Lucía Santos": "BNG-Persona.jpg"              # JPG
         }
         return mapeo_fondos_politicos.get(politico_especifico)
+    
+    # 🎨 NUEVA LÓGICA: Fondos para Análisis de Visualizaciones
+    elif tipo_analisis == "🏛️ Artículos sobre Partidos Políticos":
+        mapeo_fondos_partidos_vis = {
+            "Todos los partidos": "Todos-partidos.png",  # PNG
+            "PSdeG-PSOE de Marín": "PSOE-Partido.png",   # PNG
+            "Partido Popular de Marín": "PP-Partido.jpg", # JPG
+            "BNG - Marín": "BNG-Partido.jpg"             # JPG
+        }
+        return mapeo_fondos_partidos_vis.get(partido_especifico)
+    
+    elif tipo_analisis == "👥 Artículos sobre Políticos Locales":
+        mapeo_fondos_politicos_vis = {
+            "Todos los políticos": "Todos-candidatos.png", # PNG
+            "Manuel Pazos": "PSOE-Persona.jpg",            # JPG
+            "María Ramallo": "PP-Persona.jpg",              # JPG
+            "Lucía Santos": "BNG-Persona.jpg"              # JPG
+        }
+        return mapeo_fondos_politicos_vis.get(politico_especifico)
     
     return None
 
@@ -1511,8 +1531,32 @@ PAGINAS_CON_FONDO_ORIGINAL = [
 if opcion in PAGINAS_CON_FONDO_ORIGINAL:
     # Páginas con fondo original del logotipo
     aplicar_fondo_inicio()
+
+elif opcion == "📊 Análisis de Visualizaciones":
+    # 🎨 NUEVA LÓGICA: Fondos específicos para análisis de visualizaciones
+    
+    fondo_especifico = None
+    
+    if sub_opcion == "🏛️ Artículos sobre Partidos Políticos":
+        fondo_especifico = obtener_fondo_segun_opcion(
+            sub_opcion, 
+            partido_especifico=partido_especifico
+        )
+    elif sub_opcion == "👥 Artículos sobre Políticos Locales":
+        fondo_especifico = obtener_fondo_segun_opcion(
+            sub_opcion, 
+            politico_especifico=politico_especifico
+        )
+    # "📈 Artículos más Populares" no tiene fondo específico (fondo_especifico = None)
+    
+    # Aplicar fondo específico si está definido, sino eliminar fondo
+    if fondo_especifico:
+        aplicar_fondo_comentarios_especifico(fondo_especifico)
+    else:
+        eliminar_fondo_inicio()
+
 elif opcion == "💬 Análisis de Comentarios":
-    # 🎨 NUEVAS LÓGICAS: Fondos específicos para análisis de comentarios
+    # 🎨 LÓGICA EXISTENTE: Fondos específicos para análisis de comentarios
     
     # Obtener nombre del fondo según las opciones seleccionadas
     fondo_especifico = None
@@ -1535,6 +1579,7 @@ elif opcion == "💬 Análisis de Comentarios":
         aplicar_fondo_comentarios_especifico(fondo_especifico)
     else:
         eliminar_fondo_inicio()
+        
 else:
     # Otras páginas sin fondo especial
     eliminar_fondo_inicio()
