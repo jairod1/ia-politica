@@ -1677,6 +1677,21 @@ elif opcion == "🏘️ Visión General del Municipio":
         height=680
     )
 
+    st.components.v1.html(
+        '''
+        <div style="min-height:559px; color-scheme: dark;" id="datawrapper-vis-Qql67">
+        <script type="text/javascript" defer 
+            src="https://datawrapper.dwcdn.net/Qql67/embed.js" 
+            charset="utf-8" data-target="#datawrapper-vis-Qql67">
+            data-target="#datawrapper-vis-Qql67"
+            data-dark="true">
+            </script>
+        <noscript><img src="https://datawrapper.dwcdn.net/Qql67/full.png" alt="" /></noscript>
+        </div>
+        ''',
+        height=680
+    )
+
 elif opcion == "📊 Análisis de Visualizaciones":
     try:
         with st.spinner("📊 Cargando métricas de visualización..."):
