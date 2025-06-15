@@ -161,24 +161,6 @@ def aplicar_fondo_inicio():
         text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important;
     }}
     
-    /* SUBTÍTULOS CON BORDE DORADO */
-    .main .block-container h3,
-    .stMarkdown h3,
-    [data-testid="stMarkdownContainer"] h3 {{
-        color: #ffffff !important;
-        font-weight: 600 !important;
-        border-bottom: 2px solid #E6B800 !important;
-        padding-bottom: 0.3rem !important;
-        margin-bottom: 1rem !important;
-    }}
-
-    /* Título SIN línea (MÁS ESPECÍFICO) */
-    .main .block-container h3.titulo-sin-linea,
-    .stMarkdown h3.titulo-sin-linea,
-    [data-testid="stMarkdownContainer"] h3.titulo-sin-linea {{
-        border-bottom: none !important;
-    }}
-    
     /* ALERTAS Y CAJAS CON FONDO OSCURO */
     .main .block-container [data-testid="stAlert"],
     [data-testid="stAlert"] {{
@@ -1301,7 +1283,7 @@ elif opcion == "🏘️ Visión General del Municipio":
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown('<h3 class="titulo-sin-linea">🏘️Información general</h3>', unsafe_allow_html=True)
+        st.subheader('🏘️Información general')
         st.markdown("""
         **📍 Municipio:** Marín, Pontevedra  
         **👥 Población:** ~25.000 habitantes  
@@ -1319,7 +1301,6 @@ elif opcion == "🏘️ Visión General del Municipio":
 
     with col2:
         st.subheader("🗳️ Panorama Político")
-        st.markdown('<h3 class="titulo-sin-linea">🗳️ Panorama Político</h3>', unsafe_allow_html=True)
         st.markdown("""
         **Principales partidos activos:**
         - 🔴 **PSdeG-PSOE Marín**: Partido Socialista de Galicia - Partido Socialista Obrero Español
