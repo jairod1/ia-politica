@@ -317,12 +317,18 @@ h1 {
     margin-bottom: 0.4em;
 }
 
+/* Quitar línea a títulos específicos */
+h1:contains("Visión General del Municipio"),
+h1:contains("HorizontAI") {
+    border-bottom: none !important;
+}
+
 /* Subtítulos */
 h2, h3 {
     color: #002B4E;
 }
 
-/* NUEVO: Botones mejorados con forma y colores */
+/* Botones mejorados con forma y colores */
 button[kind="primary"],
 .stButton > button {
     background-color: #E6B800;
@@ -349,6 +355,7 @@ body {
 }
 </style>
 """, unsafe_allow_html=True)
+
 
 # Inicialización de variables globales
 SENTIMENTS_AVAILABLE = False
@@ -594,7 +601,7 @@ def procesar_comentarios_individuales_con_sentimientos(df, analizador, top_n=20,
         return df_comentarios, None
     
 # Header principal
-st.title("HorizontAI")
+st.markdown('<h1 class="titulo-sin-linea">HorizontAI</h1>', unsafe_allow_html=True)
 st.markdown("<h2 style='text-align: center;'>El futuro en tus manos</h2>", unsafe_allow_html=True)
 st.caption("<h2 style='text-align: center;'>Sistema de <strong>análisis político avanzado</strong> con IA emocional</h2>", unsafe_allow_html=True)
 
@@ -1506,6 +1513,6 @@ with footer_col3:
 
 if SENTIMENTS_AVAILABLE:
     estado_analizador = "🧠 Cargado" if st.session_state.analizador_global is not None else "💤 En espera"
-    st.caption(f"✅ **Estado**: Todos los sistemas operativos | 🎭 Emociones: 10 tipos | 🌍 Idiomas: 2 | 📂 Temáticas: 9 | 🗺️ Análisis: Global + O Morrazo + Marín | {estado_analizador}")
+    st.caption(f"✅ **Estado**: Todos los sistemas operativos | 🎭 **Emociones**: 10 tipos | 🌍 **Idiomas**: 2 | 📂 **Temáticas**: 9 | 🗺️ **Análisis**: Global + O Morrazo + Marín | {estado_analizador}")
 else:
     st.caption("⚠️ **Estado**: Sistema parcial | 📊 Métricas: Sí | 💬 Comentarios: Sí | 🧠 IA: No | 🗺️ Análisis: Global + O Morrazo + Marín")
