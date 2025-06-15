@@ -1320,14 +1320,15 @@ elif opcion == "🏘️ Visión General del Municipio":
 
     st.title("🗺️ Entorno político inmediato de Marín 🗺️")
 
-    st.components.v1.html(
-        '''
-        <div style="min-height:550px" id="datawrapper-vis-9YDQ6">
-        <script type="text/javascript" defer src="https://datawrapper.dwcdn.net/9YDQ6/embed.js" charset="utf-8" data-target="#datawrapper-vis-9YDQ6"></script>
-        <noscript><img src="https://datawrapper.dwcdn.net/9YDQ6/full.png" alt="" /></noscript></div>
-        ''',
-        height=680
-    )
+    import time
+    timestamp = int(time.time())
+
+    st.components.v1.html(f'''
+    <div style="min-height:550px" id="datawrapper-vis-9YDQ6-{timestamp}">
+    <script type="text/javascript" defer src="https://datawrapper.dwcdn.net/9YDQ6/embed.js?v={timestamp}" charset="utf-8" data-target="#datawrapper-vis-9YDQ6-{timestamp}"></script>
+    <noscript><img src="https://datawrapper.dwcdn.net/9YDQ6/full.png?v={timestamp}" alt="" /></noscript>
+    </div>
+    ''', height=680)
 
 elif opcion == "📊 Análisis de Visualizaciones":
     try:
