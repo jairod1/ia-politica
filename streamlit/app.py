@@ -232,7 +232,7 @@ def aplicar_fondo_inicio():
     }}
     </style>
     """, unsafe_allow_html=True)
-        
+
 def eliminar_fondo_inicio():
     """Remueve el fondo personalizado para otras páginas"""
     st.markdown("""
@@ -1233,10 +1233,22 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                             f"impopulares_{ubicacion_key}_{politico_comentarios.lower().replace(' ', '_')}_{periodo.replace(' ', '_')}"
                         )
 
+# Definir qué páginas tendrán el fondo especial
+PAGINAS_CON_FONDO = [
+    "🏠 Inicio", 
+    "🏘️ Visión General del Municipio", 
+    "📞 Información y Contacto"
+]
+
+# Aplicar o eliminar fondo según la página actual
+if opcion in PAGINAS_CON_FONDO:
+    aplicar_fondo_inicio()
+else:
+    eliminar_fondo_inicio()
+
 # Contenido principal según la opción seleccionada
 if opcion == "🏠 Inicio":
-    aplicar_fondo_inicio()
-
+ 
     st.title("🏠 Bienvenido a HorizontAI")
     
     col1, col2 = st.columns([2, 1])
@@ -1271,7 +1283,6 @@ if opcion == "🏠 Inicio":
             """)
     
 elif opcion == "🏘️ Visión General del Municipio":
-    eliminar_fondo_inicio()
 
     st.title("Visión General del Municipio de Marín")
     
