@@ -527,6 +527,9 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
         return mapeo_fondos_politicos.get(politico_especifico)
     
     # 🎨 NUEVA LÓGICA: Fondos para Análisis de Visualizaciones
+    elif tipo_analisis == "📈 Artículos más Populares":
+        return "Popularidad.png"  # PNG para Análisis General
+
     elif tipo_analisis == "🏛️ Artículos sobre Partidos Políticos":
         mapeo_fondos_partidos_vis = {
             "Todos los partidos": "Analisis-Todos-Partido.png",    # PNG
@@ -1293,7 +1296,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
             "Todos los partidos": ("🏛️ Partidos Políticos", filtrar_comentarios_por_partidos_general),
             "PSdeG-PSOE de Marín": ("🔴 PSdeG-PSOE", filtrar_comentarios_por_psoe),
             "Partido Popular de Marín": ("🔵 Partido Popular", filtrar_comentarios_por_pp),
-            "BNG - Marín": ("🟡 BNG", filtrar_comentarios_por_bng)
+            "BNG - Marín": ("🌀 BNG", filtrar_comentarios_por_bng)
         }
         
         titulo_partido, funcion_filtro = filtros_partidos[partido_comentarios]
@@ -1728,7 +1731,7 @@ elif opcion == "📊 Análisis de Visualizaciones":
             "Todos los partidos": ("🏛️ Artículos sobre Partidos Políticos", "Top 10 artículos que mencionan **PP, PSOE, BNG**", metricas["top10_partidos"]),
             "PSdeG-PSOE de Marín": ("🔴 PSdeG-PSOE Marín", "Top 10 artículos que mencionan **PSOE o Partido Socialista**", metricas["top10_psoe"]),
             "Partido Popular de Marín": ("🔵 Partido Popular de Marín", "Top 10 artículos que mencionan **PP o Partido Popular**", metricas["top10_pp"]),
-            "BNG - Marín": ("🟡 BNG - Marín", "Top 10 artículos que mencionan **BNG o Bloque**", metricas["top10_bng"])
+            "BNG - Marín": ("🌀 BNG - Marín", "Top 10 artículos que mencionan **BNG o Bloque**", metricas["top10_bng"])
         }
         
         titulo, descripcion, datos = mapeo_partidos[partido_especifico]
