@@ -629,7 +629,7 @@ with col2:
 st.divider()
 
 # Sidebar con opciones principales
-st.sidebar.title("🧭 Menú principal")
+st.sidebar.title("🧭 Menú principal ↙️")
 
 opciones_principales = [
     "🏠 Inicio", 
