@@ -1294,7 +1294,7 @@ elif opcion == "🏘️ Visión General del Municipio":
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown('<h3 class="titulo-sin-linea">Información general</h3>', unsafe_allow_html=True)
+        st.markdown('<h3 class="titulo-sin-linea">🏘️ Información general</h3>', unsafe_allow_html=True)
         st.markdown("""
         **📍 Municipio:** Marín, Pontevedra  
         **👥 Población:** ~25.000 habitantes  
@@ -1311,7 +1311,7 @@ elif opcion == "🏘️ Visión General del Municipio":
         """, unsafe_allow_html=True)
 
     with col2:
-        st.subheader("🗳️ Panorama Político")
+        st.markdown('<h3 class="titulo-sin-linea">🗳️ Panorama Político</h3>', unsafe_allow_html=True)
         st.markdown("""
         **Principales partidos activos:**
         - 🔴 **PSdeG-PSOE Marín**: Partido Socialista de Galicia - Partido Socialista Obrero Español
