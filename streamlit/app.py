@@ -885,7 +885,7 @@ def procesar_comentarios_individuales_con_sentimientos(df, analizador, top_n=20,
     
 # Header principal
 st.markdown('<h1 class="titulo-sin-linea">🏛️HorizontAI🏛️</h1>', unsafe_allow_html=True)
-st.markdown('<h1 class="titulo-sin-linea">Analizador de IA de sentimientos hacia políticos</h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="titulo-sin-linea">Analizador IA de sentimientos hacia políticos</h1>', unsafe_allow_html=True)
 # Mostrar estado del analizador
 col1, col2 = st.columns([3, 1])
 
