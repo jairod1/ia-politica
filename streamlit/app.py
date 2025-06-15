@@ -73,6 +73,34 @@ def aplicar_fondo_inicio():
 
     st.markdown(f"""
     <style>
+    /* ELIMINAR TODOS LOS FONDOS BLANCOS SUPERIORES */
+    [data-testid="stHeader"] {{
+        background-color: transparent !important;
+        display: none !important;
+    }}
+
+    /* Header principal de Streamlit */
+    .stApp > header {{
+        background-color: transparent !important;
+        display: none !important;
+    }}
+
+    /* Contenedor principal del viewport */
+    .main > div:first-child {{
+        background-color: transparent !important;
+    }}
+
+    /* Forzar transparencia en TODOS los elementos superiores */
+    [data-testid="stAppViewContainer"] > section:first-child,
+    [data-testid="stAppViewContainer"] > div:first-child {{
+        background-color: transparent !important;
+    }}
+
+    /* Si hay un banner o header específico */
+    .stApp > div:first-child {{
+        background-color: transparent !important;
+    }}
+    
     /* Fondo de la aplicación */
     [data-testid="stAppViewContainer"] {{
         background-image: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.25)), 
@@ -218,18 +246,6 @@ def aplicar_fondo_inicio():
     .stError * {{
         color: #ffffff !important;
         text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important;
-    }}
-
-    /* OCULTAR/ARREGLAR BARRA DE HERRAMIENTAS STREAMLIT */
-    [data-testid="stToolbar"] {{
-        background-color: transparent !important;
-        backdrop-filter: blur(10px) !important;
-        border: none !important;
-    }}
-
-    /* Ocultar completamente la barra (OPCIÓN 1) */
-    [data-testid="stToolbar"] {{
-        display: none !important;
     }}
     </style>
     """, unsafe_allow_html=True)
