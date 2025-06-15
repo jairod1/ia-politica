@@ -6,6 +6,7 @@ HorizontAI - Análisis Político Local de Marín (CORREGIDO - CRITERIOS UNIFICAD
 con y sin sentimientos para obtener resultados consistentes.
 
 🎨 NUEVO: Fondos específicos para cada sección de análisis de comentarios.
+📁 SOPORTE: Imágenes en formato .jpg y .png según disponibilidad.
 """
 
 import streamlit as st
@@ -252,10 +253,10 @@ def aplicar_fondo_inicio():
     </style>
     """, unsafe_allow_html=True)
 
-def aplicar_fondo_comentarios_especifico(imagen_nombre):
+def aplicar_fondo_comentarios_especifico(imagen_nombre_con_extension):
     """🎨 NUEVA FUNCIÓN: Aplica fondo específico para análisis de comentarios"""
     
-    imagen_url = f"https://raw.githubusercontent.com/jairod1/ia-politica/master/streamlit/images/{imagen_nombre}.jpg"
+    imagen_url = f"https://raw.githubusercontent.com/jairod1/ia-politica/master/streamlit/images/{imagen_nombre_con_extension}"
     
     zoom_porcentual = "100%"         
     posicion_horizontal = "center"     
@@ -508,19 +509,19 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
     
     elif tipo_analisis == "🗳️ Comentarios sobre Partidos Políticos":
         mapeo_fondos_partidos = {
-            "Todos los partidos": "Todos-partidos",
-            "PSdeG-PSOE de Marín": "PSOE-Partido", 
-            "Partido Popular de Marín": "PP-Partido",
-            "BNG - Marín": "BNG-Partido"
+            "Todos los partidos": "Todos-partidos.png",  # PNG
+            "PSdeG-PSOE de Marín": "PSOE-Partido.png",   # PNG
+            "Partido Popular de Marín": "PP-Partido.jpg", # JPG
+            "BNG - Marín": "BNG-Partido.jpg"             # JPG
         }
         return mapeo_fondos_partidos.get(partido_especifico)
     
     elif tipo_analisis == "👥 Comentarios sobre Políticos Locales":
         mapeo_fondos_politicos = {
-            "Todos los políticos": "Todos-candidatos",
-            "Manuel Pazos": "PSOE-Persona",
-            "María Ramallo": "PP-Persona", 
-            "Lucía Santos": "BNG-Persona"
+            "Todos los políticos": "Todos-candidatos.png", # PNG
+            "Manuel Pazos": "PSOE-Persona.jpg",            # JPG
+            "María Ramallo": "PP-Persona.jpg",              # JPG
+            "Lucía Santos": "BNG-Persona.jpg"              # JPG
         }
         return mapeo_fondos_politicos.get(politico_especifico)
     
@@ -1753,7 +1754,7 @@ elif opcion == "📞 Información y Contacto":
         st.markdown("""
         **Desarrollado con:**
         - 🐍 **Python 3.8+**: Lenguaje principal
-        - 🎈 **Streamlit**: Framework de interfaz
+        - 🎈 **Streamlit**: Framework de interfaz web
         - 🐼 **Pandas**: Manipulación de datos
         - 📊 **NumPy**: Computación numérica
         """)
