@@ -8,6 +8,7 @@ con y sin sentimientos para obtener resultados consistentes.
 🎨 NUEVO: Fondos específicos para análisis de comentarios y visualizaciones.
 📁 SOPORTE: Imágenes en formato .jpg y .png según disponibilidad.
 🔄 AMPLIADO: Partidos/políticos funcionan en comentarios Y visualizaciones.
+📈 INCLUIDO: Artículos más Populares con fondo Popularidad.png.
 """
 
 import streamlit as st
@@ -521,30 +522,30 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
         mapeo_fondos_politicos = {
             "Todos los políticos": "Todos-candidatos.png", # PNG
             "Manuel Pazos": "PSOE-Persona.jpg",            # JPG
-            "María Ramallo": "PP-Persona.jpg",             # JPG
+            "María Ramallo": "PP-Persona.jpg",              # JPG
             "Lucía Santos": "BNG-Persona.jpg"              # JPG
         }
         return mapeo_fondos_politicos.get(politico_especifico)
     
     # 🎨 NUEVA LÓGICA: Fondos para Análisis de Visualizaciones
     elif tipo_analisis == "📈 Artículos más Populares":
-        return "Popularidad.png"  # PNG para Análisis General
-
+        return "Popularidad.png"  # PNG para Artículos más Populares
+    
     elif tipo_analisis == "🏛️ Artículos sobre Partidos Políticos":
         mapeo_fondos_partidos_vis = {
-            "Todos los partidos": "Analisis-Todos-Partido.png",    # PNG
-            "PSdeG-PSOE de Marín": "Analisis-PSOE-Partido.png",    # PNG
-            "Partido Popular de Marín": "Analisis-PP-Partido.png", # PNG
-            "BNG - Marín": "Analisis-BNG-Partido.png"              # PNG
+            "Todos los partidos": "Todos-partidos.png",  # PNG
+            "PSdeG-PSOE de Marín": "PSOE-Partido.png",   # PNG
+            "Partido Popular de Marín": "PP-Partido.jpg", # JPG
+            "BNG - Marín": "BNG-Partido.jpg"             # JPG
         }
         return mapeo_fondos_partidos_vis.get(partido_especifico)
     
     elif tipo_analisis == "👥 Artículos sobre Políticos Locales":
         mapeo_fondos_politicos_vis = {
-            "Todos los políticos": "Analisis-Todos-Persona.png", # PNG
-            "Manuel Pazos": "Analisis-PSOE-Persona.png",         # PNG
-            "María Ramallo": "Analisis-PP-Persona.png",          # PNG
-            "Lucía Santos": "Analisis-BNG-Persona.png"           # PNG
+            "Todos los políticos": "Todos-candidatos.png", # PNG
+            "Manuel Pazos": "PSOE-Persona.jpg",            # JPG
+            "María Ramallo": "PP-Persona.jpg",              # JPG
+            "Lucía Santos": "BNG-Persona.jpg"              # JPG
         }
         return mapeo_fondos_politicos_vis.get(politico_especifico)
     
@@ -884,7 +885,7 @@ def procesar_comentarios_individuales_con_sentimientos(df, analizador, top_n=20,
     
 # Header principal
 st.markdown('<h1 class="titulo-sin-linea">🏛️HorizontAI🏛️</h1>', unsafe_allow_html=True)
-st.markdown('<h1 class="titulo-sin-linea">🌐 El futuro en tus manos 🌐</h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="titulo-sin-linea">- El futuro en tus manos -</h1>', unsafe_allow_html=True)
 st.caption("<h2 style='text-align: center;'>Sistema de análisis político avanzado con IA emocional</h2>", unsafe_allow_html=True)
 
 # Mostrar estado del analizador
@@ -1296,7 +1297,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
             "Todos los partidos": ("🏛️ Partidos Políticos", filtrar_comentarios_por_partidos_general),
             "PSdeG-PSOE de Marín": ("🔴 PSdeG-PSOE", filtrar_comentarios_por_psoe),
             "Partido Popular de Marín": ("🔵 Partido Popular", filtrar_comentarios_por_pp),
-            "BNG - Marín": ("🌀 BNG", filtrar_comentarios_por_bng)
+            "BNG - Marín": ("🟡 BNG", filtrar_comentarios_por_bng)
         }
         
         titulo_partido, funcion_filtro = filtros_partidos[partido_comentarios]
@@ -1540,7 +1541,9 @@ elif opcion == "📊 Análisis de Visualizaciones":
     
     fondo_especifico = None
     
-    if sub_opcion == "🏛️ Artículos sobre Partidos Políticos":
+    if sub_opcion == "📈 Artículos más Populares":
+        fondo_especifico = obtener_fondo_segun_opcion(sub_opcion)
+    elif sub_opcion == "🏛️ Artículos sobre Partidos Políticos":
         fondo_especifico = obtener_fondo_segun_opcion(
             sub_opcion, 
             partido_especifico=partido_especifico
@@ -1550,7 +1553,6 @@ elif opcion == "📊 Análisis de Visualizaciones":
             sub_opcion, 
             politico_especifico=politico_especifico
         )
-    # "📈 Artículos más Populares" no tiene fondo específico (fondo_especifico = None)
     
     # Aplicar fondo específico si está definido, sino eliminar fondo
     if fondo_especifico:
@@ -1731,7 +1733,7 @@ elif opcion == "📊 Análisis de Visualizaciones":
             "Todos los partidos": ("🏛️ Artículos sobre Partidos Políticos", "Top 10 artículos que mencionan **PP, PSOE, BNG**", metricas["top10_partidos"]),
             "PSdeG-PSOE de Marín": ("🔴 PSdeG-PSOE Marín", "Top 10 artículos que mencionan **PSOE o Partido Socialista**", metricas["top10_psoe"]),
             "Partido Popular de Marín": ("🔵 Partido Popular de Marín", "Top 10 artículos que mencionan **PP o Partido Popular**", metricas["top10_pp"]),
-            "BNG - Marín": ("🌀 BNG - Marín", "Top 10 artículos que mencionan **BNG o Bloque**", metricas["top10_bng"])
+            "BNG - Marín": ("🟡 BNG - Marín", "Top 10 artículos que mencionan **BNG o Bloque**", metricas["top10_bng"])
         }
         
         titulo, descripcion, datos = mapeo_partidos[partido_especifico]
