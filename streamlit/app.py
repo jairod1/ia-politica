@@ -1,9 +1,11 @@
 """
-HorizontAI - Análisis Político Local de Marín (CORREGIDO - CRITERIOS UNIFICADOS)
+HorizontAI - Análisis Político Local de Marín (CORREGIDO - CRITERIOS UNIFICADOS + FONDOS ESPECÍFICOS)
 =================================================================================
 
 🔧 CORRECCIÓN FINAL: Unificar criterios para artículos polémicos entre análisis
 con y sin sentimientos para obtener resultados consistentes.
+
+🎨 NUEVO: Fondos específicos para cada sección de análisis de comentarios.
 """
 
 import streamlit as st
@@ -250,6 +252,219 @@ def aplicar_fondo_inicio():
     </style>
     """, unsafe_allow_html=True)
 
+def aplicar_fondo_comentarios_especifico(imagen_nombre):
+    """🎨 NUEVA FUNCIÓN: Aplica fondo específico para análisis de comentarios"""
+    
+    imagen_url = f"https://raw.githubusercontent.com/jairod1/ia-politica/master/streamlit/images/{imagen_nombre}.jpg"
+    
+    zoom_porcentual = "100%"         
+    posicion_horizontal = "center"     
+    posicion_vertical = "center"       
+
+    st.markdown(f"""
+    <style>
+    /* ELIMINAR TODOS LOS FONDOS BLANCOS SUPERIORES */
+    [data-testid="stHeader"] {{
+        background-color: transparent !important;
+        display: none !important;
+    }}
+
+    /* Header principal de Streamlit */
+    .stApp > header {{
+        background-color: transparent !important;
+        display: none !important;
+    }}
+
+    /* Contenedor principal del viewport */
+    .main > div:first-child {{
+        background-color: transparent !important;
+    }}
+
+    /* Forzar transparencia en TODOS los elementos superiores */
+    [data-testid="stAppViewContainer"] > section:first-child,
+    [data-testid="stAppViewContainer"] > div:first-child {{
+        background-color: transparent !important;
+    }}
+
+    /* Si hay un banner o header específico */
+    .stApp > div:first-child {{
+        background-color: transparent !important;
+    }}
+    
+    /* Fondo de la aplicación */
+    [data-testid="stAppViewContainer"] {{
+        background-image: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.25)), 
+                        url('{imagen_url}');
+        background-size: cover;
+        background-position: {posicion_horizontal} {posicion_vertical};
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        min-height: 100vh;
+    }}
+    
+    /* Contenedor principal con fondo semi-transparente OSCURO para texto blanco */
+    .main .block-container {{
+        background-color: rgba(0, 0, 0, 0.3) !important;
+        backdrop-filter: blur(5px);
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 1rem auto;
+        max-width: 100%;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }}
+    
+    /* FORZAR TEXTO BLANCO - MÁS ESPECÍFICO */
+    .main .block-container h1,
+    .main .block-container h1 *,
+    .stMarkdown h1,
+    [data-testid="stMarkdownContainer"] h1 {{
+        color: #ffffff !important;
+        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9) !important;
+        font-weight: bold !important;
+        text-align: center !important;
+        margin-bottom: 1.5rem !important;
+        font-size: 2.5rem !important;
+    }}
+    
+    /* TODOS LOS TÍTULOS Y SUBTÍTULOS EN BLANCO */
+    .main .block-container h2,
+    .main .block-container h2 *,
+    .main .block-container h3,
+    .main .block-container h3 *,
+    .main .block-container h4,
+    .main .block-container h4 *,
+    .stMarkdown h2,
+    .stMarkdown h3,
+    .stMarkdown h4,
+    [data-testid="stMarkdownContainer"] h2,
+    [data-testid="stMarkdownContainer"] h3,
+    [data-testid="stMarkdownContainer"] h4 {{
+        color: #ffffff !important;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9) !important;
+        font-weight: 600 !important;
+    }}
+    
+    /* PÁRRAFOS Y TEXTO NORMAL EN BLANCO */
+    .main .block-container p,
+    .main .block-container p *,
+    .main .block-container li,
+    .main .block-container li *,
+    .main .block-container div,
+    .main .block-container span,
+    .stMarkdown p,
+    .stMarkdown li,
+    .stMarkdown div,
+    .stMarkdown span,
+    [data-testid="stMarkdownContainer"] p,
+    [data-testid="stMarkdownContainer"] li,
+    [data-testid="stMarkdownContainer"] div,
+    [data-testid="stMarkdownContainer"] span,
+    [data-testid="stMarkdownContainer"] {{
+        color: #ffffff !important;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9) !important;
+        line-height: 1.6 !important;
+    }}
+    
+    /* TEXTO FUERTE Y EM EN BLANCO */
+    .main .block-container strong,
+    .main .block-container b,
+    .main .block-container em,
+    .main .block-container i,
+    .stMarkdown strong,
+    .stMarkdown b,
+    .stMarkdown em,
+    .stMarkdown i {{
+        color: #ffffff !important;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9) !important;
+    }}
+    
+    /* ALERTAS Y CAJAS CON FONDO OSCURO */
+    .main .block-container [data-testid="stAlert"],
+    [data-testid="stAlert"] {{
+        background-color: rgba(0, 0, 0, 0.5) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        backdrop-filter: blur(3px) !important;
+        border-radius: 10px !important;
+        color: #ffffff !important;
+    }}
+    
+    /* TEXTO DENTRO DE ALERTAS TAMBIÉN BLANCO */
+    .main .block-container [data-testid="stAlert"] *,
+    [data-testid="stAlert"] * {{
+        color: #ffffff !important;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9) !important;
+    }}
+    
+    /* COLUMNAS CON MEJOR ESPACIADO */
+    .main .block-container [data-testid="column"] {{
+        padding: 0 1rem;
+    }}
+    
+    /* FORZAR BLANCO EN MARKDOWN Y OTROS CONTENEDORES */
+    .element-container div,
+    .element-container p,
+    .element-container span,
+    .css-1offfwp p,
+    .css-1offfwp div,
+    .css-1offfwp span {{
+        color: #ffffff !important;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9) !important;
+    }}
+    
+    /* CAPTION Y TEXTOS PEQUEÑOS */
+    .main .block-container .caption,
+    .stCaption,
+    [data-testid="stCaptionContainer"] {{
+        color: #ffffff !important;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9) !important;
+    }}
+    
+    /* SUCCESS, WARNING, INFO BOXES */
+    .stSuccess,
+    .stWarning, 
+    .stInfo,
+    .stError {{
+        background-color: rgba(0, 0, 0, 0.5) !important;
+        color: #ffffff !important;
+        border-radius: 10px !important;
+    }}
+    
+    .stSuccess *,
+    .stWarning *,
+    .stInfo *,
+    .stError * {{
+        color: #ffffff !important;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9) !important;
+    }}
+    
+    /* TABS Y COMPONENTES ADICIONALES EN BLANCO */
+    .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {{
+        color: #ffffff !important;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9) !important;
+    }}
+    
+    .stTabs [data-baseweb="tab-panel"] {{
+        background-color: rgba(0, 0, 0, 0.2) !important;
+        border-radius: 10px !important;
+        padding: 1rem !important;
+    }}
+    
+    /* TABLAS Y DATAFRAMES */
+    .stDataFrame,
+    .stTable {{
+        background-color: rgba(0, 0, 0, 0.3) !important;
+        border-radius: 10px !important;
+    }}
+    
+    .stDataFrame *,
+    .stTable * {{
+        color: #ffffff !important;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8) !important;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+
 def eliminar_fondo_inicio():
     """Remueve el fondo personalizado para otras páginas"""
     st.markdown("""
@@ -284,6 +499,32 @@ def eliminar_fondo_inicio():
     }}
     </style>
     """, unsafe_allow_html=True)
+
+def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_especifico=None):
+    """🎨 NUEVA FUNCIÓN: Determina qué fondo aplicar según las opciones seleccionadas"""
+    
+    if tipo_analisis == "📊 Análisis General":
+        return None  # Sin fondo específico para análisis general
+    
+    elif tipo_analisis == "🗳️ Comentarios sobre Partidos Políticos":
+        mapeo_fondos_partidos = {
+            "Todos los partidos": "Todos-partidos",
+            "PSdeG-PSOE de Marín": "PSOE-Partido", 
+            "Partido Popular de Marín": "PP-Partido",
+            "BNG - Marín": "BNG-Partido"
+        }
+        return mapeo_fondos_partidos.get(partido_especifico)
+    
+    elif tipo_analisis == "👥 Comentarios sobre Políticos Locales":
+        mapeo_fondos_politicos = {
+            "Todos los políticos": "Todos-candidatos",
+            "Manuel Pazos": "PSOE-Persona",
+            "María Ramallo": "PP-Persona", 
+            "Lucía Santos": "BNG-Persona"
+        }
+        return mapeo_fondos_politicos.get(politico_especifico)
+    
+    return None
 
 # Configuración de la página
 st.set_page_config(
@@ -1257,17 +1498,42 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                             f"impopulares_{ubicacion_key}_{politico_comentarios.lower().replace(' ', '_')}_{periodo.replace(' ', '_')}"
                         )
 
-# Definir qué páginas tendrán el fondo especial
-PAGINAS_CON_FONDO = [
+# 🎨 GESTIÓN INTELIGENTE DE FONDOS
+# Definir qué páginas tendrán fondos específicos
+PAGINAS_CON_FONDO_ORIGINAL = [
     "🏠 Inicio", 
     "🏘️ Visión General del Municipio", 
     "📞 Información y Contacto"
 ]
 
-# Aplicar o eliminar fondo según la página actual
-if opcion in PAGINAS_CON_FONDO:
+# 🎨 NUEVA LÓGICA: Aplicar fondos según la página y opciones seleccionadas
+if opcion in PAGINAS_CON_FONDO_ORIGINAL:
+    # Páginas con fondo original del logotipo
     aplicar_fondo_inicio()
+elif opcion == "💬 Análisis de Comentarios":
+    # 🎨 NUEVAS LÓGICAS: Fondos específicos para análisis de comentarios
+    
+    # Obtener nombre del fondo según las opciones seleccionadas
+    fondo_especifico = None
+    
+    if tipo_analisis_comentarios == "🗳️ Comentarios sobre Partidos Políticos":
+        fondo_especifico = obtener_fondo_segun_opcion(
+            tipo_analisis_comentarios, 
+            partido_especifico=partido_comentarios
+        )
+    elif tipo_analisis_comentarios == "👥 Comentarios sobre Políticos Locales":
+        fondo_especifico = obtener_fondo_segun_opcion(
+            tipo_analisis_comentarios, 
+            politico_especifico=politico_comentarios
+        )
+    
+    # Aplicar fondo específico si está definido, sino eliminar fondo
+    if fondo_especifico:
+        aplicar_fondo_comentarios_especifico(fondo_especifico)
+    else:
+        eliminar_fondo_inicio()
 else:
+    # Otras páginas sin fondo especial
     eliminar_fondo_inicio()
 
 # Contenido principal según la opción seleccionada
@@ -1487,7 +1753,7 @@ elif opcion == "📞 Información y Contacto":
         st.markdown("""
         **Desarrollado con:**
         - 🐍 **Python 3.8+**: Lenguaje principal
-        - 🎈 **Streamlit**: Framework de interfaz web
+        - 🎈 **Streamlit**: Framework de interfaz
         - 🐼 **Pandas**: Manipulación de datos
         - 📊 **NumPy**: Computación numérica
         """)
@@ -1503,12 +1769,14 @@ elif opcion == "📞 Información y Contacto":
     with col2:
         st.subheader("📧 Soporte y Contacto")
         st.markdown("""
-        **Para consultas técnicas o sugerencias:**
+        **Para consultas y sugerencias:**
         
-        📧 **Email**: jairod.programar@gmail.com  
-        🌐 **Web**: www.horizontai.com  
-        📱 **GitHub**: github.com/horizontai  
-        📋 **Documentación**: docs.horizontai.com
+        **Creador y Desarrollador: Jaime Rodríguez**
+        📧 **Email**: jairod.programar@gmail.com
+        📞 **Teléfono**: +34 662 675 781 (Jaime Rodríguez)
+        🌐 **Web**: horizontai.streamlit.app  
+        📱 **GitHub**: github.com/jairod1  
+        📋 **Linkedin**: https://www.linkedin.com/in/jaime-rodríguez-gonzález-a54526205/
         """)
 
 # Footer
