@@ -596,7 +596,8 @@ def procesar_comentarios_individuales_con_sentimientos(df, analizador, top_n=20,
 # Header principal
 st.title("HorizontAI")
 st.markdown("<h2 style='text-align: center;'>El futuro en tus manos</h2>", unsafe_allow_html=True)
-st.caption("<h2 style='text-align: center;'>Sistema avanzado de análisis político con IA emocional</h2>", unsafe_allow_html=True)
+st.caption("<h2 style='text-align: center;'>Sistema de <strong>análisis político avanzado</strong> con IA emocional</h2>", unsafe_allow_html=True)
+st.caption("<h2 style='text-align: center;'>Diseñado para <strong>futuros líderes</strong></h2>", unsafe_allow_html=True)
 
 # Mostrar estado del analizador
 col1, col2 = st.columns([3, 1])
