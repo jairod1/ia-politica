@@ -505,7 +505,7 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
     """🎨 NUEVA FUNCIÓN: Determina qué fondo aplicar según las opciones seleccionadas"""
     
     if tipo_analisis == "📊 Análisis General":
-        return None  # Sin fondo específico para análisis general
+        return "Analisis.png"  # PNG para Análisis General
     
     elif tipo_analisis == "🗳️ Comentarios sobre Partidos Políticos":
         mapeo_fondos_partidos = {
