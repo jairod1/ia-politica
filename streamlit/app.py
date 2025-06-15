@@ -276,8 +276,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilo personalizado dorado + azul oscuro
-#E6B800
+# Estilo personalizado dorado + azul oscuro 
 st.markdown("""
 <style>
 /* Sidebar - azul */
@@ -290,7 +289,7 @@ section[data-testid="stSidebar"] * {
     color: #002B4E !important;
 }
 
-/* 🔧 NUEVO: Leyendas específicas del sidebar */
+/* Leyendas específicas del sidebar */
 section[data-testid="stSidebar"] h1,
 section[data-testid="stSidebar"] h2,
 section[data-testid="stSidebar"] h3 {
@@ -309,7 +308,7 @@ div[data-baseweb="radio"] input:checked + div {
     color: #00B0F0 !important;
 }
 
-/* Subrayado del título principal */
+/* Subrayado del título principal (DEFAULT) */
 h1 {
     color: #002B4E;
     border-bottom: 2px solid #E6B800;
@@ -317,10 +316,12 @@ h1 {
     margin-bottom: 0.4em;
 }
 
-/* Quitar línea a títulos específicos */
-h1:contains("Visión General del Municipio"),
-h1:contains("HorizontAI") {
+/* Título SIN línea (ESPECÍFICO) */
+.titulo-sin-linea {
+    color: #002B4E !important;
     border-bottom: none !important;
+    padding-bottom: 0.2em;
+    margin-bottom: 0.4em;
 }
 
 /* Subtítulos */
@@ -355,7 +356,6 @@ body {
 }
 </style>
 """, unsafe_allow_html=True)
-
 
 # Inicialización de variables globales
 SENTIMENTS_AVAILABLE = False
