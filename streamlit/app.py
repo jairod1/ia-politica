@@ -1682,7 +1682,7 @@ elif opcion == "🏘️ Visión General del Municipio":
         <div style="min-height:559px; color-scheme: dark;" id="datawrapper-vis-Qql67">
         <script type="text/javascript" defer 
             src="https://datawrapper.dwcdn.net/Qql67/embed.js" 
-            charset="utf-8" data-target="#datawrapper-vis-Qql67">
+            charset="utf-8"
             data-target="#datawrapper-vis-Qql67"
             data-dark="true">
             </script>
