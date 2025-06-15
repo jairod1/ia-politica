@@ -886,37 +886,6 @@ def procesar_comentarios_individuales_con_sentimientos(df, analizador, top_n=20,
 # Header principal
 st.markdown('<h1 class="titulo-sin-linea">🏛️HorizontAI🏛️</h1>', unsafe_allow_html=True)
 st.markdown('<h1 class="titulo-sin-linea">Analizador IA de sentimientos hacia políticos</h1>', unsafe_allow_html=True)
-# Mostrar estado del analizador
-col1, col2 = st.columns([3, 1])
-
-with col1:
-    st.markdown("### 📊 Estado del Sistema")
-    if SENTIMENTS_AVAILABLE:
-        st.success("""
-        ✅ **Sistema Completo Operativo**
-        
-        🧠 IA Emocional: Activa
-        🌍 Detección de Idioma: Activa  
-        🎭 Análisis Granular: Activo
-        📊 Métricas: Disponibles
-        💬 Comentarios: Disponibles
-        """)
-    else:
-        st.warning("⚠️ **Análisis de Sentimientos**: ❌ No disponible")
-        st.caption("🔧 Revisa que el archivo advanced_sentiment_analyzer.py esté presente")
-
-with col2:
-    
-    if SENTIMENTS_AVAILABLE:
-        pass
-    else:
-        st.warning("""
-        ⚠️ **Sistema Parcialmente Operativo**
-        
-        📊 Métricas: Disponibles
-        💬 Comentarios: Disponibles
-        🧠 IA Emocional: No disponible
-        """)
 
 st.divider()
 
@@ -1619,6 +1588,38 @@ if opcion == "🏠 Inicio":
             - **📝 Contexto Emocional**: Celebratorio, conflictivo, informativo, etc.
             - **🔥 Intensidad Emocional**: Escala del 1 al 5
             - **📂 Clasificación Temática**: 9 categorías específicas de contenido local
+            """)
+    
+    # Mostrar estado del analizador SOLO en la página de Inicio, después de los párrafos principales
+    col1, col2 = st.columns([3, 1])
+
+    with col1:
+        st.markdown("### 📊 Estado del Sistema")
+        if SENTIMENTS_AVAILABLE:
+            st.success("""
+            ✅ **Sistema Completo Operativo**
+            
+            🧠 IA Emocional: Activa
+            🌍 Detección de Idioma: Activa  
+            🎭 Análisis Granular: Activo
+            📊 Métricas: Disponibles
+            💬 Comentarios: Disponibles
+            """)
+        else:
+            st.warning("⚠️ **Análisis de Sentimientos**: ❌ No disponible")
+            st.caption("🔧 Revisa que el archivo advanced_sentiment_analyzer.py esté presente")
+
+    with col2:
+        
+        if SENTIMENTS_AVAILABLE:
+            pass
+        else:
+            st.warning("""
+            ⚠️ **Sistema Parcialmente Operativo**
+            
+            📊 Métricas: Disponibles
+            💬 Comentarios: Disponibles
+            🧠 IA Emocional: No disponible
             """)
     
 elif opcion == "🏘️ Visión General del Municipio":
