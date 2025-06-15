@@ -1322,9 +1322,15 @@ elif opcion == "🏘️ Visión General del Municipio":
 
     st.components.v1.html(
         '''
-        <div style="min-height:550px" id="datawrapper-vis-9YDQ6">
-        <script type="text/javascript" defer src="https://datawrapper.dwcdn.net/9YDQ6/embed.js?dark=true" charset="utf-8" data-target="#datawrapper-vis-9YDQ6"></script>
-        <noscript><img src="https://datawrapper.dwcdn.net/9YDQ6/full.png" alt="" /></noscript></div>
+        <div style="min-height:550px; color-scheme: dark;" id="datawrapper-vis-9YDQ6">
+        <script type="text/javascript" defer 
+            src="https://datawrapper.dwcdn.net/9YDQ6/embed.js" 
+            charset="utf-8" 
+            data-target="#datawrapper-vis-9YDQ6"
+            data-dark="true">
+        </script>
+        <noscript><img src="https://datawrapper.dwcdn.net/9YDQ6/full.png" alt="" /></noscript>
+        </div>
         ''',
         height=680
     )
