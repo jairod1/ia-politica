@@ -521,7 +521,7 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
         mapeo_fondos_politicos = {
             "Todos los políticos": "Todos-candidatos.png", # PNG
             "Manuel Pazos": "PSOE-Persona.jpg",            # JPG
-            "María Ramallo": "PP-Persona.jpg",              # JPG
+            "María Ramallo": "PP-Persona.jpg",             # JPG
             "Lucía Santos": "BNG-Persona.jpg"              # JPG
         }
         return mapeo_fondos_politicos.get(politico_especifico)
@@ -529,19 +529,19 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
     # 🎨 NUEVA LÓGICA: Fondos para Análisis de Visualizaciones
     elif tipo_analisis == "🏛️ Artículos sobre Partidos Políticos":
         mapeo_fondos_partidos_vis = {
-            "Todos los partidos": "Todos-partidos.png",  # PNG
-            "PSdeG-PSOE de Marín": "PSOE-Partido.png",   # PNG
-            "Partido Popular de Marín": "PP-Partido.jpg", # JPG
-            "BNG - Marín": "BNG-Partido.jpg"             # JPG
+            "Todos los partidos": "Analisis-Todos-Partido.png",    # PNG
+            "PSdeG-PSOE de Marín": "Analisis-PSOE-Partido.png",    # PNG
+            "Partido Popular de Marín": "Analisis-PP-Partido.png", # PNG
+            "BNG - Marín": "Analisis-BNG-Partido.png"              # PNG
         }
         return mapeo_fondos_partidos_vis.get(partido_especifico)
     
     elif tipo_analisis == "👥 Artículos sobre Políticos Locales":
         mapeo_fondos_politicos_vis = {
-            "Todos los políticos": "Todos-candidatos.png", # PNG
-            "Manuel Pazos": "PSOE-Persona.jpg",            # JPG
-            "María Ramallo": "PP-Persona.jpg",              # JPG
-            "Lucía Santos": "BNG-Persona.jpg"              # JPG
+            "Todos los políticos": "Analisis-Todos-Persona.png", # PNG
+            "Manuel Pazos": "Analisis-PSOE-Persona.png",         # PNG
+            "María Ramallo": "Analisis-PP-Persona.png",          # PNG
+            "Lucía Santos": "Analisis-BNG-Persona.png"           # PNG
         }
         return mapeo_fondos_politicos_vis.get(politico_especifico)
     
