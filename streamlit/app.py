@@ -63,7 +63,7 @@ except ImportError as e:
     st.stop()
 
 def aplicar_fondo_inicio():
-    """Aplica la imagen de fondo desde GitHub solo en la página de Inicio"""
+    """Aplica la imagen de fondo desde GitHub solo en la página de Inicio - CORREGIDO"""
     
     imagen_url = "https://raw.githubusercontent.com/jairod1/ia-politica/master/streamlit/images/Logotipo-HorizontAI.jpg"
     
@@ -73,6 +73,7 @@ def aplicar_fondo_inicio():
 
     st.markdown(f"""
     <style>
+    /* Fondo de la aplicación */
     [data-testid="stAppViewContainer"] {{
         background-image: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.25)), 
                         url('{imagen_url}');
@@ -85,7 +86,7 @@ def aplicar_fondo_inicio():
     
     /* Contenedor principal con fondo semi-transparente OSCURO para texto blanco */
     .main .block-container {{
-        background-color: rgba(0, 0, 0, 0.25);
+        background-color: rgba(0, 0, 0, 0.25) !important;
         backdrop-filter: blur(5px);
         border-radius: 15px;
         padding: 2rem;
@@ -95,57 +96,143 @@ def aplicar_fondo_inicio():
         border: 1px solid rgba(255, 255, 255, 0.2);
     }}
     
-    /* Título principal con texto BLANCO */
-    .main .block-container h1 {{
+    /* FORZAR TEXTO BLANCO - MÁS ESPECÍFICO */
+    .main .block-container h1,
+    .main .block-container h1 *,
+    .stMarkdown h1,
+    [data-testid="stMarkdownContainer"] h1 {{
         color: #ffffff !important;
-        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
-        font-weight: bold;
-        text-align: center;
-        margin-bottom: 1.5rem;
-        font-size: 2.5rem;
+        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8) !important;
+        font-weight: bold !important;
+        text-align: center !important;
+        margin-bottom: 1.5rem !important;
+        font-size: 2.5rem !important;
     }}
     
-    /* Todo el texto en BLANCO */
-    .main .block-container p, 
-    .main .block-container li,
+    /* TODOS LOS TÍTULOS Y SUBTÍTULOS EN BLANCO */
     .main .block-container h2,
+    .main .block-container h2 *,
     .main .block-container h3,
-    .main .block-container h4 {{
+    .main .block-container h3 *,
+    .main .block-container h4,
+    .main .block-container h4 *,
+    .stMarkdown h2,
+    .stMarkdown h3,
+    .stMarkdown h4,
+    [data-testid="stMarkdownContainer"] h2,
+    [data-testid="stMarkdownContainer"] h3,
+    [data-testid="stMarkdownContainer"] h4 {{
         color: #ffffff !important;
-        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-        line-height: 1.6;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important;
+        font-weight: 600 !important;
     }}
     
-    /* Subtítulos en BLANCO */
-    .main .block-container h3 {{
+    /* PÁRRAFOS Y TEXTO NORMAL EN BLANCO */
+    .main .block-container p,
+    .main .block-container p *,
+    .main .block-container li,
+    .main .block-container li *,
+    .main .block-container div,
+    .main .block-container span,
+    .stMarkdown p,
+    .stMarkdown li,
+    .stMarkdown div,
+    .stMarkdown span,
+    [data-testid="stMarkdownContainer"] p,
+    [data-testid="stMarkdownContainer"] li,
+    [data-testid="stMarkdownContainer"] div,
+    [data-testid="stMarkdownContainer"] span,
+    [data-testid="stMarkdownContainer"] {{
         color: #ffffff !important;
-        font-weight: 600;
-        border-bottom: 2px solid #E6B800;
-        padding-bottom: 0.3rem;
-        margin-bottom: 1rem;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important;
+        line-height: 1.6 !important;
     }}
     
-    /* Cuadros de alerta con fondo oscuro para texto blanco */
-    .main .block-container [data-testid="stAlert"] {{
+    /* TEXTO FUERTE Y EM EN BLANCO */
+    .main .block-container strong,
+    .main .block-container b,
+    .main .block-container em,
+    .main .block-container i,
+    .stMarkdown strong,
+    .stMarkdown b,
+    .stMarkdown em,
+    .stMarkdown i {{
+        color: #ffffff !important;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important;
+    }}
+    
+    /* SUBTÍTULOS CON BORDE DORADO */
+    .main .block-container h3,
+    .stMarkdown h3,
+    [data-testid="stMarkdownContainer"] h3 {{
+        color: #ffffff !important;
+        font-weight: 600 !important;
+        border-bottom: 2px solid #E6B800 !important;
+        padding-bottom: 0.3rem !important;
+        margin-bottom: 1rem !important;
+    }}
+    
+    /* ALERTAS Y CAJAS CON FONDO OSCURO */
+    .main .block-container [data-testid="stAlert"],
+    [data-testid="stAlert"] {{
         background-color: rgba(0, 0, 0, 0.4) !important;
         border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        backdrop-filter: blur(3px);
-        border-radius: 10px;
+        backdrop-filter: blur(3px) !important;
+        border-radius: 10px !important;
         color: #ffffff !important;
     }}
     
-    /* Texto dentro de alertas también blanco */
-    .main .block-container [data-testid="stAlert"] * {{
+    /* TEXTO DENTRO DE ALERTAS TAMBIÉN BLANCO */
+    .main .block-container [data-testid="stAlert"] *,
+    [data-testid="stAlert"] * {{
         color: #ffffff !important;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important;
     }}
     
-    /* Columnas con mejor espaciado */
+    /* COLUMNAS CON MEJOR ESPACIADO */
     .main .block-container [data-testid="column"] {{
         padding: 0 1rem;
     }}
+    
+    /* FORZAR BLANCO EN MARKDOWN Y OTROS CONTENEDORES */
+    .element-container div,
+    .element-container p,
+    .element-container span,
+    .css-1offfwp p,
+    .css-1offfwp div,
+    .css-1offfwp span {{
+        color: #ffffff !important;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important;
+    }}
+    
+    /* CAPTION Y TEXTOS PEQUEÑOS */
+    .main .block-container .caption,
+    .stCaption,
+    [data-testid="stCaptionContainer"] {{
+        color: #ffffff !important;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important;
+    }}
+    
+    /* SUCCESS, WARNING, INFO BOXES */
+    .stSuccess,
+    .stWarning, 
+    .stInfo,
+    .stError {{
+        background-color: rgba(0, 0, 0, 0.4) !important;
+        color: #ffffff !important;
+        border-radius: 10px !important;
+    }}
+    
+    .stSuccess *,
+    .stWarning *,
+    .stInfo *,
+    .stError * {{
+        color: #ffffff !important;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important;
+    }}
     </style>
     """, unsafe_allow_html=True)
-    
+        
 def eliminar_fondo_inicio():
     """Remueve el fondo personalizado para otras páginas"""
     st.markdown("""
