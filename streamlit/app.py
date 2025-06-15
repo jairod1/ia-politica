@@ -602,7 +602,7 @@ def procesar_comentarios_individuales_con_sentimientos(df, analizador, top_n=20,
     
 # Header principal
 st.markdown('<h1 class="titulo-sin-linea">🏛️HorizontAI🏛️</h1>', unsafe_allow_html=True)
-st.markdown('<h1 class="titulo-sin-linea">El futuro en tus manos</h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="titulo-sin-linea">- El futuro en tus manos -</h1>', unsafe_allow_html=True)
 st.caption("<h2 style='text-align: center;'>Sistema de análisis político avanzado con IA emocional</h2>", unsafe_allow_html=True)
 
 # Mostrar estado del analizador
@@ -1294,7 +1294,7 @@ elif opcion == "🏘️ Visión General del Municipio":
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("Información General")
+        st.markdown('<h2 class="titulo-sin-linea">Información general</h2>', unsafe_allow_html=True)
         st.markdown("""
         **📍 Municipio:** Marín, Pontevedra  
         **👥 Población:** ~25.000 habitantes  
