@@ -594,9 +594,9 @@ def procesar_comentarios_individuales_con_sentimientos(df, analizador, top_n=20,
         return df_comentarios, None
     
 # Header principal
-st.title("🏛️ HorizontAI")
-st.subheader("Análisis Político Local - por Jaime Rodríguez")
-st.caption("Sistema avanzado de análisis político con IA emocional")
+st.title("HorizontAI")
+st.markdown("<h2 style='text-align: center;'>El futuro en tus manos</h2>", unsafe_allow_html=True)
+st.caption("<h2 style='text-align: center;'>Sistema avanzado de análisis político con IA emocional</h2>", unsafe_allow_html=True)
 
 # Mostrar estado del analizador
 col1, col2 = st.columns([3, 1])
