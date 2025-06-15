@@ -597,7 +597,6 @@ def procesar_comentarios_individuales_con_sentimientos(df, analizador, top_n=20,
 st.title("HorizontAI")
 st.markdown("<h2 style='text-align: center;'>El futuro en tus manos</h2>", unsafe_allow_html=True)
 st.caption("<h2 style='text-align: center;'>Sistema de <strong>análisis político avanzado</strong> con IA emocional</h2>", unsafe_allow_html=True)
-st.caption("<h2 style='text-align: center;'>Diseñado para <strong>futuros líderes</strong></h2>", unsafe_allow_html=True)
 
 # Mostrar estado del analizador
 col1, col2 = st.columns([3, 1])
@@ -1249,22 +1248,20 @@ else:
 
 # Contenido principal según la opción seleccionada
 if opcion == "🏠 Inicio":
- 
-    st.title("🏠 Bienvenido a HorizontAI")
     
     col1, col2 = st.columns([2, 1])
     
     with col1:
         st.markdown("""
-        ### 🚀 ¿Qué es HorizontAI?
+        ### 🏛️ ¿Qué es HorizontAI?
         
-        **HorizontAI** es una plataforma avanzada de análisis político local que combina 
+        **HorizontAI** es una plataforma de análisis político de localidades que combina 
         análisis de datos tradicional con **inteligencia artificial emocional**.
         
         #### 📊 Funcionalidades Principales:
         
-        - **📈 Métricas de Visualización**: Los artículos más leídos sobre política local
-        - **🏛️ Análisis Político**: Seguimiento detallado de partidos y políticos locales  
+        - **📈 Métricas de Visualización**: Los artículos más leídos y con más impacto sobre ciudadanías locales
+        - **🏛️ Análisis Político**: Seguimiento detallado de partidos y políticos de tu localidad  
         - **📅 Tendencias Temporales**: Evolución del interés ciudadano
         - **🔍 Búsqueda Avanzada**: Filtros por términos políticos específicos
         - **🗺️ Análisis Geográfico**: Comentarios globales, de O Morrazo/Pontevedra y específicos de Marín
