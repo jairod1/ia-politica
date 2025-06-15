@@ -219,6 +219,18 @@ def aplicar_fondo_inicio():
         color: #ffffff !important;
         text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important;
     }}
+
+    /* OCULTAR/ARREGLAR BARRA DE HERRAMIENTAS STREAMLIT */
+    [data-testid="stToolbar"] {{
+        background-color: transparent !important;
+        backdrop-filter: blur(10px) !important;
+        border: none !important;
+    }}
+
+    /* Ocultar completamente la barra (OPCIÓN 1) */
+    [data-testid="stToolbar"] {{
+        display: none !important;
+    }}
     </style>
     """, unsafe_allow_html=True)
 
