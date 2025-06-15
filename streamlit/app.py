@@ -270,7 +270,7 @@ def eliminar_fondo_inicio():
 
 # Configuración de la página
 st.set_page_config(
-    page_title="HorizontAI - Análisis Político Local",
+    page_title="HorizontAI",
     page_icon="🏛️",
     layout="wide",
     initial_sidebar_state="expanded"
