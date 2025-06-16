@@ -1679,6 +1679,35 @@ elif opcion == "🏘️ Visión General del Municipio":
 
     st.components.v1.html(
         '''
+        <style>
+        /* Forzar texto blanco en DataWrapper */
+        #datawrapper-vis-Qql67 * {
+            color: white !important;
+        }
+        
+        /* Específicamente para números y etiquetas */
+        #datawrapper-vis-Qql67 text,
+        #datawrapper-vis-Qql67 .dw-chart-text,
+        #datawrapper-vis-Qql67 .chart-text,
+        #datawrapper-vis-Qql67 .axis-label,
+        #datawrapper-vis-Qql67 .data-label,
+        #datawrapper-vis-Qql67 tspan {
+            fill: white !important;
+            color: white !important;
+        }
+        
+        /* Para elementos SVG específicos */
+        #datawrapper-vis-Qql67 svg text {
+            fill: white !important;
+        }
+        
+        /* Fondo oscuro para contraste */
+        #datawrapper-vis-Qql67 {
+            background-color: transparent !important;
+            filter: contrast(1.2) brightness(1.1);
+        }
+        </style>
+        
         <div style="min-height:559px; color-scheme: dark;" id="datawrapper-vis-Qql67">
         <script type="text/javascript" defer 
             src="https://datawrapper.dwcdn.net/Qql67/embed.js" 
