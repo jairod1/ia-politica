@@ -521,7 +521,7 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
     elif tipo_analisis == "👥 Comentarios sobre Políticos Locales":
         mapeo_fondos_politicos = {
             "Todos los políticos": "Todos-candidatos.png",              # PNG
-            "Manuel Pazos - Candidato del PSOE": "PSOE-Persona.png",    # PNG
+            "Manuel Pazos": "PSOE-Persona.png",    # PNG
             "María Ramallo": "PP-Persona.png",                          # PNG
             "Lucía Santos": "BNG-Persona.jpg"                           # PNG
         }
@@ -1377,9 +1377,9 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
     elif tipo_analisis_comentarios == "👥 Comentarios sobre Políticos Locales":
         filtros_politicos = {
             "Todos los políticos": ("👥 Políticos Locales", filtrar_comentarios_por_politicos_general),
-            "Manuel Pazos": ("👤 Manuel Pazos - Candidato del PSOE", filtrar_comentarios_por_manuel_pazos),
-            "María Ramallo": ("👤 María Ramallo - Alcaldesa del PP", filtrar_comentarios_por_maria_ramallo),
-            "Lucía Santos": ("👤 Lucía Santos - Candidata del BNG", filtrar_comentarios_por_lucia_santos)
+            "Manuel Pazos": ("👤 Manuel Pazos", filtrar_comentarios_por_manuel_pazos),
+            "María Ramallo": ("👤 María Ramallo", filtrar_comentarios_por_maria_ramallo),
+            "Lucía Santos": ("👤 Lucía Santos", filtrar_comentarios_por_lucia_santos)
         }
         
         titulo_politico, funcion_filtro = filtros_politicos[politico_comentarios]
@@ -1783,7 +1783,7 @@ elif opcion == "📊 Análisis de Visualizaciones":
     elif sub_opcion == "👥 Artículos sobre Políticos Locales":
         mapeo_politicos = {
             "Todos los políticos": ("👥 Artículos sobre Políticos Locales", "Top 10 artículos que mencionan **Pazos, Ramallo, Santos**", metricas["top10_politicos"]),
-            "Manuel Pazos - Candidato del PSOE": ("👤 Manuel Pazos - Candidato del PSOE", "Top 10 artículos que mencionan **Manuel Pazos**", metricas["top10_manuel"]),
+            "Manuel Pazos": ("👤 Manuel Pazos", "Top 10 artículos que mencionan **Manuel Pazos**", metricas["top10_manuel"]),
             "María Ramallo": ("👤 María Ramallo", "Top 10 artículos que mencionan **María Ramallo o Ramallo**", metricas["top10_maria"]),
             "Lucía Santos": ("👤 Lucía Santos", "Top 10 artículos que mencionan **Lucía Santos**", metricas["top10_lucia"])
         }
