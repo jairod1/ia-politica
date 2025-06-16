@@ -253,9 +253,8 @@ def aplicar_fondo_inicio():
         text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important;
     }}
 
-        /* SOLO para botones que contengan "Ver artículo" */
-    .stLinkButton > button:has-text("Ver artículo"),
-    .stLinkButton > button[aria-label*="Ver artículo"] {{
+    /* SOLO para botones de enlace */
+    .stLinkButton > button {{
         color: #000000 !important;
         background-color: rgba(255, 255, 255, 0.9) !important;
         border: 1px solid #000000 !important;
@@ -263,8 +262,7 @@ def aplicar_fondo_inicio():
         text-shadow: none !important;
     }}
 
-    .stLinkButton > button:has-text("Ver artículo"):hover,
-    .stLinkButton > button[aria-label*="Ver artículo"]:hover {{
+    .stLinkButton > button:hover {{
         color: #000000 !important;
         background-color: #ffffff !important;
         border: 2px solid #000000 !important;
@@ -483,9 +481,8 @@ def aplicar_fondo_comentarios_especifico(imagen_nombre_con_extension):
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8) !important;
     }}
 
-        /* SOLO para botones que contengan "Ver artículo" */
-    .stLinkButton > button:has-text("Ver artículo"),
-    .stLinkButton > button[aria-label*="Ver artículo"] {{
+        /* SOLO para botones de enlace */
+    .stLinkButton > button {{
         color: #000000 !important;
         background-color: rgba(255, 255, 255, 0.9) !important;
         border: 1px solid #000000 !important;
@@ -493,8 +490,7 @@ def aplicar_fondo_comentarios_especifico(imagen_nombre_con_extension):
         text-shadow: none !important;
     }}
 
-    .stLinkButton > button:has-text("Ver artículo"):hover,
-    .stLinkButton > button[aria-label*="Ver artículo"]:hover {{
+    .stLinkButton > button:hover {{
         color: #000000 !important;
         background-color: #ffffff !important;
         border: 2px solid #000000 !important;
