@@ -514,7 +514,7 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
             "Todos los partidos": "Todos-partidos.png",    
             "PSdeG-PSOE de Marín": "PSOE-Partido.png",     
             "Partido Popular de Marín": "PP-Partido.jpg",  
-            "BNG - Marín": "BNG-Partido.jpg"               
+            "BNG - Marín": "BNG-Partido.png"               
         }
         return mapeo_fondos_partidos.get(partido_especifico)
     
@@ -523,7 +523,7 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
             "Todos los políticos": "Todos-candidatos.png",   
             "Manuel Pazos": "PSOE-Partido.png",              
             "María Ramallo": "PP-Partido.jpg",               
-            "Lucía Santos": "BNG-Partido.jpg"                
+            "Lucía Santos": "BNG-Partido.png"                
         }
         return mapeo_fondos_politicos.get(politico_especifico)
     
@@ -536,7 +536,7 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
             "Todos los partidos": "Todos-partidos.png",    
             "PSdeG-PSOE de Marín": "PSOE-Partido.png",     
             "Partido Popular de Marín": "PP-Partido.jpg",  
-            "BNG - Marín": "BNG-Partido.jpg"               
+            "BNG - Marín": "BNG-Partido.png"               
         }
         return mapeo_fondos_partidos_vis.get(partido_especifico)
     
@@ -545,7 +545,7 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
             "Todos los políticos": "Todos-candidatos.png",  
             "Manuel Pazos": "PSOE-Partido.png",             
             "María Ramallo": "PP-Partido.jpg",              
-            "Lucía Santos": "BNG-Partido.jpg"               
+            "Lucía Santos": "BNG-Partido.png"               
         }
         return mapeo_fondos_politicos_vis.get(politico_especifico)
     
