@@ -1688,42 +1688,6 @@ elif opcion == "🏘️ Visión General del Municipio":
         </script>
         <noscript><img src="https://datawrapper.dwcdn.net/Qql67/full.png" alt="" /></noscript>
         </div>
-        
-        <script>
-        // Esperar a que se cargue la visualización y luego forzar colores blancos
-        setTimeout(function() {
-            const container = document.getElementById('datawrapper-vis-Qql67');
-            if (container) {
-                // Buscar todos los elementos de texto
-                const textElements = container.querySelectorAll('text, tspan, .chart-text, .axis-label');
-                textElements.forEach(el => {
-                    el.style.fill = 'white';
-                    el.style.color = 'white';
-                });
-                
-                // Para iframes internos (si los hay)
-                const iframes = container.querySelectorAll('iframe');
-                iframes.forEach(iframe => {
-                    try {
-                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                        const iframeTexts = iframeDoc.querySelectorAll('text, tspan');
-                        iframeTexts.forEach(el => {
-                            el.style.fill = 'white';
-                            el.style.color = 'white';
-                        });
-                    } catch(e) {
-                        console.log('No se puede acceder al iframe:', e);
-                    }
-                });
-            }
-        }, 2000); // Esperar 2 segundos para que cargue
-        </script>
-        
-        <style>
-        #datawrapper-vis-Qql67 {
-            filter: invert(0) contrast(1.2) brightness(1.2);
-        }
-        </style>
         ''',
         height=550
     )
