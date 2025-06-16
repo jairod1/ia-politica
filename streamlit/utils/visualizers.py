@@ -81,14 +81,11 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
     # Aplicar análisis si está habilitado
     df_display = df.copy()
     reporte = None
-    
-    if mostrar_sentimientos and analizador is not None:
-        with st.spinner("🧠 Analizando el rollo emocional de los artículos..."):
-            df_display, reporte = aplicar_analisis_sentimientos(df, analizador)
-            
-        if reporte is None:
-            st.error("💥 El análisis se fue a tomar un café y no volvió")
-            mostrar_sentimientos = False
+        
+    # 🔧 TRUNCAR TÍTULOS PARA QUE LA TABLA SEA MÁS ALTA
+    df_tabla['title_truncado'] = df_tabla['title'].apply(
+        lambda x: str(x)[:60] + "..." if len(str(x)) > 60 else str(x)
+    )
     
     # Configurar columnas básicas
     columnas_basicas = ["title", "n_visualizations", "date", "link"]
@@ -138,7 +135,7 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
                 }).fillna('🤷‍♂️ No detectado')
                 
                 column_config = {
-                    "title": "Título",
+                    "title_truncado": "Título",
                     "n_visualizations": st.column_config.NumberColumn("👁️ Vistas", format="%d"),
                     "idioma_emoji": "🌍 Idioma",  # NUEVA COLUMNA PRIMERA
                     "tono_general_emoji": "😊 Tono",
@@ -222,7 +219,8 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
             use_container_width=True,
             hide_index=True,
             on_select="rerun",
-            selection_mode="single-row"
+            selection_mode="single-row",
+            height=600
         )
     except Exception as e:
         st.error(f"💥 Error mostrando la tabla: {e}")
@@ -426,7 +424,8 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
             use_container_width=True,
             hide_index=True,
             on_select="rerun",
-            selection_mode="single-row"
+            selection_mode="single-row",
+            height=600
         )
     except Exception as e:
         st.error(f"💥 Error mostrando tabla: {e}")
@@ -1117,7 +1116,8 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
             use_container_width=True,
             hide_index=True,
             on_select="rerun",
-            selection_mode="single-row"
+            selection_mode="single-row",
+            height=600
         )
     except Exception as e:
         st.error(f"💥 Error mostrando tabla: {e}")
