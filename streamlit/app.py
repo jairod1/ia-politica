@@ -252,6 +252,23 @@ def aplicar_fondo_inicio():
         color: #ffffff !important;
         text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important;
     }}
+
+        /* SOLO para botones que contengan "Ver artículo" */
+    .stLinkButton > button:has-text("Ver artículo"),
+    .stLinkButton > button[aria-label*="Ver artículo"] {{
+        color: #000000 !important;
+        background-color: rgba(255, 255, 255, 0.9) !important;
+        border: 1px solid #000000 !important;
+        font-weight: bold !important;
+        text-shadow: none !important;
+    }}
+
+    .stLinkButton > button:has-text("Ver artículo"):hover,
+    .stLinkButton > button[aria-label*="Ver artículo"]:hover {{
+        color: #000000 !important;
+        background-color: #ffffff !important;
+        border: 2px solid #000000 !important;
+    }}
     </style>
     """, unsafe_allow_html=True)
 
@@ -464,6 +481,23 @@ def aplicar_fondo_comentarios_especifico(imagen_nombre_con_extension):
     .stTable * {{
         color: #ffffff !important;
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8) !important;
+    }}
+
+        /* SOLO para botones que contengan "Ver artículo" */
+    .stLinkButton > button:has-text("Ver artículo"),
+    .stLinkButton > button[aria-label*="Ver artículo"] {{
+        color: #000000 !important;
+        background-color: rgba(255, 255, 255, 0.9) !important;
+        border: 1px solid #000000 !important;
+        font-weight: bold !important;
+        text-shadow: none !important;
+    }}
+
+    .stLinkButton > button:has-text("Ver artículo"):hover,
+    .stLinkButton > button[aria-label*="Ver artículo"]:hover {{
+        color: #000000 !important;
+        background-color: #ffffff !important;
+        border: 2px solid #000000 !important;
     }}
     </style>
     """, unsafe_allow_html=True)
