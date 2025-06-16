@@ -1681,29 +1681,13 @@ elif opcion == "🏘️ Visión General del Municipio":
         '''
         <div style="min-height:559px; color-scheme: dark;" id="datawrapper-vis-Qql67">
         <script type="text/javascript" defer 
-            src="https://datawrapper.dwcdn.net/Qql67/embed.js?dark=true&theme=dark" 
+            src="https://datawrapper.dwcdn.net/Qql67/embed.js" 
             charset="utf-8"
             data-target="#datawrapper-vis-Qql67"
-            data-dark="true"
-            data-theme="dark">
+            data-dark="true">
         </script>
         <noscript><img src="https://datawrapper.dwcdn.net/Qql67/full.png" alt="" /></noscript>
         </div>
-        
-        <style>
-        /* Forzar colores con CSS muy específico */
-        #datawrapper-vis-Qql67,
-        #datawrapper-vis-Qql67 * {
-            color: white !important;
-            fill: white !important;
-        }
-        
-        /* Filtro para mejorar contraste */
-        #datawrapper-vis-Qql67 {
-            background: #2d3748 !important;
-            filter: brightness(1.2) contrast(1.1);
-        }
-        </style>
         ''',
         height=550
     )
