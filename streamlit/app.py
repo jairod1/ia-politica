@@ -253,66 +253,14 @@ def aplicar_fondo_inicio():
         text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important;
     }}
 
-        /* TABLAS MÁS COMPACTAS */
-    .stDataFrame {{
-        font-size: 0.85rem !important;
-    }}
-
-    .stDataFrame th,
-    .stDataFrame td {{
-        padding: 0.25rem 0.5rem !important;
-        font-size: 0.8rem !important;
-        white-space: nowrap !important;
-    }}
-
-    .stDataFrame th {{
-        font-size: 0.75rem !important;
-        font-weight: 600 !important;
-    }}
-
-    /* Columnas específicas más estrechas */
-    .stDataFrame th:nth-child(2), /* Vistas */
-    .stDataFrame td:nth-child(2) {{
-        max-width: 60px !important;
-        width: 60px !important;
-    }}
-
-    .stDataFrame th:nth-child(3), /* Idioma */
-    .stDataFrame td:nth-child(3) {{
-        max-width: 80px !important;
-        width: 80px !important;
-    }}
-
-    .stDataFrame th:nth-child(4), /* Tono */
-    .stDataFrame td:nth-child(4) {{
-        max-width: 85px !important;
-        width: 85px !important;
-    }}
-
-    .stDataFrame th:nth-child(6), /* Confianza */
-    .stDataFrame td:nth-child(6) {{
-        max-width: 70px !important;
-        width: 70px !important;
-    }}
-
-    .stDataFrame th:nth-child(7), /* Intensidad */
-    .stDataFrame td:nth-child(7) {{
-        max-width: 70px !important;
-        width: 70px !important;
-    }}
-
-    .stDataFrame th:nth-child(9), /* Fecha */
-    .stDataFrame td:nth-child(9) {{
-        max-width: 85px !important;
-        width: 85px !important;
-    }}
-
-    /* Título más ancho pero controlado */
-    .stDataFrame th:nth-child(1),
-    .stDataFrame td:nth-child(1) {{
-        max-width: 300px !important;
+        /* COLUMNA TÍTULO MÁS ESTRECHA */
+    .stDataFrame th:first-child,
+    .stDataFrame td:first-child {{
+        max-width: 250px !important;
+        width: 250px !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
+        white-space: nowrap !important;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -528,66 +476,14 @@ def aplicar_fondo_comentarios_especifico(imagen_nombre_con_extension):
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8) !important;
     }}
 
-        /* TABLAS MÁS COMPACTAS */
-    .stDataFrame {{
-        font-size: 0.85rem !important;
-    }}
-
-    .stDataFrame th,
-    .stDataFrame td {{
-        padding: 0.25rem 0.5rem !important;
-        font-size: 0.8rem !important;
-        white-space: nowrap !important;
-    }}
-
-    .stDataFrame th {{
-        font-size: 0.75rem !important;
-        font-weight: 600 !important;
-    }}
-
-    /* Columnas específicas más estrechas */
-    .stDataFrame th:nth-child(2), /* Vistas */
-    .stDataFrame td:nth-child(2) {{
-        max-width: 60px !important;
-        width: 60px !important;
-    }}
-
-    .stDataFrame th:nth-child(3), /* Idioma */
-    .stDataFrame td:nth-child(3) {{
-        max-width: 80px !important;
-        width: 80px !important;
-    }}
-
-    .stDataFrame th:nth-child(4), /* Tono */
-    .stDataFrame td:nth-child(4) {{
-        max-width: 85px !important;
-        width: 85px !important;
-    }}
-
-    .stDataFrame th:nth-child(6), /* Confianza */
-    .stDataFrame td:nth-child(6) {{
-        max-width: 70px !important;
-        width: 70px !important;
-    }}
-
-    .stDataFrame th:nth-child(7), /* Intensidad */
-    .stDataFrame td:nth-child(7) {{
-        max-width: 70px !important;
-        width: 70px !important;
-    }}
-
-    .stDataFrame th:nth-child(9), /* Fecha */
-    .stDataFrame td:nth-child(9) {{
-        max-width: 85px !important;
-        width: 85px !important;
-    }}
-
-    /* Título más ancho pero controlado */
-    .stDataFrame th:nth-child(1),
-    .stDataFrame td:nth-child(1) {{
-        max-width: 300px !important;
+        /* COLUMNA TÍTULO MÁS ESTRECHA */
+    .stDataFrame th:first-child,
+    .stDataFrame td:first-child {{
+        max-width: 250px !important;
+        width: 250px !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
+        white-space: nowrap !important;
     }}
     </style>
     """, unsafe_allow_html=True)
