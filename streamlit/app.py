@@ -1704,7 +1704,7 @@ elif opcion == "🏘️ Visión General del Municipio":
     <noscript><img src="https://datawrapper.dwcdn.net/AOYpH/full.png" alt="" /></noscript>
     </div>
         ''',
-        height=680
+        height=630
     )
 
     st.components.v1.html(
@@ -1719,7 +1719,7 @@ elif opcion == "🏘️ Visión General del Municipio":
     <noscript><img src="https://datawrapper.dwcdn.net/cQtwV/full.png" alt="" /></noscript>
     </div>
         ''',
-        height=680
+        height=630
     )
 
 elif opcion == "📊 Análisis de Visualizaciones":
