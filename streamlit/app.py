@@ -1685,7 +1685,7 @@ elif opcion == "🏘️ Visión General del Municipio":
             charset="utf-8"
             data-target="#datawrapper-vis-Qql67"
             data-dark="true">
-            </script>
+        </script>
         <noscript><img src="https://datawrapper.dwcdn.net/Qql67/full.png" alt="" /></noscript>
         </div>
         ''',
@@ -1694,14 +1694,30 @@ elif opcion == "🏘️ Visión General del Municipio":
 
     st.components.v1.html(
         '''
-    <div style="min-height:416px"; color-scheme: dark;" id="datawrapper-vis-AOYpH">
+    <div style="min-height:436px; color-scheme: dark;" id="datawrapper-vis-AOYpH">
     <script type="text/javascript" defer 
         src="https://datawrapper.dwcdn.net/AOYpH/embed.js" 
         charset="utf-8" 
         data-target="#datawrapper-vis-AOYpH"
         data-dark="true">
-        </script>
-    <noscript><img src="https://datawrapper.dwcdn.net/AOYpH/full.png" alt="" /></noscript></div>
+    </script>
+    <noscript><img src="https://datawrapper.dwcdn.net/AOYpH/full.png" alt="" /></noscript>
+    </div>
+        ''',
+        height=500
+    )
+
+    st.components.v1.html(
+        '''
+    <div style="min-height:436px; color-scheme: dark;" id="datawrapper-vis-cQtwV">
+    <script type="text/javascript" defer
+        src="https://datawrapper.dwcdn.net/cQtwV/embed.js" 
+        charset="utf-8" 
+        data-target="#datawrapper-vis-cQtwV"
+        data-dark="true">
+    </script>
+    <noscript><img src="https://datawrapper.dwcdn.net/cQtwV/full.png" alt="" /></noscript>
+    </div>
         ''',
         height=500
     )
