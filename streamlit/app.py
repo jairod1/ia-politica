@@ -520,10 +520,10 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
     
     elif tipo_analisis == "👥 Comentarios sobre Políticos Locales":
         mapeo_fondos_politicos = {
-            "Todos los políticos": "Todos-candidatos.png",              # PNG
-            "Manuel Pazos": "PSOE-Persona.png",    # PNG
-            "María Ramallo": "PP-Persona.png",                          # PNG
-            "Lucía Santos": "BNG-Persona.jpg"                           # PNG
+            "Todos los políticos": "Todos-candidatos.png",  # PNG
+            "Manuel Pazos": "PSOE-Persona.png",             # PNG
+            "María Ramallo": "PP-Persona.png",              # PNG
+            "Lucía Santos": "BNG-Persona.png"               # PNG
         }
         return mapeo_fondos_politicos.get(politico_especifico)
     
