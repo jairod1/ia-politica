@@ -1689,7 +1689,7 @@ elif opcion == "🏘️ Visión General del Municipio":
         <noscript><img src="https://datawrapper.dwcdn.net/Qql67/full.png" alt="" /></noscript>
         </div>
         ''',
-        height=600
+        height=550
     )
 
     st.components.v1.html(
