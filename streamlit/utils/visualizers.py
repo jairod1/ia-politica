@@ -81,11 +81,6 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
     # Aplicar análisis si está habilitado
     df_display = df.copy()
     reporte = None
-        
-    # 🔧 TRUNCAR TÍTULOS PARA QUE LA TABLA SEA MÁS ALTA
-    df_tabla['title_truncado'] = df_tabla['title'].apply(
-        lambda x: str(x)[:60] + "..." if len(str(x)) > 60 else str(x)
-    )
     
     # Configurar columnas básicas
     columnas_basicas = ["title", "n_visualizations", "date", "link"]
@@ -135,7 +130,7 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
                 }).fillna('🤷‍♂️ No detectado')
                 
                 column_config = {
-                    "title_truncado": "Título",
+                    "title": "Título",
                     "n_visualizations": st.column_config.NumberColumn("👁️ Vistas", format="%d"),
                     "idioma_emoji": "🌍 Idioma",  # NUEVA COLUMNA PRIMERA
                     "tono_general_emoji": "😊 Tono",
