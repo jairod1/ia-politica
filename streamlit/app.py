@@ -1679,7 +1679,32 @@ elif opcion == "🏘️ Visión General del Municipio":
 
     st.components.v1.html(
         '''
-        <div style="min-height:559px; color-scheme: dark;" id="datawrapper-vis-Qql67">
+        <style>
+        /* Filtro agresivo para invertir solo el texto */
+        #datawrapper-vis-Qql67 {
+            filter: contrast(200%) brightness(150%) saturate(0.8) hue-rotate(0deg);
+        }
+        
+        /* Alternativa: usar mix-blend-mode */
+        #datawrapper-vis-Qql67::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            mix-blend-mode: screen;
+            pointer-events: none;
+        }
+        
+        /* Forzar estilos directamente en el contenedor */
+        #datawrapper-vis-Qql67 iframe {
+            filter: invert(0) contrast(1.5) brightness(1.3) !important;
+        }
+        </style>
+        
+        <div style="min-height:559px; color-scheme: dark; position: relative;" id="datawrapper-vis-Qql67">
         <script type="text/javascript" defer 
             src="https://datawrapper.dwcdn.net/Qql67/embed.js" 
             charset="utf-8"
