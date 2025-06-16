@@ -507,45 +507,45 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
     """🎨 NUEVA FUNCIÓN: Determina qué fondo aplicar según las opciones seleccionadas"""
     
     if tipo_analisis == "📊 Análisis General":
-        return "Analisis.png"  # PNG para Análisis General
+        return "Analisis.png"                             # PNG
     
     elif tipo_analisis == "🗳️ Comentarios sobre Partidos Políticos":
         mapeo_fondos_partidos = {
-            "Todos los partidos": "Todos-partidos.png",  # PNG
-            "PSdeG-PSOE de Marín": "PSOE-Partido.png",   # PNG
+            "Todos los partidos": "Todos-partidos.png",   # PNG
+            "PSdeG-PSOE de Marín": "PSOE-Partido.png",    # PNG
             "Partido Popular de Marín": "PP-Partido.jpg", # JPG
-            "BNG - Marín": "BNG-Partido.jpg"             # JPG
+            "BNG - Marín": "BNG-Partido.jpg"              # JPG
         }
         return mapeo_fondos_partidos.get(partido_especifico)
     
     elif tipo_analisis == "👥 Comentarios sobre Políticos Locales":
         mapeo_fondos_politicos = {
-            "Todos los políticos": "Todos-candidatos.png", # PNG
-            "Manuel Pazos": "PSOE-Persona.jpg",            # JPG
-            "María Ramallo": "PP-Persona.jpg",              # JPG
-            "Lucía Santos": "BNG-Persona.jpg"              # JPG
+            "Todos los políticos": "Todos-candidatos.png",              # PNG
+            "Manuel Pazos - Candidato del PSOE": "PSOE-Persona.png",    # PNG
+            "María Ramallo": "PP-Persona.png",                          # PNG
+            "Lucía Santos": "BNG-Persona.jpg"                           # PNG
         }
         return mapeo_fondos_politicos.get(politico_especifico)
     
     # 🎨 NUEVA LÓGICA: Fondos para Análisis de Visualizaciones
     elif tipo_analisis == "📈 Artículos más Populares":
-        return "Popularidad.png"  # PNG para Artículos más Populares
+        return "Popularidad.png"                          # PNG 
     
     elif tipo_analisis == "🏛️ Artículos sobre Partidos Políticos":
         mapeo_fondos_partidos_vis = {
-            "Todos los partidos": "Todos-partidos.png",  # PNG
-            "PSdeG-PSOE de Marín": "PSOE-Partido.png",   # PNG
+            "Todos los partidos": "Todos-partidos.png",   # PNG
+            "PSdeG-PSOE de Marín": "PSOE-Partido.png",    # PNG
             "Partido Popular de Marín": "PP-Partido.jpg", # JPG
-            "BNG - Marín": "BNG-Partido.jpg"             # JPG
+            "BNG - Marín": "BNG-Partido.jpg"              # JPG
         }
         return mapeo_fondos_partidos_vis.get(partido_especifico)
     
     elif tipo_analisis == "👥 Artículos sobre Políticos Locales":
         mapeo_fondos_politicos_vis = {
             "Todos los políticos": "Todos-candidatos.png", # PNG
-            "Manuel Pazos": "PSOE-Persona.jpg",            # JPG
-            "María Ramallo": "PP-Persona.jpg",              # JPG
-            "Lucía Santos": "BNG-Persona.jpg"              # JPG
+            "Manuel Pazos": "PSOE-Persona.png",            # PNG
+            "María Ramallo": "PP-Persona.png",             # PNG
+            "Lucía Santos": "BNG-Persona.png"              # PNG
         }
         return mapeo_fondos_politicos_vis.get(politico_especifico)
     
@@ -1377,9 +1377,9 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
     elif tipo_analisis_comentarios == "👥 Comentarios sobre Políticos Locales":
         filtros_politicos = {
             "Todos los políticos": ("👥 Políticos Locales", filtrar_comentarios_por_politicos_general),
-            "Manuel Pazos": ("👤 Manuel Pazos", filtrar_comentarios_por_manuel_pazos),
-            "María Ramallo": ("👤 María Ramallo", filtrar_comentarios_por_maria_ramallo),
-            "Lucía Santos": ("👤 Lucía Santos", filtrar_comentarios_por_lucia_santos)
+            "Manuel Pazos": ("👤 Manuel Pazos - Candidato del PSOE", filtrar_comentarios_por_manuel_pazos),
+            "María Ramallo": ("👤 María Ramallo - Alcaldesa del PP", filtrar_comentarios_por_maria_ramallo),
+            "Lucía Santos": ("👤 Lucía Santos - Candidata del BNG", filtrar_comentarios_por_lucia_santos)
         }
         
         titulo_politico, funcion_filtro = filtros_politicos[politico_comentarios]
@@ -1783,7 +1783,7 @@ elif opcion == "📊 Análisis de Visualizaciones":
     elif sub_opcion == "👥 Artículos sobre Políticos Locales":
         mapeo_politicos = {
             "Todos los políticos": ("👥 Artículos sobre Políticos Locales", "Top 10 artículos que mencionan **Pazos, Ramallo, Santos**", metricas["top10_politicos"]),
-            "Manuel Pazos": ("👤 Manuel Pazos", "Top 10 artículos que mencionan **Manuel Pazos**", metricas["top10_manuel"]),
+            "Manuel Pazos - Candidato del PSOE": ("👤 Manuel Pazos - Candidato del PSOE", "Top 10 artículos que mencionan **Manuel Pazos**", metricas["top10_manuel"]),
             "María Ramallo": ("👤 María Ramallo", "Top 10 artículos que mencionan **María Ramallo o Ramallo**", metricas["top10_maria"]),
             "Lucía Santos": ("👤 Lucía Santos", "Top 10 artículos que mencionan **Lucía Santos**", metricas["top10_lucia"])
         }
@@ -1853,7 +1853,7 @@ elif opcion == "📞 Información y Contacto":
         st.markdown("""
         **Para consultas y sugerencias:**
         
-        **Creador y Desarrollador: Jaime Rodríguez**
+        🌌**Creador y Desarrollador**: **Jaime Rodríguez**
         📧 **Email**: jairod.programar@gmail.com
         📞 **Teléfono**: +34 662 675 781 (Jaime Rodríguez)
         🌐 **Web**: horizontai.streamlit.app  
