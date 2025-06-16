@@ -1377,9 +1377,9 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
     elif tipo_analisis_comentarios == "👥 Comentarios sobre Políticos Locales":
         filtros_politicos = {
             "Todos los políticos": ("👥 Políticos Locales", filtrar_comentarios_por_politicos_general),
-            "Manuel Pazos": ("👤 Manuel Pazos", filtrar_comentarios_por_manuel_pazos),
-            "María Ramallo": ("👤 María Ramallo", filtrar_comentarios_por_maria_ramallo),
-            "Lucía Santos": ("👤 Lucía Santos", filtrar_comentarios_por_lucia_santos)
+            "Manuel Pazos": ("🌹 Manuel Pazos", filtrar_comentarios_por_manuel_pazos),
+            "María Ramallo": ("🔵 María Ramallo", filtrar_comentarios_por_maria_ramallo),
+            "Lucía Santos": ("🌀 Lucía Santos", filtrar_comentarios_por_lucia_santos)
         }
         
         titulo_politico, funcion_filtro = filtros_politicos[politico_comentarios]
@@ -1649,13 +1649,13 @@ elif opcion == "🏘️ Visión General del Municipio":
         st.subheader("🗳️ Panorama Político")
         st.markdown("""
         **Principales partidos activos:**
-        - 🔴 **PSdeG-PSOE Marín**: Partido Socialista de Galicia - Partido Socialista Obrero Español
+        - 🌹 **PSdeG-PSOE Marín**: Partido Socialista de Galicia - Partido Socialista Obrero Español
         - 🔵 **PP de Marín**: Partido Popular
         - 🌀 **BNG - Marín**: Bloque Nacionalista Galego
         
         **Políticos locales relevantes:**
         - 🔵 **María Ramallo**: Alcaldesa de Marín, PP
-        - 🔴 **Manuel Pazos**: Secretario Local PSdeG-PSOE Marín 
+        - 🌹 **Manuel Pazos**: Secretario Local PSdeG-PSOE Marín 
         - 🌀 **Lucía Santos**: Secretaria Local BNG Marín
         """)
 
@@ -1783,9 +1783,9 @@ elif opcion == "📊 Análisis de Visualizaciones":
     elif sub_opcion == "👥 Artículos sobre Políticos Locales":
         mapeo_politicos = {
             "Todos los políticos": ("👥 Artículos sobre Políticos Locales", "Top 10 artículos que mencionan **Pazos, Ramallo, Santos**", metricas["top10_politicos"]),
-            "Manuel Pazos": ("👤 Manuel Pazos", "Top 10 artículos que mencionan **Manuel Pazos**", metricas["top10_manuel"]),
-            "María Ramallo": ("👤 María Ramallo", "Top 10 artículos que mencionan **María Ramallo o Ramallo**", metricas["top10_maria"]),
-            "Lucía Santos": ("👤 Lucía Santos", "Top 10 artículos que mencionan **Lucía Santos**", metricas["top10_lucia"])
+            "Manuel Pazos": ("🌹 Manuel Pazos", "Top 10 artículos que mencionan **Manuel Pazos**", metricas["top10_manuel"]),
+            "María Ramallo": ("🔵 María Ramallo", "Top 10 artículos que mencionan **María Ramallo o Ramallo**", metricas["top10_maria"]),
+            "Lucía Santos": ("🌀 Lucía Santos", "Top 10 artículos que mencionan **Lucía Santos**", metricas["top10_lucia"])
         }
         
         titulo, descripcion, datos = mapeo_politicos[politico_especifico]
