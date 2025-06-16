@@ -1694,7 +1694,7 @@ elif opcion == "🏘️ Visión General del Municipio":
 
     st.components.v1.html(
         '''
-    <div style="min-height:416px; color-scheme: dark;" id="datawrapper-vis-AOYpH">
+    <div style="min-height:436px; color-scheme: dark;" id="datawrapper-vis-AOYpH">
     <script type="text/javascript" defer 
         src="https://datawrapper.dwcdn.net/AOYpH/embed.js" 
         charset="utf-8" 
@@ -1704,7 +1704,7 @@ elif opcion == "🏘️ Visión General del Municipio":
     <noscript><img src="https://datawrapper.dwcdn.net/AOYpH/full.png" alt="" /></noscript>
     </div>
         ''',
-        height=400
+        height=500
     )
 
     st.components.v1.html(
@@ -1719,7 +1719,7 @@ elif opcion == "🏘️ Visión General del Municipio":
     <noscript><img src="https://datawrapper.dwcdn.net/cQtwV/full.png" alt="" /></noscript>
     </div>
         ''',
-        height=400
+        height=500
     )
 
 elif opcion == "📊 Análisis de Visualizaciones":
