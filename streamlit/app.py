@@ -1679,40 +1679,31 @@ elif opcion == "🏘️ Visión General del Municipio":
 
     st.components.v1.html(
         '''
-        <style>
-        /* Filtro agresivo para invertir solo el texto */
-        #datawrapper-vis-Qql67 {
-            filter: contrast(200%) brightness(150%) saturate(0.8) hue-rotate(0deg);
-        }
-        
-        /* Alternativa: usar mix-blend-mode */
-        #datawrapper-vis-Qql67::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.1);
-            mix-blend-mode: screen;
-            pointer-events: none;
-        }
-        
-        /* Forzar estilos directamente en el contenedor */
-        #datawrapper-vis-Qql67 iframe {
-            filter: invert(0) contrast(1.5) brightness(1.3) !important;
-        }
-        </style>
-        
-        <div style="min-height:559px; color-scheme: dark; position: relative;" id="datawrapper-vis-Qql67">
+        <div style="min-height:559px; color-scheme: dark;" id="datawrapper-vis-Qql67">
         <script type="text/javascript" defer 
-            src="https://datawrapper.dwcdn.net/Qql67/embed.js" 
+            src="https://datawrapper.dwcdn.net/Qql67/embed.js?dark=true&theme=dark" 
             charset="utf-8"
             data-target="#datawrapper-vis-Qql67"
-            data-dark="true">
+            data-dark="true"
+            data-theme="dark">
         </script>
         <noscript><img src="https://datawrapper.dwcdn.net/Qql67/full.png" alt="" /></noscript>
         </div>
+        
+        <style>
+        /* Forzar colores con CSS muy específico */
+        #datawrapper-vis-Qql67,
+        #datawrapper-vis-Qql67 * {
+            color: white !important;
+            fill: white !important;
+        }
+        
+        /* Filtro para mejorar contraste */
+        #datawrapper-vis-Qql67 {
+            background: #2d3748 !important;
+            filter: brightness(1.2) contrast(1.1);
+        }
+        </style>
         ''',
         height=550
     )
