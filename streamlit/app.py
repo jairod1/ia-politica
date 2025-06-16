@@ -504,48 +504,48 @@ def eliminar_fondo_inicio():
     """, unsafe_allow_html=True)
 
 def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_especifico=None):
-    """🎨 NUEVA FUNCIÓN: Determina qué fondo aplicar según las opciones seleccionadas"""
+    """Determina qué fondo aplicar según las opciones seleccionadas"""
     
     if tipo_analisis == "📊 Análisis General":
-        return "Analisis.png"                             # PNG
+        return "Analisis.png"                     # Todos los archivos son PNG
     
     elif tipo_analisis == "🗳️ Comentarios sobre Partidos Políticos":
         mapeo_fondos_partidos = {
-            "Todos los partidos": "Todos-partidos.png",   # PNG
-            "PSdeG-PSOE de Marín": "PSOE-Partido.png",    # PNG
-            "Partido Popular de Marín": "PP-Partido.jpg", # JPG
-            "BNG - Marín": "BNG-Partido.jpg"              # JPG
+            "Todos los partidos": "Todos-partidos.png",    
+            "PSdeG-PSOE de Marín": "PSOE-Persona.png",     
+            "Partido Popular de Marín": "PP-Persona.png",  
+            "BNG - Marín": "BNG-Persona.png"               
         }
         return mapeo_fondos_partidos.get(partido_especifico)
     
     elif tipo_analisis == "👥 Comentarios sobre Políticos Locales":
         mapeo_fondos_politicos = {
-            "Todos los políticos": "Todos-candidatos.png",  # PNG
-            "Manuel Pazos": "PSOE-Persona.png",             # PNG
-            "María Ramallo": "PP-Persona.png",              # PNG
-            "Lucía Santos": "BNG-Persona.png"               # PNG
+            "Todos los políticos": "Todos-candidatos.png",   
+            "Manuel Pazos": "PSOE-Persona.png",              
+            "María Ramallo": "PP-Persona.png",               
+            "Lucía Santos": "BNG-Persona.png"                
         }
         return mapeo_fondos_politicos.get(politico_especifico)
     
-    # 🎨 NUEVA LÓGICA: Fondos para Análisis de Visualizaciones
+    # Fondos para Análisis de Visualizaciones - Todos los archivos son PNG
     elif tipo_analisis == "📈 Artículos más Populares":
-        return "Popularidad.png"                          # PNG 
+        return "Popularidad.png"                            
     
     elif tipo_analisis == "🏛️ Artículos sobre Partidos Políticos":
         mapeo_fondos_partidos_vis = {
-            "Todos los partidos": "Todos-partidos.png",   # PNG
-            "PSdeG-PSOE de Marín": "PSOE-Partido.png",    # PNG
-            "Partido Popular de Marín": "PP-Partido.jpg", # JPG
-            "BNG - Marín": "BNG-Partido.jpg"              # JPG
+            "Todos los partidos": "Todos-partidos.png",    
+            "PSdeG-PSOE de Marín": "PSOE-Persona.png",     
+            "Partido Popular de Marín": "PP-Persona.png",  
+            "BNG - Marín": "BNG-Persona.png"               
         }
         return mapeo_fondos_partidos_vis.get(partido_especifico)
     
     elif tipo_analisis == "👥 Artículos sobre Políticos Locales":
         mapeo_fondos_politicos_vis = {
-            "Todos los políticos": "Todos-candidatos.png", # PNG
-            "Manuel Pazos": "PSOE-Persona.png",            # PNG
-            "María Ramallo": "PP-Persona.png",             # PNG
-            "Lucía Santos": "BNG-Persona.png"              # PNG
+            "Todos los políticos": "Todos-candidatos.png",  
+            "Manuel Pazos": "PSOE-Persona.png",             
+            "María Ramallo": "PP-Persona.png",              
+            "Lucía Santos": "BNG-Persona.png"               
         }
         return mapeo_fondos_politicos_vis.get(politico_especifico)
     
