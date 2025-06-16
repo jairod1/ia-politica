@@ -68,14 +68,11 @@ except ImportError as e:
     st.stop()
 
 def aplicar_fondo_inicio():
-    """Aplica la imagen de fondo desde GitHub solo en la página de Inicio - CORREGIDO"""
+    """Aplica la imagen de fondo desde GitHub solo en la página de Inicio - CORREGIDO PARA MÓVILES"""
     
     imagen_url = "https://raw.githubusercontent.com/jairod1/ia-politica/master/streamlit/images/Logotipo-HorizontAI.jpg"
     
-    zoom_porcentual = "100%"         
-    posicion_horizontal = "100%"     
-    posicion_vertical = "100%"       
-
+    # 🔧 USAR LAS MISMAS CONFIGURACIONES QUE FUNCIONAN EN LAS OTRAS IMÁGENES
     st.markdown(f"""
     <style>
     /* ELIMINAR TODOS LOS FONDOS BLANCOS SUPERIORES */
@@ -106,12 +103,12 @@ def aplicar_fondo_inicio():
         background-color: transparent !important;
     }}
     
-    /* Fondo de la aplicación */
+    /* 🔧 FONDO CORREGIDO: USAR LAS MISMAS CONFIGURACIONES QUE LAS OTRAS IMÁGENES */
     [data-testid="stAppViewContainer"] {{
         background-image: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.25)), 
                         url('{imagen_url}');
-        background-size: {zoom_porcentual} auto;
-        background-position: {posicion_horizontal} {posicion_vertical};
+        background-size: cover;  /* 🔧 CAMBIO: cover como las otras imágenes */
+        background-position: center center;  /* 🔧 CAMBIO: center como las otras */
         background-repeat: no-repeat;
         background-attachment: fixed;
         min-height: 100vh;
@@ -253,18 +250,8 @@ def aplicar_fondo_inicio():
         text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important;
     }}
 
-        /* COLUMNA TÍTULO MÁS ESTRECHA */
-    .stDataFrame th:first-child,
-    .stDataFrame td:first-child {{
-        max-width: 250px !important;
-        width: 250px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        white-space: nowrap !important;
-    }}
-    </style>
-    """, unsafe_allow_html=True)
-
+        """, unsafe_allow_html=True)
+    
 def aplicar_fondo_comentarios_especifico(imagen_nombre_con_extension):
     """🎨 NUEVA FUNCIÓN: Aplica fondo específico para análisis de comentarios"""
     
@@ -474,16 +461,6 @@ def aplicar_fondo_comentarios_especifico(imagen_nombre_con_extension):
     .stTable * {{
         color: #ffffff !important;
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8) !important;
-    }}
-
-        /* COLUMNA TÍTULO MÁS ESTRECHA */
-    .stDataFrame th:first-child,
-    .stDataFrame td:first-child {{
-        max-width: 250px !important;
-        width: 250px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        white-space: nowrap !important;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -1709,20 +1686,20 @@ elif opcion == "🏘️ Visión General del Municipio":
         <noscript><img src="https://datawrapper.dwcdn.net/Qql67/full.png" alt="" /></noscript>
         </div>
         ''',
-        height=550
+        height=600
     )
 
     st.components.v1.html(
         '''
-        <div style="min-height:416px; color-scheme: dark;" id="datawrapper-vis-AOYpH">
-        <script type="text/javascript" defer 
-            src="https://datawrapper.dwcdn.net/AOYpH/embed.js" 
-            charset="utf-8" 
-            data-target="#datawrapper-vis-AOYpH"
-            data-dark="true">
-        </script>
-        <noscript><img src="https://datawrapper.dwcdn.net/AOYpH/full.png" alt="" /></noscript>
-        </div>
+    <div style="min-height:416px; color-scheme: dark;" id="datawrapper-vis-AOYpH">
+    <script type="text/javascript" defer 
+        src="https://datawrapper.dwcdn.net/AOYpH/embed.js" 
+        charset="utf-8" 
+        data-target="#datawrapper-vis-AOYpH"
+        data-dark="true">
+    </script>
+    <noscript><img src="https://datawrapper.dwcdn.net/AOYpH/full.png" alt="" /></noscript>
+    </div>
         ''',
         height=630
     )
