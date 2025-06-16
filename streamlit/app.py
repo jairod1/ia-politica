@@ -253,19 +253,66 @@ def aplicar_fondo_inicio():
         text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important;
     }}
 
-    /* SOLO para botones de enlace */
-    .stLinkButton > button {{
-        color: #000000 !important;
-        background-color: rgba(255, 255, 255, 0.9) !important;
-        border: 1px solid #000000 !important;
-        font-weight: bold !important;
-        text-shadow: none !important;
+        /* TABLAS MÁS COMPACTAS */
+    .stDataFrame {{
+        font-size: 0.85rem !important;
     }}
 
-    .stLinkButton > button:hover {{
-        color: #000000 !important;
-        background-color: #ffffff !important;
-        border: 2px solid #000000 !important;
+    .stDataFrame th,
+    .stDataFrame td {{
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.8rem !important;
+        white-space: nowrap !important;
+    }}
+
+    .stDataFrame th {{
+        font-size: 0.75rem !important;
+        font-weight: 600 !important;
+    }}
+
+    /* Columnas específicas más estrechas */
+    .stDataFrame th:nth-child(2), /* Vistas */
+    .stDataFrame td:nth-child(2) {{
+        max-width: 60px !important;
+        width: 60px !important;
+    }}
+
+    .stDataFrame th:nth-child(3), /* Idioma */
+    .stDataFrame td:nth-child(3) {{
+        max-width: 80px !important;
+        width: 80px !important;
+    }}
+
+    .stDataFrame th:nth-child(4), /* Tono */
+    .stDataFrame td:nth-child(4) {{
+        max-width: 85px !important;
+        width: 85px !important;
+    }}
+
+    .stDataFrame th:nth-child(6), /* Confianza */
+    .stDataFrame td:nth-child(6) {{
+        max-width: 70px !important;
+        width: 70px !important;
+    }}
+
+    .stDataFrame th:nth-child(7), /* Intensidad */
+    .stDataFrame td:nth-child(7) {{
+        max-width: 70px !important;
+        width: 70px !important;
+    }}
+
+    .stDataFrame th:nth-child(9), /* Fecha */
+    .stDataFrame td:nth-child(9) {{
+        max-width: 85px !important;
+        width: 85px !important;
+    }}
+
+    /* Título más ancho pero controlado */
+    .stDataFrame th:nth-child(1),
+    .stDataFrame td:nth-child(1) {{
+        max-width: 300px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -481,19 +528,66 @@ def aplicar_fondo_comentarios_especifico(imagen_nombre_con_extension):
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8) !important;
     }}
 
-        /* SOLO para botones de enlace */
-    .stLinkButton > button {{
-        color: #000000 !important;
-        background-color: rgba(255, 255, 255, 0.9) !important;
-        border: 1px solid #000000 !important;
-        font-weight: bold !important;
-        text-shadow: none !important;
+        /* TABLAS MÁS COMPACTAS */
+    .stDataFrame {{
+        font-size: 0.85rem !important;
     }}
 
-    .stLinkButton > button:hover {{
-        color: #000000 !important;
-        background-color: #ffffff !important;
-        border: 2px solid #000000 !important;
+    .stDataFrame th,
+    .stDataFrame td {{
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.8rem !important;
+        white-space: nowrap !important;
+    }}
+
+    .stDataFrame th {{
+        font-size: 0.75rem !important;
+        font-weight: 600 !important;
+    }}
+
+    /* Columnas específicas más estrechas */
+    .stDataFrame th:nth-child(2), /* Vistas */
+    .stDataFrame td:nth-child(2) {{
+        max-width: 60px !important;
+        width: 60px !important;
+    }}
+
+    .stDataFrame th:nth-child(3), /* Idioma */
+    .stDataFrame td:nth-child(3) {{
+        max-width: 80px !important;
+        width: 80px !important;
+    }}
+
+    .stDataFrame th:nth-child(4), /* Tono */
+    .stDataFrame td:nth-child(4) {{
+        max-width: 85px !important;
+        width: 85px !important;
+    }}
+
+    .stDataFrame th:nth-child(6), /* Confianza */
+    .stDataFrame td:nth-child(6) {{
+        max-width: 70px !important;
+        width: 70px !important;
+    }}
+
+    .stDataFrame th:nth-child(7), /* Intensidad */
+    .stDataFrame td:nth-child(7) {{
+        max-width: 70px !important;
+        width: 70px !important;
+    }}
+
+    .stDataFrame th:nth-child(9), /* Fecha */
+    .stDataFrame td:nth-child(9) {{
+        max-width: 85px !important;
+        width: 85px !important;
+    }}
+
+    /* Título más ancho pero controlado */
+    .stDataFrame th:nth-child(1),
+    .stDataFrame td:nth-child(1) {{
+        max-width: 300px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -1724,15 +1818,15 @@ elif opcion == "🏘️ Visión General del Municipio":
 
     st.components.v1.html(
         '''
-    <div style="min-height:416px; color-scheme: dark;" id="datawrapper-vis-AOYpH">
-    <script type="text/javascript" defer 
-        src="https://datawrapper.dwcdn.net/AOYpH/embed.js" 
-        charset="utf-8" 
-        data-target="#datawrapper-vis-AOYpH"
-        data-dark="true">
-    </script>
-    <noscript><img src="https://datawrapper.dwcdn.net/AOYpH/full.png" alt="" /></noscript>
-    </div>
+        <div style="min-height:416px; color-scheme: dark;" id="datawrapper-vis-AOYpH">
+        <script type="text/javascript" defer 
+            src="https://datawrapper.dwcdn.net/AOYpH/embed.js" 
+            charset="utf-8" 
+            data-target="#datawrapper-vis-AOYpH"
+            data-dark="true">
+        </script>
+        <noscript><img src="https://datawrapper.dwcdn.net/AOYpH/full.png" alt="" /></noscript>
+        </div>
         ''',
         height=630
     )
