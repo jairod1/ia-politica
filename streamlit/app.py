@@ -1704,6 +1704,22 @@ elif opcion == "🏘️ Visión General del Municipio":
         height=630
     )
 
+    st.markdown("""
+    <style>
+    /* Eliminar espacios extra en componentes HTML */
+    .stHtml {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    
+    /* Eliminar espacios en la parte inferior de la página */
+    .main .block-container {
+        padding-bottom: 1rem !important;
+        margin-bottom: 0 !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 elif opcion == "📊 Análisis de Visualizaciones":
     try:
         with st.spinner("📊 Cargando métricas de visualización..."):
