@@ -573,19 +573,19 @@ section[data-testid="stSidebar"] * {
 section[data-testid="stSidebar"] h1,
 section[data-testid="stSidebar"] h2,
 section[data-testid="stSidebar"] h3 {
-    color: #ff6800 !important; /* Rojo para títulos */
+    color: #FF6800 !important; /* Rojo para títulos */
     font-weight: bold;
 }
 
 section[data-testid="stSidebar"] p,
 section[data-testid="stSidebar"] .css-1d391kg {
-    color: #B3D9FF !important; /* Blanco para texto descriptivo */
+    color: #FFFFFF !important; /* Blanco para texto descriptivo */
     font-size: 0.9em;
 }
 
 /* Texto de opciones seleccionadas en azul */
 div[data-baseweb="radio"] input:checked + div {
-    color: #B3D9FF !important;
+    color: #00B0F0 !important;
 }
 
 /* Subrayado del título principal (DEFAULT) */
