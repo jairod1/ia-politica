@@ -510,8 +510,8 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
         mapeo_fondos_partidos = {
             "Todos los partidos": "Todos-partidos.png",    
             "🌹PSdeG-PSOE de Marín": "PSOE-Partido.png",     
-            "Partido Popular de Marín": "PP-Partido.jpg",  
-            "BNG - Marín": "BNG-Partido.png"               
+            "🔵Partido Popular de Marín": "PP-Partido.jpg",  
+            "🌀BNG - Marín": "BNG-Partido.png"               
         }
         return mapeo_fondos_partidos.get(partido_especifico)
     
@@ -519,7 +519,7 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
         mapeo_fondos_politicos = {
             "Todos los políticos": "Todos-candidatos.png",   
             "🌹Manuel Pazos": "PSOE-Partido.png",              
-            "María Ramallo": "PP-Partido.jpg",               
+            "🔵María Ramallo": "PP-Partido.jpg",               
             "Lucía Santos": "BNG-Partido.png"                
         }
         return mapeo_fondos_politicos.get(politico_especifico)
@@ -532,8 +532,8 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
         mapeo_fondos_partidos_vis = {
             "Todos los partidos": "Todos-partidos.png",    
             "🌹PSdeG-PSOE de Marín": "PSOE-Partido.png",     
-            "Partido Popular de Marín": "PP-Partido.jpg",  
-            "BNG - Marín": "BNG-Partido.png"               
+            "🔵Partido Popular de Marín": "PP-Partido.jpg",  
+            "🌀BNG - Marín": "BNG-Partido.png"               
         }
         return mapeo_fondos_partidos_vis.get(partido_especifico)
     
@@ -541,7 +541,7 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
         mapeo_fondos_politicos_vis = {
             "Todos los políticos": "Todos-candidatos.png",  
             "🌹Manuel Pazos": "PSOE-Partido.png",             
-            "María Ramallo": "PP-Partido.jpg",              
+            "🔵María Ramallo": "PP-Partido.jpg",              
             "Lucía Santos": "BNG-Partido.png"               
         }
         return mapeo_fondos_politicos_vis.get(politico_especifico)
@@ -941,8 +941,8 @@ if opcion == "📊 Análisis de Visualizaciones":
             options=[
                 "Todos los partidos", 
                 "🌹PSdeG-PSOE de Marín", 
-                "Partido Popular de Marín", 
-                "BNG - Marín"
+                "🔵Partido Popular de Marín", 
+                "🌀BNG - Marín"
             ]
         )
     
@@ -953,7 +953,7 @@ if opcion == "📊 Análisis de Visualizaciones":
             options=[
                 "Todos los políticos", 
                 "🌹Manuel Pazos", 
-                "María Ramallo", 
+                "🔵María Ramallo", 
                 "Lucía Santos"
             ]
         )
@@ -1003,8 +1003,8 @@ elif opcion == "💬 Análisis de Comentarios":
             options=[
                 "Todos los partidos", 
                 "🌹PSdeG-PSOE de Marín", 
-                "Partido Popular de Marín", 
-                "BNG - Marín"
+                "🔵Partido Popular de Marín", 
+                "🌀BNG - Marín"
             ]
         )
 
@@ -1015,7 +1015,7 @@ elif opcion == "💬 Análisis de Comentarios":
             options=[
                 "Todos los políticos", 
                 "🌹Manuel Pazos", 
-                "María Ramallo", 
+                "🔵María Ramallo", 
                 "Lucía Santos"
             ]
         )
@@ -1258,8 +1258,8 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
         filtros_partidos = {
             "Todos los partidos": ("🏛️ Partidos Políticos", filtrar_comentarios_por_partidos_general),
             "🌹PSdeG-PSOE de Marín": ("🌹 PSdeG-PSOE", filtrar_comentarios_por_psoe),
-            "Partido Popular de Marín": ("🔵 Partido Popular", filtrar_comentarios_por_pp),
-            "BNG - Marín": ("🌀 BNG", filtrar_comentarios_por_bng)
+            "🔵Partido Popular de Marín": ("🔵 Partido Popular", filtrar_comentarios_por_pp),
+            "🌀BNG - Marín": ("🌀 BNG", filtrar_comentarios_por_bng)
         }
         
         titulo_partido, funcion_filtro = filtros_partidos[partido_comentarios]
@@ -1373,7 +1373,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
         filtros_politicos = {
             "Todos los políticos": ("👥 Políticos Locales", filtrar_comentarios_por_politicos_general),
             "🌹Manuel Pazos": ("🌹 Manuel Pazos", filtrar_comentarios_por_manuel_pazos),
-            "María Ramallo": ("🔵 María Ramallo", filtrar_comentarios_por_maria_ramallo),
+            "🔵María Ramallo": ("🔵 María Ramallo", filtrar_comentarios_por_maria_ramallo),
             "Lucía Santos": ("🌀 Lucía Santos", filtrar_comentarios_por_lucia_santos)
         }
         
@@ -1750,8 +1750,8 @@ elif opcion == "📊 Análisis de Visualizaciones":
         mapeo_partidos = {
             "Todos los partidos": ("🏛️ Artículos sobre Partidos Políticos 🏛️", "Top 10 artículos que mencionan **PP, PSOE, BNG**", metricas["top10_partidos"]),
             "🌹PSdeG-PSOE de Marín": ("🌹 PSdeG-PSOE Marín 🌹", "Top 10 artículos que mencionan **PSOE o Partido Socialista**", metricas["top10_psoe"]),
-            "Partido Popular de Marín": ("🔵 Partido Popular de Marín 🔵", "Top 10 artículos que mencionan **PP o Partido Popular**", metricas["top10_pp"]),
-            "BNG - Marín": ("🌀 BNG - Marín 🌀", "Top 10 artículos que mencionan **BNG o Bloque**", metricas["top10_bng"])
+            "🔵Partido Popular de Marín": ("🔵 Partido Popular de Marín 🔵", "Top 10 artículos que mencionan **PP o Partido Popular**", metricas["top10_pp"]),
+            "🌀BNG - Marín": ("🌀 BNG - Marín 🌀", "Top 10 artículos que mencionan **BNG o Bloque**", metricas["top10_bng"])
         }
         
         titulo, descripcion, datos = mapeo_partidos[partido_especifico]
@@ -1773,7 +1773,7 @@ elif opcion == "📊 Análisis de Visualizaciones":
         mapeo_politicos = {
             "Todos los políticos": ("👥 Artículos sobre Políticos Locales 👥", "Top 10 artículos que mencionan **Pazos, Ramallo, Santos**", metricas["top10_politicos"]),
             "🌹Manuel Pazos": ("🌹 Manuel Pazos 🌹", "Top 10 artículos que mencionan **Manuel Pazos**", metricas["top10_manuel"]),
-            "María Ramallo": ("🔵 María Ramallo 🔵", "Top 10 artículos que mencionan **María Ramallo o Ramallo**", metricas["top10_maria"]),
+            "🔵María Ramallo": ("🔵 María Ramallo 🔵", "Top 10 artículos que mencionan **María Ramallo o Ramallo**", metricas["top10_maria"]),
             "Lucía Santos": ("🌀 Lucía Santos 🌀", "Top 10 artículos que mencionan **Lucía Santos**", metricas["top10_lucia"])
         }
         
