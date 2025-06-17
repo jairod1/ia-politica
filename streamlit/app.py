@@ -585,7 +585,7 @@ section[data-testid="stSidebar"] .css-1d391kg {
 
 /* Texto de opciones seleccionadas en azul */
 div[data-baseweb="radio"] input:checked + div {
-    color: #00B0F0 !important;
+    color: #B3D9FF !important;
 }
 
 /* Subrayado del título principal (DEFAULT) */
