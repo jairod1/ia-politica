@@ -884,8 +884,6 @@ def procesar_comentarios_individuales_con_sentimientos(df, analizador, top_n=20,
 st.markdown('<h1 class="titulo-sin-linea">🏛️HorizontAI🏛️</h1>', unsafe_allow_html=True)
 st.markdown('<h1 class="titulo-sin-linea">Analizador IA de sentimientos hacia políticos</h1>', unsafe_allow_html=True)
 
-st.divider()
-
 # Sidebar con opciones principales
 st.sidebar.title("🧭 Menú principal ↙️")
 
