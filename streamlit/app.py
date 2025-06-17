@@ -1571,13 +1571,13 @@ if opcion == "🏠 Inicio":
     
     with col1:
         st.markdown("""
-        #### 📊 Funcionalidades Principales:
+        #### 📊 Funciones Principales:
         
         - **🧠 Análisis Político**: Presentación política básica de tu localidad  
         - **📈 Métricas de Visualización**: Los artículos más leídos y con más impacto sobre ciudadanías locales
-        - **🔍 Búsqueda Avanzada**: Filtros de comentarios por términos políticos específicos (partidos y personas)
-        - **🗺️ Análisis Geográfico**: Comentarios globales, de O Morrazo/Pontevedra y específicos de Marín
         - **📋 Estadísticas de Sentimientos**: Gráficos y estadísticas en funcion de los sentimientos y visualizaciones
+        - **🔍 Filtros Avanzados**: Filtros de comentarios por términos políticos específicos (partidos y personas)
+        - **🗺️ Análisis Geográfico**: Comentarios globales, de O Morrazo/Pontevedra y específicos de Marín
         - **🔢 Datos de Prueba**: Tomados de la localidad de Marín, Pontevedra, Galicia
         """)
 
@@ -1589,7 +1589,6 @@ if opcion == "🏠 Inicio":
             - **🌍 Detección de Idioma**: Reconoce gallego y castellano
             - **😊 Tono General**: Clasifica como positivo, negativo o neutral
             - **🎭 Emociones Granulares**: Detecta 10 emociones específicas
-            - **📝 Contexto Emocional**: Celebratorio, informativo, etc.
             - **🔥 Intensidad Emocional**: Escala del 1 (menos intenso) al 5
             - **📂 Clasificación Temática**: 9 categorías de contenido
             """)
@@ -1629,8 +1628,8 @@ if opcion == "🏠 Inicio":
     st.divider()    
     st.markdown("### 📚 Más Información 📚")
     st.info("🔍 **Si quieres conocer más detalles técnicos** sobre el " \
-    "funcionamiento del sistema, "
-    "ve a la pestaña **📞 Info. Técnica y Contacto**")
+    "funcionamiento del sistema, ve a la pestaña"
+    "**📞 Info. Técnica y Contacto**")
         
 elif opcion == "🏘️ Visión General del Municipio":
 
