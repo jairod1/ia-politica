@@ -1596,6 +1596,8 @@ if opcion == "🏠 Inicio":
             - **📂 Clasificación Temática**: 9 categorías de contenido
             """)
     
+    st.divider()
+    
     # Mostrar estado del analizador SOLO en la página de Inicio, después de los párrafos principales
     col1, col2 = st.columns([3, 1])
 
@@ -1852,10 +1854,9 @@ elif opcion == "📞 Info. Técnica y Contacto":
         st.markdown("""
         **Para consultas y sugerencias:**
         
-        - 🌌**Creador y Desarrollador**: **Jaime Rodríguez**
+        - 🌌 **Creador y Desarrollador**: **Jaime Rodríguez**
+        - 🌐 **Proyecto original para**: **Evolve Academy** 
         - 📧 **Email**: jairod.programar@gmail.com
-        - 📞 **Teléfono**: +34 662 675 781 (Jaime Rodríguez)
-        - 🌐 **Web**: horizontai.streamlit.app  
         - 📱 **GitHub**: github.com/jairod1  
         - 📋 **LinkedIn**: https://www.linkedin.com/in/jaime-rodríguez-gonzález-a54526205/
         """)
