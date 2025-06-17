@@ -1621,7 +1621,7 @@ if opcion == "🏠 Inicio":
     
 elif opcion == "🏘️ Visión General del Municipio":
 
-    st.title("Visión General del Municipio de Marín")
+    st.title("⛪Visión General del Municipio de Marín⛪")
     
     col1, col2 = st.columns(2)
     
@@ -1703,22 +1703,6 @@ elif opcion == "🏘️ Visión General del Municipio":
         ''',
         height=450
     )
-
-    # st.markdown("""
-    # <style>
-    # /* Eliminar espacios extra en componentes HTML */
-    # .stHtml {
-    #     margin-bottom: 0 !important;
-    #     padding-bottom: 0 !important;
-    # }
-    
-    # /* Eliminar espacios en la parte inferior de la página */
-    # .main .block-container {
-    #     padding-bottom: 1rem !important;
-    #     margin-bottom: 0 !important;
-    # }
-    # </style>
-    # """, unsafe_allow_html=True)
 
 elif opcion == "📊 Análisis de Visualizaciones":
     try:
@@ -1871,8 +1855,28 @@ elif opcion == "📞 Información y Contacto":
         📞 **Teléfono**: +34 662 675 781 (Jaime Rodríguez)
         🌐 **Web**: horizontai.streamlit.app  
         📱 **GitHub**: github.com/jairod1  
-        📋 **Linkedin**: https://www.linkedin.com/in/jaime-rodríguez-gonzález-a54526205/
+        📋 **LinkedIn**: https://www.linkedin.com/in/jaime-rodríguez-gonzález-a54526205/
         """)
+    
+        st.markdown("""
+        <style>
+        /* Mejorar alineación en columnas */
+        [data-testid="column"] {
+            padding: 0 1rem;
+        }
+
+        /* Asegurar que los enlaces no se rompan */
+        [data-testid="column"] a {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* Mejor espaciado en párrafos */
+        .main .block-container p {
+            margin-bottom: 0.5rem;
+        }
+        </style>
+        """, unsafe_allow_html=True)
 
 # Footer
 st.divider()
