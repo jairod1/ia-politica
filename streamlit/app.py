@@ -1653,7 +1653,7 @@ elif opcion == "🏘️ Visión General del Municipio":
         margin-bottom: 1rem;
         display: inline-block;
     '>
-    🗺️ Entorno político de MARÍN 🗺️
+    🗺️ Entorno político de MARÍNn 🗺️
     </h3>
     """, unsafe_allow_html=True)
 
