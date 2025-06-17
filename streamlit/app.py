@@ -1646,9 +1646,9 @@ elif opcion == "🏘️ Visión General del Municipio":
 
 
     st.markdown("""
-        <h3 style='text-align: center; color: white;'>
+        <h2 style='text-align: center; color: white;'>
         🗺️ Entorno político inmediato de MARÍN 🗺️
-        </h3>
+        </h2>
         """, unsafe_allow_html=True)
 
 
