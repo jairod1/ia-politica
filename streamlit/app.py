@@ -1609,18 +1609,18 @@ if opcion == "🏠 Inicio":
 
 elif opcion == "🏘️ Visión General del Municipio":
 
-    st.title("⛪Visión General del Municipio de Marín⛪")
+    st.title("⛪Visión General del Municipio de MARÍN⛪")
     
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader('🏘️Información general')
+        st.subheader('Información general')
         st.markdown("""
-        **📍 Municipio:** Marín, Pontevedra  
-        **👥 Población:** ~25.000 habitantes  
-        **🏘️ Comarca:** O Morrazo  
-        **🌍 Provincia:** Pontevedra, Galicia  
-        **⚓ Características:** Villa marinera con tradición naval y comercial
+        **Municipio:** Marín, Pontevedra  
+        **Población:** ~25.000 habitantes  
+        **Comarca:** O Morrazo  
+        **Provincia:** Pontevedra, Galicia  
+        **Características:** Villa marinera con tradición naval y comercial
         """)
         
         st.markdown("""
@@ -1631,7 +1631,7 @@ elif opcion == "🏘️ Visión General del Municipio":
         """, unsafe_allow_html=True)
 
     with col2:
-        st.subheader("🗳️ Panorama Político")
+        st.subheader("Panorama Político")
         st.markdown("""
         **Principales partidos activos:**
         - 🌹 **PSdeG-PSOE Marín**: Partido Socialista de Galicia - Partido Socialista Obrero Español
