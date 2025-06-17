@@ -1645,7 +1645,7 @@ elif opcion == "🏘️ Visión General del Municipio":
         """)
 
 
-    st.title("🗺️ Entorno político inmediato de MARÍN 🗺️")
+    st.subheader("🗺️ Entorno político inmediato de MARÍN 🗺️")
 
     st.components.v1.html(
         '''
