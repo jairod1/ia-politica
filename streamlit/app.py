@@ -1628,9 +1628,7 @@ if opcion == "🏠 Inicio":
     st.divider()    
     st.markdown("### 📚 Más Información 📚")
     st.info("🔍 **Si quieres conocer más detalles técnicos** sobre el " \
-    "funcionamiento del sistema, ve a la pestaña"
-    
-    "**📞 Info. Técnica y Contacto**")
+    "funcionamiento del sistema, ve a la pestaña\n\n**📞 Info. Técnica y Contacto**")
         
 elif opcion == "🏘️ Visión General del Municipio":
 
