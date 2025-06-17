@@ -1566,33 +1566,7 @@ if opcion == "🏠 Inicio":
     """)
 
     st.divider()
-    
-    col1, col2 = st.columns([2, 1])
-    
-    with col1:
-        st.markdown("""
-        #### 📊 Funciones Principales:
         
-        - **🧠 Análisis Político**: Presentación política básica de tu localidad  
-        - **📈 Métricas de Visualización**: Los artículos más leídos y con más impacto sobre ciudadanías locales
-        - **📋 Estadísticas de Sentimientos**: Gráficos y estadísticas en funcion de los sentimientos y visualizaciones
-        - **🔍 Filtros Avanzados**: Filtros de comentarios por términos políticos específicos (partidos y personas)
-        - **🗺️ Análisis Geográfico**: Comentarios globales, de O Morrazo/Pontevedra y específicos de Marín
-        - **🔢 Datos de Prueba**: Tomados de la localidad de Marín, Pontevedra, Galicia
-        """)
-
-    with col2:      
-        if SENTIMENTS_AVAILABLE:
-            st.markdown("""
-            #### 🧠 Análisis Avanzado con IA Emocional:
-            
-            - **🌍 Detección de Idioma**: Reconoce gallego y castellano
-            - **😊 Tono General**: Clasifica como positivo, negativo o neutral
-            - **🎭 Emociones Granulares**: Detecta 10 emociones específicas
-            - **🔥 Intensidad Emocional**: Escala del 1 (menos intenso) al 5
-            - **📂 Clasificación Temática**: 9 categorías de contenido
-            """)
-    
     # Mostrar estado del analizador
     col1, col2 = st.columns([3, 1])
 
@@ -1862,6 +1836,32 @@ elif opcion == "📞 Info. Técnica y Contacto":
         - 📱 **GitHub**: github.com/jairod1  
         - 📋 **LinkedIn**: https://www.linkedin.com/in/jaime-rodríguez-gonzález-a54526205/
         """)
+
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        st.markdown("""
+        #### 📊 Funciones Principales:
+        
+        - **🧠 Análisis Político**: Presentación política básica de tu localidad  
+        - **📈 Métricas de Visualización**: Los artículos más leídos y con más impacto sobre ciudadanías locales
+        - **📋 Estadísticas de Sentimientos**: Gráficos y estadísticas en funcion de los sentimientos y visualizaciones
+        - **🔍 Filtros Avanzados**: Filtros de comentarios por términos políticos específicos (partidos y personas)
+        - **🗺️ Análisis Geográfico**: Comentarios globales, de O Morrazo/Pontevedra y específicos de Marín
+        - **🔢 Datos de Prueba**: Tomados de la localidad de Marín, Pontevedra, Galicia
+        """)
+
+    with col2:      
+        if SENTIMENTS_AVAILABLE:
+            st.markdown("""
+            #### 🧠 Análisis Avanzado con IA Emocional:
+            
+            - **🌍 Detección de Idioma**: Reconoce gallego y castellano
+            - **😊 Tono General**: Clasifica como positivo, negativo o neutral
+            - **🎭 Emociones Granulares**: Detecta 10 emociones específicas
+            - **🔥 Intensidad Emocional**: Escala del 1 (menos intenso) al 5
+            - **📂 Clasificación Temática**: 9 categorías de contenido
+            """)
 
     # 🔧 NUEVA SECCIÓN: Explicación de parámetros del análisis
     st.divider()
