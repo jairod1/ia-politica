@@ -1593,8 +1593,6 @@ if opcion == "🏠 Inicio":
             - **🔥 Intensidad Emocional**: Escala del 1 (menos intenso) al 5
             - **📂 Clasificación Temática**: 9 categorías de contenido
             """)
-
-    st.divider()
     
     # Mostrar estado del analizador
     col1, col2 = st.columns([3, 1])
@@ -1628,12 +1626,12 @@ if opcion == "🏠 Inicio":
             🧠 IA Emocional: No disponible
             """)
 
-    st.markdown("---")
-    st.markdown("### 📚 Más Información")
-    st.info("🔍 **¿Quieres saber más detalles técnicos?** "
-    "Ve a la pestaña **📞 Info. Técnica y Contacto** para información completa " \
-    "sobre el funcionamiento del sistema.")
-    
+    st.divider()    
+    st.markdown("### 📚 Más Información 📚")
+    st.info("🔍 **Si quieres conocer más detalles técnicos** sobre el " \
+    "funcionamiento del sistema, "
+    "ve a la pestaña **📞 Info. Técnica y Contacto**")
+        
 elif opcion == "🏘️ Visión General del Municipio":
 
     st.title("⛪Visión General del Municipio de Marín⛪")
