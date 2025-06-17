@@ -520,7 +520,7 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
             "Todos los políticos": "Todos-candidatos.png",   
             "🌹Manuel Pazos": "PSOE-Partido.png",              
             "🔵María Ramallo": "PP-Partido.jpg",               
-            "Lucía Santos": "BNG-Partido.png"                
+            "🌀Lucía Santos": "BNG-Partido.png"                
         }
         return mapeo_fondos_politicos.get(politico_especifico)
     
@@ -542,7 +542,7 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
             "Todos los políticos": "Todos-candidatos.png",  
             "🌹Manuel Pazos": "PSOE-Partido.png",             
             "🔵María Ramallo": "PP-Partido.jpg",              
-            "Lucía Santos": "BNG-Partido.png"               
+            "🌀Lucía Santos": "BNG-Partido.png"               
         }
         return mapeo_fondos_politicos_vis.get(politico_especifico)
     
@@ -954,7 +954,7 @@ if opcion == "📊 Análisis de Visualizaciones":
                 "Todos los políticos", 
                 "🌹Manuel Pazos", 
                 "🔵María Ramallo", 
-                "Lucía Santos"
+                "🌀Lucía Santos"
             ]
         )
 
@@ -1016,7 +1016,7 @@ elif opcion == "💬 Análisis de Comentarios":
                 "Todos los políticos", 
                 "🌹Manuel Pazos", 
                 "🔵María Ramallo", 
-                "Lucía Santos"
+                "🌀Lucía Santos"
             ]
         )
 
@@ -1374,7 +1374,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
             "Todos los políticos": ("👥 Políticos Locales", filtrar_comentarios_por_politicos_general),
             "🌹Manuel Pazos": ("🌹 Manuel Pazos", filtrar_comentarios_por_manuel_pazos),
             "🔵María Ramallo": ("🔵 María Ramallo", filtrar_comentarios_por_maria_ramallo),
-            "Lucía Santos": ("🌀 Lucía Santos", filtrar_comentarios_por_lucia_santos)
+            "🌀Lucía Santos": ("🌀 Lucía Santos", filtrar_comentarios_por_lucia_santos)
         }
         
         titulo_politico, funcion_filtro = filtros_politicos[politico_comentarios]
@@ -1774,7 +1774,7 @@ elif opcion == "📊 Análisis de Visualizaciones":
             "Todos los políticos": ("👥 Artículos sobre Políticos Locales 👥", "Top 10 artículos que mencionan **Pazos, Ramallo, Santos**", metricas["top10_politicos"]),
             "🌹Manuel Pazos": ("🌹 Manuel Pazos 🌹", "Top 10 artículos que mencionan **Manuel Pazos**", metricas["top10_manuel"]),
             "🔵María Ramallo": ("🔵 María Ramallo 🔵", "Top 10 artículos que mencionan **María Ramallo o Ramallo**", metricas["top10_maria"]),
-            "Lucía Santos": ("🌀 Lucía Santos 🌀", "Top 10 artículos que mencionan **Lucía Santos**", metricas["top10_lucia"])
+            "🌀Lucía Santos": ("🌀 Lucía Santos 🌀", "Top 10 artículos que mencionan **Lucía Santos**", metricas["top10_lucia"])
         }
         
         titulo, descripcion, datos = mapeo_politicos[politico_especifico]
