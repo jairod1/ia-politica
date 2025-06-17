@@ -503,7 +503,7 @@ def eliminar_fondo_inicio():
 def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_especifico=None):
     """Determina qué fondo aplicar según las opciones seleccionadas"""
     
-    if tipo_analisis == "📊 Análisis General 📊":
+    if tipo_analisis == "📊 Análisis General":
         return "Analisis.png"                     # Todos los archivos son PNG
     
     elif tipo_analisis == "🗳️ Comentarios sobre Partidos Políticos":
@@ -1032,7 +1032,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
         """)
     
     if tipo_analisis_comentarios == "📊 Análisis General":
-        st.title(f"💬 {titulo_ubicacion} - Análisis General")
+        st.title(f"💬 {titulo_ubicacion} - 📊 Análisis General")
         st.markdown(f"""
         **Análisis completo de comentarios** de {titulo_ubicacion.lower()}
         
@@ -1371,10 +1371,10 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
     
     elif tipo_analisis_comentarios == "👥 Comentarios sobre Políticos Locales":
         filtros_politicos = {
-            "Todos los políticos": ("👥 Políticos Locales 👥", filtrar_comentarios_por_politicos_general),
-            "🌹Manuel Pazos": ("🌹 Manuel Pazos 🌹", filtrar_comentarios_por_manuel_pazos),
-            "María Ramallo": ("🔵 María Ramallo 🔵", filtrar_comentarios_por_maria_ramallo),
-            "Lucía Santos": ("🌀 Lucía Santos 🌀", filtrar_comentarios_por_lucia_santos)
+            "Todos los políticos": ("👥 Políticos Locales", filtrar_comentarios_por_politicos_general),
+            "🌹Manuel Pazos": ("🌹 Manuel Pazos", filtrar_comentarios_por_manuel_pazos),
+            "María Ramallo": ("🔵 María Ramallo", filtrar_comentarios_por_maria_ramallo),
+            "Lucía Santos": ("🌀 Lucía Santos", filtrar_comentarios_por_lucia_santos)
         }
         
         titulo_politico, funcion_filtro = filtros_politicos[politico_comentarios]
@@ -1772,7 +1772,7 @@ elif opcion == "📊 Análisis de Visualizaciones":
     elif sub_opcion == "👥 Artículos sobre Políticos Locales":
         mapeo_politicos = {
             "Todos los políticos": ("👥 Artículos sobre Políticos Locales 👥", "Top 10 artículos que mencionan **Pazos, Ramallo, Santos**", metricas["top10_politicos"]),
-            "Manuel Pazos": ("🌹 Manuel Pazos 🌹", "Top 10 artículos que mencionan **Manuel Pazos**", metricas["top10_manuel"]),
+            "🌹Manuel Pazos": ("🌹 Manuel Pazos 🌹", "Top 10 artículos que mencionan **Manuel Pazos**", metricas["top10_manuel"]),
             "María Ramallo": ("🔵 María Ramallo 🔵", "Top 10 artículos que mencionan **María Ramallo o Ramallo**", metricas["top10_maria"]),
             "Lucía Santos": ("🌀 Lucía Santos 🌀", "Top 10 artículos que mencionan **Lucía Santos**", metricas["top10_lucia"])
         }
