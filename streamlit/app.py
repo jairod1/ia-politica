@@ -561,7 +561,7 @@ st.markdown("""
 <style>
 /* Sidebar - azul */
 section[data-testid="stSidebar"] {
-    background-color: #3A5F78;
+    background-color: #2F5D81;
 }
 
 /* Texto sidebar: títulos, subtítulos, radio labels */
