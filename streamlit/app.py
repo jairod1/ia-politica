@@ -1823,7 +1823,7 @@ elif opcion == "💬 Análisis de Comentarios":
             st.error(f"❌ Error cargando datos de comentarios de Marín: {e}")
 
 elif opcion == "📞 Información y Contacto":
-    st.title("📞 Información y Contacto")
+    st.title("📧 Información y Contacto 📧")
     
     col1, col2 = st.columns(2)
     
@@ -1831,52 +1831,25 @@ elif opcion == "📞 Información y Contacto":
         st.subheader("🛠️ Información Técnica")
         st.markdown("""
         **Desarrollado con:**
-        - 🐍 **Python 3.8+**: Lenguaje principal
+        - 📊 **VisualStudio**: Entorno de desarrollo
+        - 🐍 **Python 3.12.9**: Lenguaje principal
         - 🎈 **Streamlit**: Framework de interfaz web
-        - 🐼 **Pandas**: Manipulación de datos
-        - 📊 **NumPy**: Computación numérica
+        - 💬 **DataWrapper**: Estadísticas municipales básicas
+        - ⚙️ **Sistemas de IA utilizados**: Analizadores BETO y Bertinho, Transformers, NLTK
         """)
-        
-        if SENTIMENTS_AVAILABLE:
-            st.markdown("""
-            - 🧠 **NLP Avanzado**: Análisis de texto con procesamiento de lenguaje natural
-            - 🎭 **Análisis Emocional**: Detección granular de 10 emociones específicas
-            - 🌍 **Multiidioma**: Soporte para gallego y castellano
-            - 📂 **Clasificación Temática**: 9 categorías específicas de contenido local
-            """)
-    
+            
     with col2:
         st.subheader("📧 Soporte y Contacto")
         st.markdown("""
         **Para consultas y sugerencias:**
         
-        🌌**Creador y Desarrollador**: **Jaime Rodríguez**
-        📧 **Email**: jairod.programar@gmail.com
-        📞 **Teléfono**: +34 662 675 781 (Jaime Rodríguez)
-        🌐 **Web**: horizontai.streamlit.app  
-        📱 **GitHub**: github.com/jairod1  
-        📋 **LinkedIn**: https://www.linkedin.com/in/jaime-rodríguez-gonzález-a54526205/
+        - 🌌**Creador y Desarrollador**: **Jaime Rodríguez**
+        - 📧 **Email**: jairod.programar@gmail.com
+        - 📞 **Teléfono**: +34 662 675 781 (Jaime Rodríguez)
+        - 🌐 **Web**: horizontai.streamlit.app  
+        - 📱 **GitHub**: github.com/jairod1  
+        - 📋 **LinkedIn**: https://www.linkedin.com/in/jaime-rodríguez-gonzález-a54526205/
         """)
-    
-        st.markdown("""
-        <style>
-        /* Mejorar alineación en columnas */
-        [data-testid="column"] {
-            padding: 0 1rem;
-        }
-
-        /* Asegurar que los enlaces no se rompan */
-        [data-testid="column"] a {
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-        }
-
-        /* Mejor espaciado en párrafos */
-        .main .block-container p {
-            margin-bottom: 0.5rem;
-        }
-        </style>
-        """, unsafe_allow_html=True)
 
 # Footer
 st.divider()
