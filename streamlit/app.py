@@ -573,7 +573,7 @@ section[data-testid="stSidebar"] * {
 section[data-testid="stSidebar"] h1,
 section[data-testid="stSidebar"] h2,
 section[data-testid="stSidebar"] h3 {
-    color: #FF5722 !important; /* Rojo para títulos */
+    color: #ff6800 !important; /* Rojo para títulos */
     font-weight: bold;
 }
 
