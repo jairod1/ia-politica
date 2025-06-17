@@ -1579,7 +1579,7 @@ if opcion == "🏠 Inicio":
     col1, col2 = st.columns([3, 1])
 
     with col1:
-        st.markdown("### 📊 Estado del Sistema")
+        st.markdown("### 📊 Estado del Sistema 📊")
         if SENTIMENTS_AVAILABLE:
             st.success("""
             ✅ **Sistema Completo Operativo**
