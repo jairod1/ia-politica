@@ -503,13 +503,13 @@ def eliminar_fondo_inicio():
 def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_especifico=None):
     """Determina qué fondo aplicar según las opciones seleccionadas"""
     
-    if tipo_analisis == "📊 Análisis General":
+    if tipo_analisis == "📊 Análisis General 📊":
         return "Analisis.png"                     # Todos los archivos son PNG
     
     elif tipo_analisis == "🗳️ Comentarios sobre Partidos Políticos":
         mapeo_fondos_partidos = {
             "Todos los partidos": "Todos-partidos.png",    
-            "PSdeG-PSOE de Marín": "PSOE-Partido.png",     
+            "🌹PSdeG-PSOE de Marín": "PSOE-Partido.png",     
             "Partido Popular de Marín": "PP-Partido.jpg",  
             "BNG - Marín": "BNG-Partido.png"               
         }
@@ -518,7 +518,7 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
     elif tipo_analisis == "👥 Comentarios sobre Políticos Locales":
         mapeo_fondos_politicos = {
             "Todos los políticos": "Todos-candidatos.png",   
-            "Manuel Pazos": "PSOE-Partido.png",              
+            "🌹Manuel Pazos": "PSOE-Partido.png",              
             "María Ramallo": "PP-Partido.jpg",               
             "Lucía Santos": "BNG-Partido.png"                
         }
@@ -531,7 +531,7 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
     elif tipo_analisis == "🏛️ Artículos sobre Partidos Políticos":
         mapeo_fondos_partidos_vis = {
             "Todos los partidos": "Todos-partidos.png",    
-            "PSdeG-PSOE de Marín": "PSOE-Partido.png",     
+            "🌹PSdeG-PSOE de Marín": "PSOE-Partido.png",     
             "Partido Popular de Marín": "PP-Partido.jpg",  
             "BNG - Marín": "BNG-Partido.png"               
         }
@@ -540,7 +540,7 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
     elif tipo_analisis == "👥 Artículos sobre Políticos Locales":
         mapeo_fondos_politicos_vis = {
             "Todos los políticos": "Todos-candidatos.png",  
-            "Manuel Pazos": "PSOE-Partido.png",             
+            "🌹Manuel Pazos": "PSOE-Partido.png",             
             "María Ramallo": "PP-Partido.jpg",              
             "Lucía Santos": "BNG-Partido.png"               
         }
@@ -940,7 +940,7 @@ if opcion == "📊 Análisis de Visualizaciones":
             label="Selecciona:",
             options=[
                 "Todos los partidos", 
-                "PSdeG-PSOE de Marín", 
+                "🌹PSdeG-PSOE de Marín", 
                 "Partido Popular de Marín", 
                 "BNG - Marín"
             ]
@@ -952,7 +952,7 @@ if opcion == "📊 Análisis de Visualizaciones":
             label="Selecciona:",
             options=[
                 "Todos los políticos", 
-                "Manuel Pazos", 
+                "🌹Manuel Pazos", 
                 "María Ramallo", 
                 "Lucía Santos"
             ]
@@ -1002,7 +1002,7 @@ elif opcion == "💬 Análisis de Comentarios":
             label="Selecciona:",
             options=[
                 "Todos los partidos", 
-                "PSdeG-PSOE de Marín", 
+                "🌹PSdeG-PSOE de Marín", 
                 "Partido Popular de Marín", 
                 "BNG - Marín"
             ]
@@ -1014,7 +1014,7 @@ elif opcion == "💬 Análisis de Comentarios":
             label="Selecciona:",
             options=[
                 "Todos los políticos", 
-                "Manuel Pazos", 
+                "🌹Manuel Pazos", 
                 "María Ramallo", 
                 "Lucía Santos"
             ]
@@ -1257,7 +1257,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
     elif tipo_analisis_comentarios == "🗳️ Comentarios sobre Partidos Políticos":
         filtros_partidos = {
             "Todos los partidos": ("🏛️ Partidos Políticos", filtrar_comentarios_por_partidos_general),
-            "PSdeG-PSOE de Marín": ("🔴 PSdeG-PSOE", filtrar_comentarios_por_psoe),
+            "🌹PSdeG-PSOE de Marín": ("🌹 PSdeG-PSOE", filtrar_comentarios_por_psoe),
             "Partido Popular de Marín": ("🔵 Partido Popular", filtrar_comentarios_por_pp),
             "BNG - Marín": ("🌀 BNG", filtrar_comentarios_por_bng)
         }
@@ -1372,7 +1372,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
     elif tipo_analisis_comentarios == "👥 Comentarios sobre Políticos Locales":
         filtros_politicos = {
             "Todos los políticos": ("👥 Políticos Locales 👥", filtrar_comentarios_por_politicos_general),
-            "Manuel Pazos": ("🌹 Manuel Pazos 🌹", filtrar_comentarios_por_manuel_pazos),
+            "🌹Manuel Pazos": ("🌹 Manuel Pazos 🌹", filtrar_comentarios_por_manuel_pazos),
             "María Ramallo": ("🔵 María Ramallo 🔵", filtrar_comentarios_por_maria_ramallo),
             "Lucía Santos": ("🌀 Lucía Santos 🌀", filtrar_comentarios_por_lucia_santos)
         }
@@ -1609,7 +1609,7 @@ if opcion == "🏠 Inicio":
 
 elif opcion == "🏘️ Visión General del Municipio":
 
-    st.title("⛪Visión General del Municipio de Marín⛪")
+    st.title("⛪Visión General de Marín⛪")
     
     col1, col2 = st.columns(2)
     
@@ -1645,17 +1645,11 @@ elif opcion == "🏘️ Visión General del Municipio":
         """)
 
     st.markdown("""
-    <h3 style='
-        text-align: center;
-        color: white;
-        border-bottom: 3px solid #FDD835;
-        padding-bottom: 0.3rem;
-        margin-bottom: 1rem;
-        display: inline-block;
-    '>
-    🗺️ Entorno político de MARÍNn 🗺️
-    </h3>
-    """, unsafe_allow_html=True)
+        <h3 style='text-align: left; color: white;'>
+        🗺️ Entorno político de Marín 🗺️
+        </h3>
+        """, unsafe_allow_html=True)
+
 
     st.components.v1.html(
         '''
@@ -1755,7 +1749,7 @@ elif opcion == "📊 Análisis de Visualizaciones":
     elif sub_opcion == "🏛️ Artículos sobre Partidos Políticos":
         mapeo_partidos = {
             "Todos los partidos": ("🏛️ Artículos sobre Partidos Políticos 🏛️", "Top 10 artículos que mencionan **PP, PSOE, BNG**", metricas["top10_partidos"]),
-            "PSdeG-PSOE de Marín": ("🔴 PSdeG-PSOE Marín 🔴", "Top 10 artículos que mencionan **PSOE o Partido Socialista**", metricas["top10_psoe"]),
+            "🌹PSdeG-PSOE de Marín": ("🌹 PSdeG-PSOE Marín 🌹", "Top 10 artículos que mencionan **PSOE o Partido Socialista**", metricas["top10_psoe"]),
             "Partido Popular de Marín": ("🔵 Partido Popular de Marín 🔵", "Top 10 artículos que mencionan **PP o Partido Popular**", metricas["top10_pp"]),
             "BNG - Marín": ("🌀 BNG - Marín 🌀", "Top 10 artículos que mencionan **BNG o Bloque**", metricas["top10_bng"])
         }
