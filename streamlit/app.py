@@ -894,7 +894,7 @@ opciones_principales = [
     "🏘️ Visión General del Municipio", 
     "📊 Análisis de Visualizaciones", 
     "💬 Análisis de Comentarios", 
-    "📞 Información y Contacto"
+    "📞 Info. Técnica y Contacto"
 ]
 
 opcion = st.sidebar.radio(
@@ -1492,7 +1492,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
 PAGINAS_CON_FONDO_ORIGINAL = [
     "🏠 Inicio", 
     "🏘️ Visión General del Municipio", 
-    "📞 Información y Contacto"
+    "📞 Info. Técnica y Contacto"
 ]
 
 # 🎨 NUEVA LÓGICA: Aplicar fondos según la página y opciones seleccionadas
@@ -1831,7 +1831,7 @@ elif opcion == "💬 Análisis de Comentarios":
         except Exception as e:
             st.error(f"❌ Error cargando datos de comentarios de Marín: {e}")
 
-elif opcion == "📞 Información y Contacto":
+elif opcion == "📞 Info. Técnica y Contacto":
     st.title("📧 Información y Contacto 📧")
     
     col1, col2 = st.columns(2)
