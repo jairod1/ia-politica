@@ -1563,7 +1563,7 @@ if opcion == "🏠 Inicio":
         ### ¿Qué es 🏛️**HorizontAI**🏛️?
                     
         **HorizontAI** es una plataforma de análisis político centrada en municipios pequeños y medianos
-        que utiliza **inteligencia artificial emocional** para analizar métricas de visualización y comentarios 
+        que utiliza **inteligencia artificial emocional** para analizar visualizaciones y comentarios 
         ciudadanos en medios de comunicación locales. Esto proporciona una visión profunda de la opinión pública.
         **Diseñada para** ayudar a los políticos de hoy a ser **los líderes del mañana.**
         
