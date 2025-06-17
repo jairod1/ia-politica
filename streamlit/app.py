@@ -1566,7 +1566,7 @@ if opcion == "🏠 Inicio":
     """)
 
     st.divider()
-    st.markdown("### 📚 Más Información 📚")
+    st.markdown("### 📚 Información Técnica 📚")
     st.info("""
     **Si quieres conocer más detalles técnicos** sobre el funcionamiento del sistema, ve a la pestaña
 
