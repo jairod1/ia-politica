@@ -882,7 +882,7 @@ def procesar_comentarios_individuales_con_sentimientos(df, analizador, top_n=20,
     
 # Header principal
 st.markdown('<h1 class="titulo-sin-linea">🏛️HorizontAI🏛️</h1>', unsafe_allow_html=True)
-st.markdown('<h1 class="titulo-sin-linea">Analizador IA de sentimientos hacia políticos</h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="titulo-sin-linea">Analizador IA de sentimientos políticos</h1>', unsafe_allow_html=True)
 
 # Sidebar con opciones principales
 st.sidebar.title("🧭 Menú principal ↙️")
@@ -1593,10 +1593,16 @@ if opcion == "🏠 Inicio":
             - **🔥 Intensidad Emocional**: Escala del 1 (menos intenso) al 5
             - **📂 Clasificación Temática**: 9 categorías de contenido
             """)
+
+    st.markdown("---")
+    st.markdown("### 📚 Más Información")
+    st.info("🔍 **¿Quieres saber más detalles técnicos?**"
+    "Ve a la pestaña **📞 Info. Técnica y Contacto** para información completa" \
+    "sobre el funcionamiento del sistema.")
     
     st.divider()
     
-    # Mostrar estado del analizador SOLO en la página de Inicio, después de los párrafos principales
+    # Mostrar estado del analizador
     col1, col2 = st.columns([3, 1])
 
     with col1:
