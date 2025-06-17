@@ -1594,12 +1594,6 @@ if opcion == "🏠 Inicio":
             - **📂 Clasificación Temática**: 9 categorías de contenido
             """)
 
-    st.markdown("---")
-    st.markdown("### 📚 Más Información")
-    st.info("🔍 **¿Quieres saber más detalles técnicos?**"
-    "Ve a la pestaña **📞 Info. Técnica y Contacto** para información completa" \
-    "sobre el funcionamiento del sistema.")
-    
     st.divider()
     
     # Mostrar estado del analizador
@@ -1633,6 +1627,12 @@ if opcion == "🏠 Inicio":
             💬 Comentarios: Disponibles
             🧠 IA Emocional: No disponible
             """)
+
+    st.markdown("---")
+    st.markdown("### 📚 Más Información")
+    st.info("🔍 **¿Quieres saber más detalles técnicos?** "
+    "Ve a la pestaña **📞 Info. Técnica y Contacto** para información completa " \
+    "sobre el funcionamiento del sistema.")
     
 elif opcion == "🏘️ Visión General del Municipio":
 
