@@ -561,7 +561,7 @@ st.markdown("""
 <style>
 /* Sidebar - azul */
 section[data-testid="stSidebar"] {
-    background-color: #2F5D81;
+    background-color: #2F5D81; /* Azul oscuro */
 }
 
 /* Texto sidebar: títulos, subtítulos, radio labels */
@@ -573,13 +573,13 @@ section[data-testid="stSidebar"] * {
 section[data-testid="stSidebar"] h1,
 section[data-testid="stSidebar"] h2,
 section[data-testid="stSidebar"] h3 {
-    color: #FF6800 !important; /* Rojo para títulos */
+    color: #FF6800 !important; /* Naranja para títulos */
     font-weight: bold;
 }
 
 section[data-testid="stSidebar"] p,
 section[data-testid="stSidebar"] .css-1d391kg {
-    color: #c5e2ff !important; /* Blanco para texto descriptivo */
+    color: #c5e2ff !important; /* Azulado para texto descriptivo */
     font-size: 0.9em;
 }
 
@@ -1609,7 +1609,7 @@ if opcion == "🏠 Inicio":
 
 elif opcion == "🏘️ Visión General del Municipio":
 
-    st.title("⛪Visión General del Municipio de MARÍN⛪")
+    st.title("⛪Visión General del Municipio de Marín⛪")
     
     col1, col2 = st.columns(2)
     
@@ -1644,13 +1644,18 @@ elif opcion == "🏘️ Visión General del Municipio":
         - 🌀 **Lucía Santos**: Secretaria Local BNG Marín
         """)
 
-
     st.markdown("""
-        <h3 style='text-align: left; color: white;'>
-        🗺️ Entorno político de MARÍN 🗺️
-        </h3>
-        """, unsafe_allow_html=True)
-
+    <h3 style='
+        text-align: center;
+        color: white;
+        border-bottom: 3px solid #FDD835;
+        padding-bottom: 0.3rem;
+        margin-bottom: 1rem;
+        display: inline-block;
+    '>
+    🗺️ Entorno político de MARÍN 🗺️
+    </h3>
+    """, unsafe_allow_html=True)
 
     st.components.v1.html(
         '''
