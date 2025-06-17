@@ -1566,6 +1566,14 @@ if opcion == "🏠 Inicio":
     """)
 
     st.divider()
+    st.markdown("### 📚 Más Información 📚")
+    st.info("""
+    **Si quieres conocer más detalles técnicos** sobre el funcionamiento del sistema, ve a la pestaña
+
+     **📞 Info. Técnica y Contacto**
+    """)  
+
+    st.divider()
         
     # Mostrar estado del analizador
     col1, col2 = st.columns([3, 1])
@@ -1599,13 +1607,6 @@ if opcion == "🏠 Inicio":
             🧠 IA Emocional: No disponible
             """)
 
-    st.divider()
-    st.markdown("### 📚 Más Información 📚")
-    st.info("""
-    **Si quieres conocer más detalles técnicos** sobre el funcionamiento del sistema, ve a la pestaña
-
-     **📞 Info. Técnica y Contacto**
-    """)  
 elif opcion == "🏘️ Visión General del Municipio":
 
     st.title("⛪Visión General del Municipio de Marín⛪")
@@ -1836,6 +1837,8 @@ elif opcion == "📞 Info. Técnica y Contacto":
         - 📱 **GitHub**: github.com/jairod1  
         - 📋 **LinkedIn**: https://www.linkedin.com/in/jaime-rodríguez-gonzález-a54526205/
         """)
+
+    st.divider()
 
     col1, col2 = st.columns([2, 1])
     
