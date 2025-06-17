@@ -1560,18 +1560,24 @@ if opcion == "🏠 Inicio":
     
     with col1:
         st.markdown("""
-        ### 🏛️ ¿Qué es HorizontAI?
+        ### ¿Qué es 🏛️**HorizontAI**🏛️?
         
         **HorizontAI** es una plataforma de análisis político de localidades que combina 
         análisis de datos tradicional con **inteligencia artificial emocional**.
+                    
+        HorizontAI es una plataforma de análisis político centrada en municipios pequeños que combina
+        métricas de visualización y comentarios ciudadanos con inteligencia artificial emocional.
+        Detecta emociones, tono, idioma y contexto en comentarios sobre partidos y políticos.
+        **Diseñada para** ayudar a los políticos de hoy a ser **los líderes del mañana.**
         
         #### 📊 Funcionalidades Principales:
         
+        - **🧠 Análisis Político**: Presentación política básica de tu localidad  
         - **📈 Métricas de Visualización**: Los artículos más leídos y con más impacto sobre ciudadanías locales
-        - **🏛️ Análisis Político**: Seguimiento detallado de partidos y políticos de tu localidad  
-        - **📅 Tendencias Temporales**: Evolución del interés ciudadano
-        - **🔍 Búsqueda Avanzada**: Filtros por términos políticos específicos
+        - **🔍 Búsqueda Avanzada**: Filtros de comentarios por términos políticos específicos (partidos y personas)
         - **🗺️ Análisis Geográfico**: Comentarios globales, de O Morrazo/Pontevedra y específicos de Marín
+        - **📋 Estadísticas de Sentimientos**: Gráficos y estadísticas en funcion de los sentimientos y visualizaciones
+        - **🔢 Datos de Prueba**: Tomados de la localidad de Marín, Pontevedra, Galicia
         """)
 
     with col2:      
@@ -1583,8 +1589,8 @@ if opcion == "🏠 Inicio":
             - **😊 Tono General**: Clasifica como positivo, negativo o neutral
             - **🎭 Emociones Granulares**: Detecta 10 emociones específicas
             - **📝 Contexto Emocional**: Celebratorio, conflictivo, informativo, etc.
-            - **🔥 Intensidad Emocional**: Escala del 1 al 5
-            - **📂 Clasificación Temática**: 9 categorías específicas de contenido local
+            - **🔥 Intensidad Emocional**: Escala del 1 (menos intenso) al 5 (más intenso)
+            - **📂 Clasificación Temática**: 9 categorías de contenido
             """)
     
     # Mostrar estado del analizador SOLO en la página de Inicio, después de los párrafos principales
