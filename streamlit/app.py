@@ -1559,10 +1559,12 @@ if opcion == "🏠 Inicio":
     st.markdown("""
     ### ¿Qué es 🏛️**HorizontAI**🏛️?
                 
-    **HorizontAI** es una plataforma de análisis político centrada en municipios pequeños y medianos
+    **HorizontAI** es una herramienta de análisis político centrada en municipios pequeños y medianos
     que utiliza **inteligencia artificial emocional** para analizar visualizaciones y comentarios 
-    ciudadanos en medios de comunicación locales. Esto proporciona una visión profunda de la opinión pública.
-    **Diseñada para** ayudar a los políticos de hoy a ser **los líderes del mañana.**
+    ciudadanos en medios de comunicación locales. Esto proporciona una visión profunda de la opinión pública
+    y ayuda a diseñar campañas efectivas.
+                
+    **HorizontAI** ha sido **diseñada para** ayudar a los políticos de hoy a ser **los líderes del mañana.**
     """)
     
     col1, col2 = st.columns([2, 1])
@@ -1718,7 +1720,7 @@ elif opcion == "📊 Análisis de Visualizaciones":
         st.stop()
     
     if mostrar_sentimientos:
-        st.info("🧠 **Análisis avanzado de sentimientos y emociones activado**")
+        st.success("🧠 **Análisis avanzado de sentimientos y emociones activado**")
             
     if sub_opcion == "📈 Artículos más Populares":
         st.title("📈 Artículos más Populares")
