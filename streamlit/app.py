@@ -1566,6 +1566,8 @@ if opcion == "🏠 Inicio":
                 
     **HorizontAI** ha sido **diseñada para** ayudar a los políticos de hoy a ser **los líderes del mañana.**
     """)
+
+    st.divider()
     
     col1, col2 = st.columns([2, 1])
     
@@ -1586,11 +1588,11 @@ if opcion == "🏠 Inicio":
             st.markdown("""
             #### 🧠 Análisis Avanzado con IA Emocional:
             
-            - **🌍 Detección de Idioma**: Reconoce automáticamente gallego y castellano
+            - **🌍 Detección de Idioma**: Reconoce gallego y castellano
             - **😊 Tono General**: Clasifica como positivo, negativo o neutral
             - **🎭 Emociones Granulares**: Detecta 10 emociones específicas
-            - **📝 Contexto Emocional**: Celebratorio, conflictivo, informativo, etc.
-            - **🔥 Intensidad Emocional**: Escala del 1 (menos intenso) al 5 (más intenso)
+            - **📝 Contexto Emocional**: Celebratorio, informativo, etc.
+            - **🔥 Intensidad Emocional**: Escala del 1 (menos intenso) al 5
             - **📂 Clasificación Temática**: 9 categorías de contenido
             """)
     
