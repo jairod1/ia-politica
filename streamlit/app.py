@@ -1858,6 +1858,10 @@ elif opcion == "📞 Información y Contacto":
         - 📋 **LinkedIn**: https://www.linkedin.com/in/jaime-rodríguez-gonzález-a54526205/
         """)
 
+    # 🔧 NUEVA SECCIÓN: Explicación de parámetros del análisis
+    st.divider()
+    mostrar_explicacion_parametros()
+
 # Footer
 st.divider()
 
