@@ -760,9 +760,7 @@ def mostrar_analisis_sentimientos_compacto(df_analizado, reporte, titulo_seccion
         else:
             st.info("🤷‍♂️ Los artículos están muy zen (sin emociones)")
     
-    with col2:
-        st.write("**📊 Datos curiosos:**")
-        
+    with col2:       
         # Distribución de tonos
         tonos_generales = reporte.get('tonos_generales', {})
         if tonos_generales:

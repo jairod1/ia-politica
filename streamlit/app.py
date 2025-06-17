@@ -1027,7 +1027,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
     """🔧 FUNCIÓN CORREGIDA: Usar criterios unificados para artículos polémicos"""
     
     if mostrar_sentimientos:
-        st.info("""
+        st.success("""
         🧠 **Análisis avanzado de sentimientos en comentarios activado**
         
         Se analizará el contenido emocional de cada comentario individual.
