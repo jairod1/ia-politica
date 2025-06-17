@@ -1701,7 +1701,7 @@ elif opcion == "🏘️ Visión General del Municipio":
     <noscript><img src="https://datawrapper.dwcdn.net/AOYpH/full.png" alt="" /></noscript>
     </div>
         ''',
-        height=530
+        height=416
     )
 
     st.markdown("""
