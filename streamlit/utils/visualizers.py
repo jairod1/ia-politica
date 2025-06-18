@@ -105,6 +105,26 @@ def obtener_titulo_original(selected_article, mapping_titulos):
     
     return 'Título no disponible'
 
+def crear_mapping_titulos_articulos_comentarios(df):
+    """Mapping específico para títulos de artículos desde comentarios"""
+    mapping = {}
+    
+    for idx, row in df.iterrows():
+        # Priorizar article_link, luego link
+        link = row.get('article_link', row.get('link', f'no_link_{idx}'))
+        
+        # Priorizar title_original, luego article_title, luego title
+        titulo = row.get('title_original', 
+                        row.get('article_title', 
+                               row.get('title', 'Sin título')))
+        
+        if pd.notna(titulo):
+            mapping[link] = str(titulo).strip()
+        else:
+            mapping[link] = 'Sin título'
+    
+    return mapping
+
 def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentimientos=False, analizador=None, es_articulos_populares=True):
     """
     Tabla mejorada con las nuevas columnas en el orden solicitado:
@@ -337,13 +357,16 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
     
     # Aplicar análisis si está habilitado y no se ha hecho ya
     df_display = df.copy()
+
+    # Guardar título completo
+    mapping_titulos_articulos_originales = crear_mapping_titulos_articulos_comentarios(df_display)
     
     if mostrar_sentimientos and analizador is not None and reporte is None:
-        with st.spinner("🧠 Analizando el rollo emocional de los comentarios..."):
+        with st.spinner("🧠 Analizando comentarios..."):
             df_display, reporte = aplicar_analisis_sentimientos(df, analizador)
             
         if reporte is None:
-            st.error("💥 El análisis se fue a tomar un café y no volvió")
+            st.error("💥 El análisis falló")
             mostrar_sentimientos = False
     
     # MAPEAR COLUMNAS SEGÚN LA ESTRUCTURA DEL DATAFRAME
@@ -930,7 +953,7 @@ def mostrar_tabla_comentarios(df, titulo_seccion, es_popular=True, key_suffix=""
     df_display = df[columnas_disponibles].copy()
 
     # Guardar título original     
-    mapping_titulos_originales = crear_mapping_titulos_originales(df_display)
+    mapping_titulos_articulos_originales = crear_mapping_titulos_articulos_comentarios(df_display)
 
     # Truncar títulos a 5 palabras
     if 'title' in df_display.columns:
@@ -997,8 +1020,9 @@ def mostrar_tabla_comentarios(df, titulo_seccion, es_popular=True, key_suffix=""
             
             if 'article_title' in selected_comment:
                 st.write("**📰 Artículo relacionado:**")
-                st.write(selected_comment['article_title'])
-            
+                titulo_articulo_completo = obtener_titulo_original(selected_comment, mapping_titulos_articulos_originales)
+                st.write(titulo_articulo_completo)
+
             if 'article_link' in selected_comment and pd.notna(selected_comment['article_link']):
                 st.link_button("🔗 Ver artículo completo", selected_comment['article_link'])
             else:
@@ -1087,16 +1111,16 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
     # Preparar DataFrame con presentación bonita
     df_display = df.copy()
 
-    # Guardar títulos originales
-    mapping_titulos_originales = crear_mapping_titulos_originales(df_display)
-
-    # Truncar títulos a 5 palabras
-    if 'title' in df_display.columns:
-        df_display['title'] = df_display['title'].apply(lambda x: truncar_titulo_palabras(x, 5))
-
     # GUARDAR TEXTO ORIGINAL ANTES DE CUALQUIER PROCESAMIENTO
     if 'title' in df_display.columns:
         df_display['texto_original_completo'] = df_display['title'].copy()
+
+    # Guardar títulos originales
+    mapping_titulos_originales = crear_mapping_titulos_originales(df_display)
+    
+    # Truncar títulos a 5 palabras
+    if 'title' in df_display.columns:
+        df_display['title'] = df_display['title'].apply(lambda x: truncar_titulo_palabras(x, 5))
     
     # MAPEO DE COLUMNAS: Detectar qué columnas usar
     columnas_mapeo = {
@@ -1224,9 +1248,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
                         from .sentiment_integration import aplicar_analisis_sentimientos
                         comentarios_analizados, _ = aplicar_analisis_sentimientos(comentarios_artículo, analizador)
                 
-                        # 🔧 NUEVO ORDEN 1: COMENTARIOS PRIMERO
-                        st.write("**📝 Comentarios individuales:**")
-                        
+                        # 🔧 NUEVO ORDEN 1: COMENTARIOS PRIMERO                        
                         # Mostrar comentarios individuales con análisis (CON IDIOMA)
                         for idx, comment in comentarios_analizados.iterrows():
                             comment_text = comment.get('title', '')
