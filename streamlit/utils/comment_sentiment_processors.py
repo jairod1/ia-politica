@@ -158,9 +158,6 @@ def resumir_sentimientos_por_articulo(df_analizado):
     # 🆕 AÑADIR TEMÁTICA MODAL SI LA COLUMNA EXISTE
     if tiene_tematica:
         agregaciones['tematica'] = calcular_tematica_modal
-        st.info(f"✅ Calculando temática modal para {len(df_analizado)} comentarios")
-    else:
-        st.info("ℹ️ No se encontró columna 'tematica', saltando cálculo de temática modal")
     
     # 🔧 AGRUPAR CON MANEJO DE ERRORES
     try:
