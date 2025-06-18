@@ -1712,7 +1712,7 @@ elif opcion == "📊 Análisis de Visualizaciones":
         st.success("🧠 **Análisis avanzado de sentimientos y emociones activado**")
 
         st.info("""
-        ↖️ **Para visualizar mejor todas las columnas del análisis, cierra el menú lateral**.
+        ↖️ **Para visualizar mejor todas las columnas del análisis, cierra el menú principal**.
         """)
             
     if sub_opcion == "📈 Artículos más Populares":
