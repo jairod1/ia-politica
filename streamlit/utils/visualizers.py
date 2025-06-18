@@ -1109,7 +1109,7 @@ def mostrar_tabla_articulos_con_sentimientos(df, titulo, reporte=None):
     if reporte is not None:
         mostrar_analisis_sentimientos_compacto(df, reporte, titulo)
 
-def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentarios_originales=None, reporte=None):
+def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentarios_originales=None, reporte=None, table_height=600):
     if len(df) == 0:
         st.warning(f"🤷‍♂️ No hay datos para mostrar en: {titulo}")
         return
@@ -1220,7 +1220,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
             hide_index=True,
             on_select="rerun",
             selection_mode="single-row",
-            height=600
+            height=table_height
         )
     except Exception as e:
         st.error(f"💥 Error mostrando tabla: {e}")
