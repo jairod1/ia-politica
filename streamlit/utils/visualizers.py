@@ -578,11 +578,11 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
             st.write("**Texto completo:**")
             
             # SOLUCIÓN DIRECTA: Usar la columna que sabemos que funciona
-            if 'texto_original' in selected_comment and pd.notna(selected_comment['texto_original']):
-                texto_completo = selected_comment['texto_original'] 
+            if 'texto_completo_original' in selected_comment and pd.notna(selected_comment['texto_completo_original']):
+                texto_completo = selected_comment['texto_completo_original'] 
             else:
                 texto_completo = selected_comment.get('vista_previa_comentario', 'Sin texto disponible')
-                
+
             if texto_completo:
                 st.write(texto_completo)
             else:
