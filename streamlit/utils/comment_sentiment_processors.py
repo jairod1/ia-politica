@@ -96,7 +96,8 @@ def resumir_sentimientos_por_articulo(df_analizado):
         st.error(f"❌ Faltan columnas de análisis: {columnas_faltantes}")
         return pd.DataFrame()
 
-    agrupado = df_analizado.groupby(['link', 'title_original']).agg({
+    agrupado = df_analizado.groupby(['title_original']).agg({
+        'link': 'first',  
         'tono_general': moda_o_neutral,
         'emocion_principal': moda_o_neutral,
         'intensidad_emocional': 'mean',
