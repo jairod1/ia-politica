@@ -1032,7 +1032,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
         """)
 
         st.info("""
-        ↖️ **Para visualizar mejor todas las columnas del análisis, cierra el menú lateral**.
+        ↖️ **Para visualizar mejor todas las columnas del análisis, cierra el menú principal**.
         """)
     
     if tipo_analisis_comentarios == "📊 Análisis General":
