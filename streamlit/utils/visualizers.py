@@ -1220,6 +1220,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
             hide_index=True,
             on_select="rerun",
             selection_mode="single-row",
+            height=600
         )
     except Exception as e:
         st.error(f"💥 Error mostrando tabla: {e}")
