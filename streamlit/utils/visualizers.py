@@ -300,7 +300,7 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
         st.error(f"💥 Error mostrando la tabla: {e}")
         return
     
-    # 🔧 CAMBIO PRINCIPAL: Panel de detalles PRIMERO (si hay una fila seleccionada)
+    # Panel de detalles (si hay una fila seleccionada)
     if event.selection.rows:
         selected_idx = event.selection.rows[0]
         selected_article = df_display.iloc[selected_idx]
@@ -1097,12 +1097,19 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
     st.subheader(f"📋 {titulo}")
     st.info("💡 Haz clic en la columna de la izquierda para ver comentarios del artículo")
     
-    # 🔧 CREAR MAPPING DESDE COMENTARIOS ORIGINALES (con títulos completos)
+    # CREAR MAPPING DESDE COMENTARIOS ORIGINALES (con títulos completos)
     if df_comentarios_originales is not None:
         mapping_titulos_originales = crear_mapping_titulos_articulos_comentarios(df_comentarios_originales)
     else:
         # Fallback al DataFrame actual (puede estar truncado)
         mapping_titulos_originales = crear_mapping_titulos_originales(df)
+
+    st.write(f"**🔍 DEBUG Mapping creado:** {len(mapping_titulos_originales)} entradas")
+    if len(mapping_titulos_originales) > 0:
+        primer_elemento = list(mapping_titulos_originales.items())[0]
+        st.write(f"**🔍 DEBUG Primer elemento:** {primer_elemento[0][:50]} → {primer_elemento[1][:50]}")
+    else:
+        st.write("**🔍 DEBUG:** ¡El mapping está VACÍO!")
     
     # Preparar DataFrame con presentación bonita
     df_display = df.copy()
@@ -1210,6 +1217,10 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
     if event.selection.rows and df_comentarios_originales is not None:
         selected_idx = event.selection.rows[0]
         selected_article = df_display.iloc[selected_idx]
+
+        link_seleccionado = selected_article.get('link', 'NO_LINK')
+        st.write(f"**🔍 DEBUG Link seleccionado:** {link_seleccionado}")
+        st.write(f"**🔍 DEBUG ¿Está en mapping?** {link_seleccionado in mapping_titulos_originales}")
         
         st.divider()
         
