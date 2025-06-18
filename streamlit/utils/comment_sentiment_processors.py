@@ -189,15 +189,7 @@ def resumir_sentimientos_por_articulo(df_analizado):
     
     try:
         agrupado.rename(columns=nombres_columnas, inplace=True)
-        
-        # 🔧 VERIFICAR QUE LA TEMÁTICA MODAL SE CREÓ CORRECTAMENTE
-        if tiene_tematica and 'tematica_modal' in agrupado.columns:
-            st.success(f"✅ Temática modal calculada para {len(agrupado)} artículos")
-            # Mostrar preview de las temáticas encontradas
-            tematicas_encontradas = agrupado['tematica_modal'].value_counts().head(3).to_dict()
-            if tematicas_encontradas:
-                st.info(f"📂 Temáticas principales: {', '.join(tematicas_encontradas.keys())}")
-        
+                
     except Exception as e:
         st.error(f"❌ Error renombrando columnas: {e}")
         return pd.DataFrame()
