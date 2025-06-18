@@ -1316,7 +1316,8 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                             df_resumido, 
                             f"Artículos polémicos sobre {partido_comentarios} - {periodo} ({titulo_ubicacion})", 
                             df_comentarios_originales=df_comentarios_originales,
-                            reporte=reporte
+                            reporte=reporte,
+                            table_height=300
                         )
                     else:
                         # Versión sin sentimientos
@@ -1445,7 +1446,8 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                             df_resumido, 
                             f"Artículos polémicos sobre {politico_comentarios} - {periodo} ({titulo_ubicacion})", 
                             df_comentarios_originales=df_comentarios_originales,
-                            reporte=reporte
+                            reporte=reporte,
+                            table_height=300
                         )
                     else:
                         # Versión sin sentimientos
