@@ -1339,8 +1339,9 @@ def mostrar_analisis_comentarios_articulo_especifico(selected_article, comentari
     
     # Título del análisis específico
     article_title = selected_article.get(columnas_mapeo['titulo'], 'Artículo sin título')
-    st.subheader(f"🎯 Análisis específico: {article_title}")
-    
+    st.subheader(f"🎯 Análisis específico del artículo")
+    st.write("---")
+
     # Verificar si los comentarios tienen análisis de sentimientos
     tiene_analisis = 'idioma' in comentarios_articulo.columns
     
