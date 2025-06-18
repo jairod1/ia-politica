@@ -1219,7 +1219,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
         selected_article = df_display.iloc[selected_idx]
 
         link_seleccionado = selected_article.get('link', 'NO_LINK')
-        st.write(f"**🔍 DEBUG Link seleccionado:** {link_seleccionado}")
+        st.write(f"**🔍 DEBUG Linkkkk seleccionado:** {link_seleccionado}")
         st.write(f"**🔍 DEBUG ¿Está en mapping?** {link_seleccionado in mapping_titulos_originales}")
         
         st.divider()
