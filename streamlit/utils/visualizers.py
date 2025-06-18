@@ -949,7 +949,7 @@ def mostrar_tabla_articulos_polemicos(df, titulo_seccion, key_suffix="", table_h
                     st.write(comment_text)
                 comentarios_mostrados += 1
 
-def mostrar_tabla_comentarios(df, titulo_seccion, es_popular=True, key_suffix=""):
+def mostrar_tabla_comentarios(df, titulo_seccion, es_popular=True, key_suffix="", table_height=600):
     """Muestra tabla de comentarios populares o impopulares (sin cambios significativos)"""
     if len(df) == 0:
         tipo = "populares" if es_popular else "impopulares"
@@ -1000,6 +1000,7 @@ def mostrar_tabla_comentarios(df, titulo_seccion, es_popular=True, key_suffix=""
             hide_index=True,
             on_select="rerun",
             selection_mode="single-row",
+            height=table_height,
             key=f"comentarios_{key_suffix}"
         )
     except Exception as e:
