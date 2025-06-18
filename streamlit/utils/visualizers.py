@@ -1222,8 +1222,6 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
         titulo_original = obtener_titulo_original(selected_article, mapping_titulos_originales)
         st.subheader(f"**📰 Artículo:** {titulo_original}")
         
-        st.subheader("💬 Comentarios del artículo seleccionado")
-
         # Buscar comentarios de este artículo específico
         article_link = selected_article.get(columnas_mapeo['enlace'], '')
         article_title = selected_article.get(columnas_mapeo['titulo'], '')
@@ -1240,7 +1238,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
             ]
         
         if len(comentarios_artículo) > 0:
-            st.write(f"**💬 {len(comentarios_artículo)} comentarios encontrados:**")
+            st.subheader(f"**💬 Encontrados {len(comentarios_artículo)} comentarios para el artículo seleccionado:**")
     
             # 🔧 ANÁLISIS BAJO DEMANDA 
             analizador = st.session_state.get('analizador_global', None)
