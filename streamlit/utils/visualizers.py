@@ -93,7 +93,7 @@ def crear_mapping_titulos_originales(df):
 
 def obtener_titulo_original(selected_article, mapping_titulos):
 
-    link = selected_article.get('link', '')
+    link = selected_article.get('article_link', selected_article.get('link', ''))
     
     # Intentar recuperar desde mapping
     if link and link in mapping_titulos:
