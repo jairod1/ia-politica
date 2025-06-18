@@ -1090,17 +1090,6 @@ def mostrar_tabla_articulos_con_sentimientos(df, titulo, reporte=None):
         mostrar_analisis_sentimientos_compacto(df, reporte, titulo)
 
 def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentarios_originales=None, reporte=None):
-    """
-    FUNCIÓN MEJORADA: Reemplaza mostrar_tabla_articulos_con_sentimientos
-    
-    Muestra datos agregados por artículo con presentación bonita y selector para ver comentarios
-    
-    Args:
-        df: DataFrame con datos agregados por artículo (resultado de resumir_sentimientos_por_articulo)
-        titulo: Título de la sección
-        df_comentarios_originales: DataFrame con comentarios individuales (para el selector)
-        reporte: Reporte de análisis de sentimientos
-    """
     if len(df) == 0:
         st.warning(f"🤷‍♂️ No hay datos para mostrar en: {titulo}")
         return
@@ -1108,17 +1097,17 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
     st.subheader(f"📋 {titulo}")
     st.info("💡 Haz clic en la columna de la izquierda para ver comentarios del artículo")
     
-    # Preparar DataFrame con presentación bonita
+    # 1. CREAR MAPPING DEL DATAFRAME ORIGINAL ANTES DE CUALQUIER PROCESAMIENTO
+    mapping_titulos_originales = crear_mapping_titulos_originales(df)
+    
+    # 2. Preparar DataFrame con presentación bonita
     df_display = df.copy()
 
-    # GUARDAR TEXTO ORIGINAL ANTES DE CUALQUIER PROCESAMIENTO
+    # 3. GUARDAR TEXTO ORIGINAL ANTES DE TRUNCAR
     if 'title' in df_display.columns:
         df_display['texto_original_completo'] = df_display['title'].copy()
 
-    # Guardar títulos originales
-    mapping_titulos_originales = crear_mapping_titulos_originales(df_display)
-    
-    # Truncar títulos a 5 palabras
+    # 4. Truncar títulos a 5 palabras
     if 'title' in df_display.columns:
         df_display['title'] = df_display['title'].apply(lambda x: truncar_titulo_palabras(x, 5))
     
