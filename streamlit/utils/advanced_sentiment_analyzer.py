@@ -379,7 +379,7 @@ class HybridSentimentAnalyzer:
         intensificadores_encontrados = sum(1 for palabra in intensificadores if palabra in texto)
         intensidad_base += intensificadores_encontrados * 0.5
         
-        return min(int(intensidad_base), 5)
+        return min(round(intensidad_base), 5)
     
     def _es_politico(self, texto: str) -> bool:
         """Determina si es político"""
