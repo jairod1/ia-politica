@@ -356,7 +356,6 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
             df_display['comment_preview'] = df_display[texto_columna].apply(
                 lambda x: truncar_titulo_palabras(x, 5)  # 5 palabras
             )
-
     
     # RENOMBRAR COLUMNAS PARA ESTANDARIZAR
     for nombre_estandar, nombre_real in mapeo_columnas.items():
@@ -522,8 +521,8 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
             st.write("**Texto completo:**")
             
             # SOLUCIÓN DIRECTA: Usar la columna que sabemos que funciona
-            if 'texto_original' in selected_comment and pd.notna(selected_comment['texto_completo_original']):
-                texto_completo = selected_comment['texto_completo_original']
+            if 'texto_original' in selected_comment and pd.notna(selected_comment['texto_original']):
+                texto_completo = selected_comment['texto_original'] 
             else:
                 texto_completo = selected_comment.get('vista_previa_comentario', 'Sin texto disponible')
                 
