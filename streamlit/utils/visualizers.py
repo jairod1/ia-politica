@@ -1336,11 +1336,7 @@ def mostrar_analisis_comentarios_articulo_especifico(selected_article, comentari
         
         if 'emocion_principal' in comentarios_articulo.columns:
             emociones_articulo = comentarios_articulo['emocion_principal'].value_counts().to_dict()
-            
-            # Filtrar 'neutral' si hay otras emociones
-            if len(emociones_articulo) > 1 and 'neutral' in emociones_articulo:
-                emociones_articulo.pop('neutral', None)
-            
+                        
             if emociones_articulo:
                 emociones_df = pd.DataFrame(list(emociones_articulo.items()), 
                                            columns=['Emoción', 'Cantidad'])
