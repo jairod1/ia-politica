@@ -1149,15 +1149,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
     except Exception as e:
         st.error(f"💥 Error mostrando tabla: {e}")
         return
-        
-# def seccion_modificada_para_reemplazar():
-#     """
-#     🔧 CÓDIGO PARA REEMPLAZAR en mostrar_tabla_articulos_agregados_con_sentimientos()
-    
-#     Esta sección va desde "# PANEL DE COMENTARIOS SI HAY ARTÍCULO SELECCIONADO"
-#     hasta el final de la función (antes de la sección del reporte general)
-#     """
-    
+            
     # PANEL DE COMENTARIOS SI HAY ARTÍCULO SELECCIONADO
     if event.selection.rows and df_comentarios_originales is not None:
         selected_idx = event.selection.rows[0]
@@ -1184,7 +1176,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
         if len(comentarios_artículo) > 0:
             st.write(f"**💬 {len(comentarios_artículo)} comentarios encontrados:**")
     
-            # 🆕 ANÁLISIS ESPECÍFICO DEL ARTÍCULO SELECCIONADO
+            # 🔧 ANÁLISIS BAJO DEMANDA 
             analizador = st.session_state.get('analizador_global', None)
     
             if analizador is not None:
@@ -1193,11 +1185,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
                         from .sentiment_integration import aplicar_analisis_sentimientos
                         comentarios_analizados, _ = aplicar_analisis_sentimientos(comentarios_artículo, analizador)
                 
-                        # 🆕 MOSTRAR ANÁLISIS ESPECÍFICO DEL ARTÍCULO
-                        st.divider()
-                        mostrar_analisis_comentarios_articulo_especifico(selected_article, comentarios_analizados, columnas_mapeo)
-                        
-                        st.divider()
+                        # 🔧 NUEVO ORDEN 1: COMENTARIOS PRIMERO
                         st.write("**📝 Comentarios individuales:**")
                         
                         # Mostrar comentarios individuales con análisis (CON IDIOMA)
@@ -1224,26 +1212,34 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
                             
                             with st.expander(titulo):
                                 st.write(comment_text)
+                        
+                        # 🔧 NUEVO ORDEN 2: ANÁLISIS ESPECÍFICO DESPUÉS
+                        st.divider()
+                        mostrar_analisis_comentarios_articulo_especifico(selected_article, comentarios_analizados, columnas_mapeo)
                                 
                     except Exception as e:
                         st.error(f"❌ Error en análisis específico: {e}")
-                        # Fallback sin análisis específico
+                        # Fallback sin análisis específico - SOLO COMENTARIOS
+                        st.write("**📝 Comentarios individuales:**")
                         for idx, comment in comentarios_artículo.iterrows():
                             titulo = f"💬 {comment.get('comment_author', 'Anónimo')} | 👍 {comment.get('likes', 0)} | 👎 {comment.get('dislikes', 0)}"
                             with st.expander(titulo):
                                 st.write(comment.get('title', ''))
             else:
                 # Sin analizador - solo mostrar comentarios básicos
+                st.write("**📝 Comentarios individuales:**")
                 for idx, comment in comentarios_artículo.iterrows():
                     titulo = f"💬 {comment.get('comment_author', 'Anónimo')} | 👍 {comment.get('likes', 0)} | 👎 {comment.get('dislikes', 0)}"
                     with st.expander(titulo):
                         st.write(comment.get('title', ''))    
+        else:
+            st.info("🤷‍♂️ Este artículo no tiene comentarios")
                         
     elif event.selection.rows and df_comentarios_originales is None:
         st.info("ℹ️ Para ver comentarios individuales, proporciona el parámetro df_comentarios_originales")
 
-    # Mostrar reporte de análisis si está disponible
-    if reporte is not None:
+    # ESTADÍSTICAS GENERALES SOLO SI NO HAY SELECCIÓN
+    if reporte is not None and not event.selection.rows:
         st.divider()
         mostrar_analisis_sentimientos_compacto(df_display, reporte, titulo)
 
