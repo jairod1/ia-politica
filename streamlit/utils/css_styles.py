@@ -92,7 +92,7 @@ def aplicar_css_principal():
 def aplicar_fondo_inicio():
     """Aplica la imagen de fondo desde GitHub solo en la página de Inicio - CORREGIDO PARA MÓVILES"""
     
-    imagen_url = "https://raw.githubusercontent.com/jairod1/ia-politica/master/streamlit/images/Logotipo-HorizontAI.jpg"
+    imagen_url = "https://raw.githubusercontent.com/jairod1/ia-politica/master/streamlit/images/Logotipo-HorizontAI.png"
     
     st.markdown(f"""
     <style>
