@@ -618,18 +618,16 @@ def mostrar_analisis_sentimientos_comentarios_compacto(df_analizado, reporte, ti
         st.error("❌ No hay reporte de comentarios disponible")
         return
     
-    st.subheader(f"🧠 Análisis Emocional de Comentarios - {titulo_seccion}")
+    st.title(f"🧠 Análisis emocional - {titulo_seccion}")
     
-    # 📊 MÉTRICAS PRINCIPALES (5 columnas) - ESPECÍFICAS PARA COMENTARIOS
+    # Métricas principales
     col1, col2, col3, col4, col5 = st.columns(5)
     
     with col1:
-        st.metric("💬 Total comentarios", reporte.get('total_articulos', 0))  # Para comentarios
+        st.metric("📰 Total", reporte.get('total_articulos', 0))
     
     with col2:
-        # Para comentarios políticos - calcular cuántos son realmente políticos
-        politicos = reporte.get('articulos_politicos', len(df_analizado))
-        st.metric("🏛️ Políticos", politicos)
+        st.metric("🏛️ Políticos", reporte.get('articulos_politicos', 0))
     
     with col3:
         intensidad = reporte.get('intensidad_promedio', 0)
@@ -643,52 +641,44 @@ def mostrar_analisis_sentimientos_comentarios_compacto(df_analizado, reporte, ti
         negativos = reporte.get('tonos_generales', {}).get('negativo', 0)
         st.metric("😔 Negativos", negativos)
     
-    # 🔧 DOS COLUMNAS DE INFORMACIÓN
+    # 🔧 DOS COLUMNAS DE INFORMACIÓN PRIMERO
     col1, col2 = st.columns(2)
     
     with col1:
-        st.write("**🎯 Cómo reacciona la gente:**")
+        st.write("**🎯 Cómo está el ambiente:**")
         
         # Distribución de tonos
         tonos_generales = reporte.get('tonos_generales', {})
         if tonos_generales:
-            total_comentarios = reporte.get('total_articulos', 1)
+            total_articulos = reporte.get('total_articulos', 1)
             for tono, cantidad in tonos_generales.items():
-                porcentaje = (cantidad / total_comentarios) * 100
+                porcentaje = (cantidad / total_articulos) * 100
                 emoji = "😊" if tono == "positivo" else "😔" if tono == "negativo" else "😐"
                 st.write(f"{emoji} **{tono.title()}**: {porcentaje:.1f}%")
         
         # Distribución de idiomas
         idiomas = reporte.get('distribución_idiomas', {})
         if idiomas:
-            st.write("**🌍 Idiomas en comentarios:**")
-            total_comentarios = reporte.get('total_articulos', 1)
+            st.write("**🌍 Idiomas detectados:**")
+            total_articulos = reporte.get('total_articulos', 1)
             for idioma, cantidad in idiomas.items():
-                porcentaje = (cantidad / total_comentarios) * 100
-                emoji = "🏴󠁥󠁳󠁧󠁡󠁿" if idioma == "gallego" else "🇪🇸"
+                porcentaje = (cantidad / total_articulos) * 100
+                emoji = "📘" if idioma == "gallego" else "🐂"
                 st.write(f"{emoji} **{idioma.title()}**: {porcentaje:.1f}%")
     
     with col2:
-        # Contextos emocionales más comunes (específico para comentarios)
-        st.write("**📝 Contextos detectados:**")
-        contextos = reporte.get('contextos_emocionales', {})
-        if contextos:
-            for contexto, cantidad in list(contextos.items())[:4]:
-                st.write(f"• **{contexto.title()}**: {cantidad} comentarios")
-        else:
-            st.info("🤷‍♂️ Sin contextos detectados")
+        # 🔧 TEMAS EN COLUMNA SEPARADA
+        st.write("**📂 Temas que más interesan:**")
+        tematicas = reporte.get('tematicas', {})
+        if tematicas:
+            for tematica, cantidad in list(tematicas.items())[:4]:
+                st.write(f"• {tematica}: {cantidad} artículos")
     
     # 🔧 GRÁFICO DE EMOCIONES AL FINAL (ancho completo)
-    st.write("**🎭 Emociones en los comentarios:**")
+    st.write("**🎭 Emociones que más aparecen:**")
     emociones_principales = reporte.get('emociones_principales', {})
     
     if emociones_principales:
-        # Filtrar emociones neutras solo si hay muchas otras (para comentarios)
-        if len(emociones_principales) > 3 and 'neutral' in emociones_principales:
-            emociones_principales_filtradas = {k: v for k, v in emociones_principales.items() if k != 'neutral'}
-            if emociones_principales_filtradas:
-                emociones_principales = emociones_principales_filtradas
-        
         emociones_df = pd.DataFrame(list(emociones_principales.items()), 
                                    columns=['Emoción', 'Cantidad'])
         if len(emociones_df) > 0:
@@ -696,8 +686,8 @@ def mostrar_analisis_sentimientos_comentarios_compacto(df_analizado, reporte, ti
         else:
             st.info("🤷‍♂️ No hay emociones detectadas")
     else:
-        st.info("🤷‍♂️ Los comentarios están muy neutrales")
-        
+        st.info("🤷‍♂️ No se dectaron emociones")
+
 def mostrar_detalles_sentimientos_mejorado(selected_article):
     """Panel de detalles mejorado con las nuevas columnas"""
     st.divider()
