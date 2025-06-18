@@ -100,8 +100,8 @@ def obtener_titulo_original(selected_article, mapping_titulos):
         return mapping_titulos[link]
     
     # Fallbacks si no se encuentra
-    if 'title' in selected_article:
-        return selected_article['title']  # Título truncado como último recurso
+    # if 'title' in selected_article:
+    #     return selected_article['title']  # Título truncado como último recurso
     
     return 'Título no disponible'
 
