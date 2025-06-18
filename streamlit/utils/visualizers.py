@@ -1150,7 +1150,14 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
         st.error(f"💥 Error mostrando tabla: {e}")
         return
         
-    # 🔧 EL RESTO DEL CÓDIGO SIGUE IGUAL (comentarios individuales CON idioma)
+# def seccion_modificada_para_reemplazar():
+#     """
+#     🔧 CÓDIGO PARA REEMPLAZAR en mostrar_tabla_articulos_agregados_con_sentimientos()
+    
+#     Esta sección va desde "# PANEL DE COMENTARIOS SI HAY ARTÍCULO SELECCIONADO"
+#     hasta el final de la función (antes de la sección del reporte general)
+#     """
+    
     # PANEL DE COMENTARIOS SI HAY ARTÍCULO SELECCIONADO
     if event.selection.rows and df_comentarios_originales is not None:
         selected_idx = event.selection.rows[0]
@@ -1177,7 +1184,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
         if len(comentarios_artículo) > 0:
             st.write(f"**💬 {len(comentarios_artículo)} comentarios encontrados:**")
     
-            # 🔧 ANÁLISIS BAJO DEMANDA (MANTIENE IDIOMA EN COMENTARIOS INDIVIDUALES)
+            # 🆕 ANÁLISIS ESPECÍFICO DEL ARTÍCULO SELECCIONADO
             analizador = st.session_state.get('analizador_global', None)
     
             if analizador is not None:
@@ -1186,7 +1193,14 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
                         from .sentiment_integration import aplicar_analisis_sentimientos
                         comentarios_analizados, _ = aplicar_analisis_sentimientos(comentarios_artículo, analizador)
                 
-                        # Mostrar con análisis (🔧 CON IDIOMA EN COMENTARIOS INDIVIDUALES)
+                        # 🆕 MOSTRAR ANÁLISIS ESPECÍFICO DEL ARTÍCULO
+                        st.divider()
+                        mostrar_analisis_comentarios_articulo_especifico(selected_article, comentarios_analizados, columnas_mapeo)
+                        
+                        st.divider()
+                        st.write("**📝 Comentarios individuales:**")
+                        
+                        # Mostrar comentarios individuales con análisis (CON IDIOMA)
                         for idx, comment in comentarios_analizados.iterrows():
                             comment_text = comment.get('title', '')
                             comment_author = comment.get('comment_author', 'Anónimo')
@@ -1194,10 +1208,10 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
                             dislikes = comment.get('dislikes', 0)
                             location = comment.get('comment_location', 'No especificada')
                             
-                            # Construir título con análisis (🔧 CON IDIOMA)
+                            # Construir título con análisis (CON IDIOMA)
                             titulo = f"💬 {comment_author} | 👍 {likes} | 👎 {dislikes} | 📍 {location}"
                             
-                            if 'idioma' in comment:  # 🔧 MANTENER IDIOMA EN COMENTARIOS
+                            if 'idioma' in comment:
                                 idioma = comment['idioma']
                                 tono = comment.get('tono_general', 'neutral')
                                 emocion = comment.get('emocion_principal', 'neutral')
@@ -1212,14 +1226,14 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
                                 st.write(comment_text)
                                 
                     except Exception as e:
-                        st.error(f"❌ Error en análisis: {e}")
-                        # Fallback sin análisis
+                        st.error(f"❌ Error en análisis específico: {e}")
+                        # Fallback sin análisis específico
                         for idx, comment in comentarios_artículo.iterrows():
                             titulo = f"💬 {comment.get('comment_author', 'Anónimo')} | 👍 {comment.get('likes', 0)} | 👎 {comment.get('dislikes', 0)}"
                             with st.expander(titulo):
                                 st.write(comment.get('title', ''))
             else:
-                # Sin analizador
+                # Sin analizador - solo mostrar comentarios básicos
                 for idx, comment in comentarios_artículo.iterrows():
                     titulo = f"💬 {comment.get('comment_author', 'Anónimo')} | 👍 {comment.get('likes', 0)} | 👎 {comment.get('dislikes', 0)}"
                     with st.expander(titulo):
@@ -1227,7 +1241,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
                         
     elif event.selection.rows and df_comentarios_originales is None:
         st.info("ℹ️ Para ver comentarios individuales, proporciona el parámetro df_comentarios_originales")
-    
+
     # Mostrar reporte de análisis si está disponible
     if reporte is not None:
         st.divider()
@@ -1254,3 +1268,159 @@ def ordenar_articulos_polemicos(df_comentarios_completos):
     conteo_comentarios = conteo_comentarios.sort_values('num_comentarios', ascending=False)
     
     return conteo_comentarios.reset_index()
+
+def mostrar_analisis_comentarios_articulo_especifico(selected_article, comentarios_articulo, columnas_mapeo):
+    """
+    🆕 NUEVA FUNCIÓN: Muestra análisis emocional específico del artículo seleccionado
+    
+    Args:
+        selected_article: Fila del artículo seleccionado
+        comentarios_articulo: DataFrame con comentarios específicos del artículo
+        columnas_mapeo: Mapeo de columnas para acceso consistente
+    """
+    if len(comentarios_articulo) == 0:
+        st.info("🤷‍♂️ Este artículo no tiene comentarios para analizar")
+        return
+    
+    # Título del análisis específico
+    article_title = selected_article.get(columnas_mapeo['titulo'], 'Artículo sin título')
+    st.subheader(f"🎯 Análisis específico: {article_title}")
+    
+    # Verificar si los comentarios tienen análisis de sentimientos
+    tiene_analisis = 'idioma' in comentarios_articulo.columns
+    
+    if not tiene_analisis:
+        st.info("ℹ️ Los comentarios de este artículo no tienen análisis emocional procesado")
+        st.write(f"📊 **Total comentarios**: {len(comentarios_articulo)}")
+        return
+    
+    # 📊 MÉTRICAS ESPECÍFICAS DEL ARTÍCULO
+    col1, col2, col3, col4, col5 = st.columns(5)
+    
+    with col1:
+        st.metric("💬 Comentarios", len(comentarios_articulo))
+    
+    with col2:
+        # Comentarios políticos (detectados por el analizador)
+        if 'es_politico' in comentarios_articulo.columns:
+            politicos = comentarios_articulo['es_politico'].sum()
+        else:
+            politicos = 0
+        st.metric("🏛️ Políticos", int(politicos))
+    
+    with col3:
+        # Intensidad promedio
+        if 'intensidad_emocional' in comentarios_articulo.columns:
+            intensidad_promedio = comentarios_articulo['intensidad_emocional'].mean()
+            st.metric("🔥 Intensidad", f"{intensidad_promedio:.1f}/5")
+        else:
+            st.metric("🔥 Intensidad", "N/A")
+    
+    with col4:
+        # Comentarios positivos
+        if 'tono_general' in comentarios_articulo.columns:
+            positivos = (comentarios_articulo['tono_general'] == 'positivo').sum()
+            st.metric("😊 Positivos", int(positivos))
+        else:
+            st.metric("😊 Positivos", "N/A")
+    
+    with col5:
+        # Comentarios negativos
+        if 'tono_general' in comentarios_articulo.columns:
+            negativos = (comentarios_articulo['tono_general'] == 'negativo').sum()
+            st.metric("😔 Negativos", int(negativos))
+        else:
+            st.metric("😔 Negativos", "N/A")
+    
+    # 📈 GRÁFICOS ESPECÍFICOS
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.write("**🎭 Emociones en este artículo:**")
+        
+        if 'emocion_principal' in comentarios_articulo.columns:
+            emociones_articulo = comentarios_articulo['emocion_principal'].value_counts().to_dict()
+            
+            # Filtrar 'neutral' si hay otras emociones
+            if len(emociones_articulo) > 1 and 'neutral' in emociones_articulo:
+                emociones_articulo.pop('neutral', None)
+            
+            if emociones_articulo:
+                emociones_df = pd.DataFrame(list(emociones_articulo.items()), 
+                                           columns=['Emoción', 'Cantidad'])
+                st.bar_chart(emociones_df.set_index('Emoción')['Cantidad'], height=250)
+            else:
+                st.info("😐 Solo emociones neutrales detectadas")
+        else:
+            st.info("🤷‍♂️ Sin datos de emociones")
+    
+    with col2:
+        st.write("**📊 Detalles específicos:**")
+        
+        # Distribución de tonos
+        if 'tono_general' in comentarios_articulo.columns:
+            tonos_articulo = comentarios_articulo['tono_general'].value_counts().to_dict()
+            total_comentarios_articulo = len(comentarios_articulo)
+            
+            st.write("**🎯 Ambiente en comentarios:**")
+            for tono, cantidad in tonos_articulo.items():
+                porcentaje = (cantidad / total_comentarios_articulo) * 100
+                emoji = "😊" if tono == "positivo" else "😔" if tono == "negativo" else "😐"
+                st.write(f"{emoji} **{tono.title()}**: {porcentaje:.1f}% ({cantidad})")
+        
+        # Distribución de idiomas
+        if 'idioma' in comentarios_articulo.columns:
+            idiomas_articulo = comentarios_articulo['idioma'].value_counts().to_dict()
+            
+            st.write("**🌍 Idiomas en comentarios:**")
+            for idioma, cantidad in idiomas_articulo.items():
+                porcentaje = (cantidad / len(comentarios_articulo)) * 100
+                emoji = "🏴󠁥󠁳󠁧󠁡󠁿" if idioma == "gallego" else "🇪🇸"
+                st.write(f"{emoji} **{idioma.title()}**: {porcentaje:.1f}% ({cantidad})")
+        
+        # Comentarios más "intensos"
+        if 'intensidad_emocional' in comentarios_articulo.columns:
+            intensidad_alta = (comentarios_articulo['intensidad_emocional'] >= 4).sum()
+            intensidad_baja = (comentarios_articulo['intensidad_emocional'] <= 2).sum()
+            
+            st.write("**🔥 Nivel de intensidad:**")
+            st.write(f"🌶️ **Alta intensidad (4-5)**: {intensidad_alta}")
+            st.write(f"🧊 **Baja intensidad (1-2)**: {intensidad_baja}")
+
+
+def generar_reporte_comentarios_articulo(comentarios_articulo):
+    """
+    🆕 NUEVA FUNCIÓN: Genera un reporte específico para comentarios de un artículo
+    
+    Args:
+        comentarios_articulo: DataFrame con comentarios del artículo específico
+        
+    Returns:
+        Dict con estadísticas específicas del artículo
+    """
+    if len(comentarios_articulo) == 0:
+        return None
+    
+    # Verificar si hay análisis de sentimientos
+    tiene_analisis = all(col in comentarios_articulo.columns for col in 
+                        ['idioma', 'tono_general', 'emocion_principal'])
+    
+    if not tiene_analisis:
+        return {
+            'total_comentarios': len(comentarios_articulo),
+            'tiene_analisis': False
+        }
+    
+    # Generar estadísticas específicas
+    reporte_especifico = {
+        'total_comentarios': len(comentarios_articulo),
+        'tiene_analisis': True,
+        'comentarios_politicos': comentarios_articulo.get('es_politico', pd.Series([False] * len(comentarios_articulo))).sum(),
+        'distribución_idiomas': comentarios_articulo['idioma'].value_counts().to_dict(),
+        'tonos_generales': comentarios_articulo['tono_general'].value_counts().to_dict(),
+        'emociones_principales': comentarios_articulo['emocion_principal'].value_counts().to_dict(),
+        'intensidad_promedio': comentarios_articulo.get('intensidad_emocional', pd.Series([1] * len(comentarios_articulo))).mean(),
+        'confianza_promedio': comentarios_articulo.get('confianza_analisis', pd.Series([0.5] * len(comentarios_articulo))).mean()
+    }
+    
+    return reporte_especifico
