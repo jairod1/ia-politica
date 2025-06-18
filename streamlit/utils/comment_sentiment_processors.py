@@ -74,51 +74,76 @@ def mostrar_comentarios_con_sentimientos(df_comentarios, reporte, titulo_seccion
 
 def resumir_sentimientos_por_articulo(df_analizado):
     """
-    Agrupa los comentarios analizados por artículo y calcula estadísticas agregadas de sentimiento.
-    🆕 AÑADIDO: Cálculo de temática modal (más repetida) por artículo
-
-    Args:
-        df_analizado: DataFrame con una fila por comentario, y análisis de sentimientos hecho
-
-    Returns:
-        DataFrame con una fila por artículo y resumen emocional
+    🔧 VERSIÓN CORREGIDA: Agrupa comentarios por artículo con temática modal
+    
+    Maneja errores de columnas faltantes de forma más robusta
     """
+    
+    # Función helper para moda
     def moda_o_neutral(col):
-        conteo = col.value_counts()
-        if len(conteo) == 0:
+        try:
+            conteo = col.dropna().value_counts()
+            if len(conteo) == 0:
+                return 'neutral'
+            return conteo.idxmax()
+        except:
             return 'neutral'
-        return conteo.idxmax()
     
+    # Función helper para temática modal
     def calcular_tematica_modal(col):
-        """🆕 NUEVA FUNCIÓN: Calcula la temática más repetida en los comentarios del artículo"""
-        conteo = col.value_counts()
-        if len(conteo) == 0:
+        try:
+            col_clean = col.dropna()
+            if len(col_clean) == 0:
+                return '📄 Otros'
+            
+            conteo = col_clean.value_counts()
+            if len(conteo) == 0:
+                return '📄 Otros'
+            
+            tematica_modal = conteo.idxmax()
+            
+            # Si todas aparecen solo 1 vez, devolver "Variadas"
+            if conteo.iloc[0] == 1 and len(conteo) > 1:
+                return '📄 Variadas'
+            
+            return tematica_modal
+        except:
             return '📄 Otros'
-        
-        # Obtener la temática más frecuente
-        tematica_modal = conteo.idxmax()
-        
-        # Si hay empate o solo hay "Otros", manejar casos especiales
-        if conteo.iloc[0] == 1 and len(conteo) > 1:
-            # Si todas las temáticas aparecen solo 1 vez, devolver "📄 Variadas"
-            return '📄 Variadas'
-        
-        return tematica_modal
     
-    # Verificar que las columnas necesarias existen
-    columnas_necesarias = ['tono_general', 'emocion_principal', 'intensidad_emocional', 'confianza_analisis']
-    columnas_faltantes = [col for col in columnas_necesarias if col not in df_analizado.columns]
-
-    if columnas_faltantes:
-        st.error(f"❌ Faltan columnas de análisis: {columnas_faltantes}")
+    # 🔧 VERIFICACIÓN BÁSICA SOLO DE COLUMNAS CRÍTICAS
+    if 'title_original' not in df_analizado.columns:
+        st.error("❌ No se encontró la columna 'title_original'")
         return pd.DataFrame()
-
+    
+    if len(df_analizado) == 0:
+        st.warning("⚠️ No hay datos para agrupar")
+        return pd.DataFrame()
+    
+    # 🔧 CREAR COLUMNAS FALTANTES CON VALORES POR DEFECTO
+    columnas_default = {
+        'tono_general': 'neutral',
+        'emocion_principal': 'neutral',
+        'intensidad_emocional': 1.0,
+        'confianza_analisis': 0.5,
+        'es_politico': False,
+        'idioma': 'castellano',
+        'link': '',
+        'date': '',
+        'n_visualizations': 0,
+        'source': ''
+    }
+    
+    # Añadir columnas que falten
+    for col, valor_default in columnas_default.items():
+        if col not in df_analizado.columns:
+            df_analizado[col] = valor_default
+    
     # 🆕 VERIFICAR SI EXISTE COLUMNA DE TEMÁTICA
     tiene_tematica = 'tematica' in df_analizado.columns
-
-    # Configurar agregaciones base
+    
+    # 🔧 CONFIGURAR AGREGACIONES BÁSICAS
     agregaciones = {
-        'link': 'first',  
+        'link': 'first',
         'tono_general': moda_o_neutral,
         'emocion_principal': moda_o_neutral,
         'intensidad_emocional': 'mean',
@@ -130,13 +155,22 @@ def resumir_sentimientos_por_articulo(df_analizado):
         'source': 'first'
     }
     
-    # 🆕 AÑADIR AGREGACIÓN DE TEMÁTICA MODAL SI EXISTE LA COLUMNA
+    # 🆕 AÑADIR TEMÁTICA MODAL SI LA COLUMNA EXISTE
     if tiene_tematica:
-        agregaciones['tematica_modal'] = calcular_tematica_modal
-
-    agrupado = df_analizado.groupby(['title_original']).agg(agregaciones).reset_index()
-
-    # Renombrar columnas
+        agregaciones['tematica'] = calcular_tematica_modal
+        st.info(f"✅ Calculando temática modal para {len(df_analizado)} comentarios")
+    else:
+        st.info("ℹ️ No se encontró columna 'tematica', saltando cálculo de temática modal")
+    
+    # 🔧 AGRUPAR CON MANEJO DE ERRORES
+    try:
+        agrupado = df_analizado.groupby(['title_original']).agg(agregaciones).reset_index()
+    except Exception as e:
+        st.error(f"❌ Error en agrupación: {e}")
+        st.error("💡 Revisa que las columnas necesarias existan en el DataFrame")
+        return pd.DataFrame()
+    
+    # 🔧 RENOMBRAR COLUMNAS CON MANEJO DE ERRORES
     nombres_columnas = {
         'title_original': 'title',
         'tono_general': 'tono_comentarios',
@@ -149,12 +183,25 @@ def resumir_sentimientos_por_articulo(df_analizado):
         'date': 'article_date'
     }
     
-    # 🆕 AÑADIR RENOMBRADO DE TEMÁTICA MODAL SI EXISTE
-    if tiene_tematica:
-        nombres_columnas['tematica_modal'] = 'tematica_modal'
-
-    agrupado.rename(columns=nombres_columnas, inplace=True)
-
+    # 🆕 RENOMBRAR TEMÁTICA SI EXISTE
+    if tiene_tematica and 'tematica' in agrupado.columns:
+        nombres_columnas['tematica'] = 'tematica_modal'
+    
+    try:
+        agrupado.rename(columns=nombres_columnas, inplace=True)
+        
+        # 🔧 VERIFICAR QUE LA TEMÁTICA MODAL SE CREÓ CORRECTAMENTE
+        if tiene_tematica and 'tematica_modal' in agrupado.columns:
+            st.success(f"✅ Temática modal calculada para {len(agrupado)} artículos")
+            # Mostrar preview de las temáticas encontradas
+            tematicas_encontradas = agrupado['tematica_modal'].value_counts().head(3).to_dict()
+            if tematicas_encontradas:
+                st.info(f"📂 Temáticas principales: {', '.join(tematicas_encontradas.keys())}")
+        
+    except Exception as e:
+        st.error(f"❌ Error renombrando columnas: {e}")
+        return pd.DataFrame()
+    
     return agrupado
 
 def procesar_comentarios_politicos_con_sentimientos(df, aplicar_analisis_sentimientos, analizador, top_n=20, filtro_popularidad=None):
