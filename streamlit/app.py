@@ -1307,15 +1307,28 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                                             [comentarios_mayo_2025, comentarios_anio_2025, comentarios_historico],
                                             ["Mayo 2025", "Año 2025", "Histórico"]):
                 with subtab:
-                    mostrar_seccion_comentarios_temporal(
-                        f"📅 {periodo}",
-                        f"Artículos polémicos con comentarios sobre {partido_comentarios}",
-                        datos,
-                        f"{periodo.lower()} ({titulo_ubicacion} - {partido_comentarios})",
-                        procesar_articulos_politicos_polemicos,
-                        mostrar_tabla_articulos_polemicos,
-                        f"polemicos_{ubicacion_key}_{partido_comentarios.lower().replace(' ', '_')}_{periodo.lower().replace(' ', '_')}"
-                    )
+                    if mostrar_sentimientos and analizador is not None:
+                        # ✅ USAR FUNCIÓN CON SENTIMIENTOS
+                        df_resumido, reporte, df_comentarios_originales = procesar_comentarios_con_sentimientos_directo(
+                            datos, analizador, top_n=20, filtro_popularidad=None
+                        )
+                        mostrar_tabla_articulos_agregados_con_sentimientos(
+                            df_resumido, 
+                            f"Artículos polémicos sobre {partido_comentarios} - {periodo} ({titulo_ubicacion})", 
+                            df_comentarios_originales=df_comentarios_originales,
+                            reporte=reporte
+                        )
+                    else:
+                        # Versión sin sentimientos
+                        mostrar_seccion_comentarios_temporal(
+                            f"📅 {periodo}",
+                            f"Artículos polémicos con comentarios sobre {partido_comentarios}",
+                            datos,
+                            f"{periodo.lower()} ({titulo_ubicacion} - {partido_comentarios})",
+                            procesar_articulos_politicos_polemicos,
+                            mostrar_tabla_articulos_polemicos,
+                            f"polemicos_{ubicacion_key}_{partido_comentarios.lower().replace(' ', '_')}_{periodo.lower().replace(' ', '_')}"
+                        )
         
         with tab2:
             st.subheader(f"👍 Comentarios más populares sobre {partido_comentarios}")
@@ -1423,15 +1436,28 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                                             [comentarios_mayo_2025, comentarios_anio_2025, comentarios_historico],
                                             ["Mayo 2025", "Año 2025", "Histórico"]):
                 with subtab:
-                    mostrar_seccion_comentarios_temporal(
-                        f"📅 {periodo}",
-                        f"Artículos polémicos con comentarios sobre {politico_comentarios}",
-                        datos,
-                        f"{periodo.lower()} ({titulo_ubicacion} - {politico_comentarios})",
-                        procesar_articulos_politicos_polemicos,
-                        mostrar_tabla_articulos_polemicos,
-                        f"polemicos_{ubicacion_key}_{politico_comentarios.lower().replace(' ', '_')}_{periodo.lower().replace(' ', '_')}"
-                    )
+                    if mostrar_sentimientos and analizador is not None:
+                        # ✅ USAR FUNCIÓN CON SENTIMIENTOS
+                        df_resumido, reporte, df_comentarios_originales = procesar_comentarios_con_sentimientos_directo(
+                            datos, analizador, top_n=20, filtro_popularidad=None
+                        )
+                        mostrar_tabla_articulos_agregados_con_sentimientos(
+                            df_resumido, 
+                            f"Artículos polémicos sobre {politico_comentarios} - {periodo} ({titulo_ubicacion})", 
+                            df_comentarios_originales=df_comentarios_originales,
+                            reporte=reporte
+                        )
+                    else:
+                        # Versión sin sentimientos
+                        mostrar_seccion_comentarios_temporal(
+                            f"📅 {periodo}",
+                            f"Artículos polémicos con comentarios sobre {politico_comentarios}",
+                            datos,
+                            f"{periodo.lower()} ({titulo_ubicacion} - {politico_comentarios})",
+                            procesar_articulos_politicos_polemicos,
+                            mostrar_tabla_articulos_polemicos,
+                            f"polemicos_{ubicacion_key}_{politico_comentarios.lower().replace(' ', '_')}_{periodo.lower().replace(' ', '_')}"
+                        )
         
         with tab2:
             st.subheader(f"👍 Comentarios más populares sobre {politico_comentarios}")
