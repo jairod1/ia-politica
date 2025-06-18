@@ -97,7 +97,7 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
     reporte = None
 
     # Truncar títulos a 10 palabras
-    df_display['title'] = df_display['title'].apply(lambda x: truncar_titulo_palabras(x, 10))
+    df_display['title'] = df_display['title'].apply(lambda x: truncar_titulo_palabras(x, 6))
 
     if mostrar_sentimientos and analizador is not None:
         with st.spinner("🧠 Aplicando análisis de sentimientos..."):
@@ -345,7 +345,7 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
     if texto_columna:
         df_display['texto_original'] = df_display[texto_columna].copy()  # Guardar original
         df_display['comment_preview'] = df_display[texto_columna].apply(
-            lambda x: truncar_titulo_palabras(x, 10)  # 🔧 10 palabras en lugar de 50 caracteres
+            lambda x: truncar_titulo_palabras(x, 6)  # 🔧 10 palabras en lugar de 50 caracteres
         )
         
     if 'comment_preview' not in df_display.columns:
@@ -838,7 +838,7 @@ def mostrar_tabla_articulos_polemicos(df, titulo_seccion, key_suffix=""):
     df_display = df[columnas_disponibles].copy()
 
     # Truncar títulos a 10 palabras
-    df_display['title'] = df_display['title'].apply(lambda x: truncar_titulo_palabras(x, 10))
+    df_display['title'] = df_display['title'].apply(lambda x: truncar_titulo_palabras(x, 6))
     
     try:
         event = st.dataframe(
@@ -1059,7 +1059,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
 
     # Truncar títulos a 10 palabras
     if 'title' in df_display.columns:
-        df_display['title'] = df_display['title'].apply(lambda x: truncar_titulo_palabras(x, 10))
+        df_display['title'] = df_display['title'].apply(lambda x: truncar_titulo_palabras(x, 6))
 
     # GUARDAR TEXTO ORIGINAL ANTES DE CUALQUIER PROCESAMIENTO
     if 'title' in df_display.columns:
