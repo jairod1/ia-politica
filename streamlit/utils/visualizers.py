@@ -75,6 +75,36 @@ def truncar_titulo_palabras(titulo, max_palabras=10):
     else:
         return " ".join(palabras[:max_palabras]) + "..."
 
+def crear_mapping_titulos_originales(df):
+
+    mapping = {}
+    
+    for idx, row in df.iterrows():
+        link = row.get('link', f'no_link_{idx}')  # Fallback si no hay link
+        titulo_original = row.get('title', 'Sin título')
+        
+        # Limpiar y preservar título original
+        if pd.notna(titulo_original):
+            mapping[link] = str(titulo_original).strip()
+        else:
+            mapping[link] = 'Sin título'
+    
+    return mapping
+
+def obtener_titulo_original(selected_article, mapping_titulos):
+
+    link = selected_article.get('link', '')
+    
+    # Intentar recuperar desde mapping
+    if link and link in mapping_titulos:
+        return mapping_titulos[link]
+    
+    # Fallbacks si no se encuentra
+    if 'title' in selected_article:
+        return selected_article['title']  # Título truncado como último recurso
+    
+    return 'Título no disponible'
+
 def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentimientos=False, analizador=None, es_articulos_populares=True):
     """
     Tabla mejorada con las nuevas columnas en el orden solicitado:
@@ -95,6 +125,9 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
     # Aplicar análisis si está habilitado
     df_display = df.copy()
     reporte = None
+
+    # Función para guardar título completo del artículo
+    mapping_titulos_originales = crear_mapping_titulos_originales(df_display)
 
     # Truncar títulos a 5 palabras
     df_display['title'] = df_display['title'].apply(lambda x: truncar_titulo_palabras(x, 5))
@@ -258,7 +291,8 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
         col1, col2 = st.columns([3, 1])
         
         with col1:
-            st.write(f"**📰 {selected_article['title']}**")
+            titulo_completo = obtener_titulo_original(selected_article, mapping_titulos_originales)
+            st.write(f"**📰 {titulo_completo}**")
             st.write("**📖 Resumen:**")
             if pd.notna(selected_article.get('summary')) and str(selected_article.get('summary', '')).strip():
                 st.write(selected_article['summary'])
@@ -830,7 +864,10 @@ def mostrar_tabla_articulos_polemicos(df, titulo_seccion, key_suffix=""):
     
     df_display = df[columnas_disponibles].copy()
 
-    # Truncar títulos a 10 palabras
+    # Guardar títulos completos
+    mapping_titulos_originales = crear_mapping_titulos_originales(df_display)
+
+    # Truncar títulos a 5 palabras
     df_display['title'] = df_display['title'].apply(lambda x: truncar_titulo_palabras(x, 5))
     
     try:
@@ -891,14 +928,14 @@ def mostrar_tabla_comentarios(df, titulo_seccion, es_popular=True, key_suffix=""
     
     # Crear tabla con información relevante
     df_display = df[columnas_disponibles].copy()
-    
-    # Truncar texto de comentario para la tabla
-    if 'comment_text' in df_display.columns:
-        # Guardar texto original del comentario
-        df_display['texto_original'] = df_display['comment_text'].copy()  # Guardar texto completo
-        df_display['comment_preview'] = df_display['comment_text'].apply(
-            lambda x: str(x)[:50] + "..." if len(str(x)) > 50 else str(x)
-        )
+
+    # Guardar título original     
+    mapping_titulos_originales = crear_mapping_titulos_originales(df_display)
+
+    # Truncar títulos a 5 palabras
+    if 'title' in df_display.columns:
+        df_display['title'] = df_display['title'].apply(lambda x: truncar_titulo_palabras(x, 5))
+
     
     # Configurar columnas para mostrar
     columnas_tabla = ['comment_preview', 'comment_location', 'likes', 'dislikes', 'net_score', 'article_title', 'article_link']
@@ -1049,6 +1086,9 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
     
     # Preparar DataFrame con presentación bonita
     df_display = df.copy()
+
+    # Guardar títulos originales
+    mapping_titulos_originales = crear_mapping_titulos_originales(df_display)
 
     # Truncar títulos a 5 palabras
     if 'title' in df_display.columns:
