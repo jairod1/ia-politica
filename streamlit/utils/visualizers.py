@@ -972,8 +972,13 @@ def mostrar_tabla_comentarios(df, titulo_seccion, es_popular=True, key_suffix=""
     # Truncar títulos a 5 palabras
     if 'title' in df_display.columns:
         df_display['title'] = df_display['title'].apply(lambda x: truncar_titulo_palabras(x, 5))
-
     
+    # Crear previsualización del comentario ANTES de configurar columnas
+    if 'comment_preview' not in df_display.columns and 'comment_text' in df_display.columns:
+        df_display['comment_preview'] = df_display['comment_text'].apply(
+            lambda x: str(x)[:50] + "..." if len(str(x)) > 50 else str(x)
+        )
+
     # Configurar columnas para mostrar
     columnas_tabla = ['comment_preview', 'comment_location', 'likes', 'dislikes', 'net_score', 'article_title', 'article_link']
     columnas_tabla = [col for col in columnas_tabla if col in df_display.columns]
