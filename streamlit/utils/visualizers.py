@@ -1109,6 +1109,9 @@ def mostrar_tabla_articulos_con_sentimientos(df, titulo, reporte=None):
         mostrar_analisis_sentimientos_compacto(df, reporte, titulo)
 
 def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentarios_originales=None, reporte=None, table_height=600):
+    """
+    🆕 MODIFICADO: Añadir columna de "Temática Modal" entre Intensidad y Confianza
+    """
     if len(df) == 0:
         st.warning(f"🤷‍♂️ No hay datos para mostrar en: {titulo}")
         return
@@ -1142,7 +1145,8 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
         'intensidad': 'intensidad_media' if 'intensidad_media' in df.columns else 'intensidad_emocional',
         'confianza': 'confianza_media' if 'confianza_media' in df.columns else 'confianza_analisis',
         'fecha': 'article_date' if 'article_date' in df.columns else 'date',
-        'enlace': 'article_link' if 'article_link' in df.columns else 'link'
+        'enlace': 'article_link' if 'article_link' in df.columns else 'link',
+        'tematica_modal': 'tematica_modal'  # 🆕 NUEVA COLUMNA
     }
     
     # PRESENTACIÓN VISUAL BONITA con emojis
@@ -1163,7 +1167,13 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
         lambda x: f"{emoji_emociones.get(x, '🤔')} {str(x).title()}" if pd.notna(x) else "🤷‍♂️ Ninguna"
     )
     
-    # 🔧 NUEVO: CALCULAR NÚMERO DE COMENTARIOS EN LUGAR DE IDIOMA
+    # 🆕 PROCESAR TEMÁTICA MODAL (si existe la columna)
+    tiene_tematica_modal = columnas_mapeo['tematica_modal'] in df_display.columns
+    if tiene_tematica_modal:
+        # La temática modal ya viene con emoji del analizador, solo limpiar si es necesario
+        df_display['tematica_modal_display'] = df_display[columnas_mapeo['tematica_modal']].fillna("📄 No definida")
+    
+    # CALCULAR NÚMERO DE COMENTARIOS
     if df_comentarios_originales is not None:
         # Contar comentarios por artículo
         comentarios_por_articulo = {}
@@ -1189,10 +1199,10 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
         # Fallback: usar columna n_comments si existe
         df_display['num_comentarios'] = df_display.get('n_comments', 0)
     
-    # CONFIGURACIÓN DE COLUMNAS (🔧 SIN IDIOMA, CON COMENTARIOS)
+    # 🆕 CONFIGURACIÓN DE COLUMNAS ACTUALIZADA CON TEMÁTICA MODAL
     column_config = {
         columnas_mapeo['titulo']: "📰 Título",
-        "num_comentarios": st.column_config.NumberColumn("💬 Comentarios", format="%d"),  # 🔧 NUEVA COLUMNA
+        "num_comentarios": st.column_config.NumberColumn("💬 Comentarios", format="%d"),
         "tono_emoji": "😊 Tono General",
         "emocion_emoji": "🎭 Emoción Dominante",
         columnas_mapeo['intensidad']: st.column_config.NumberColumn("🔥 Intensidad", format="%.1f/5"),
@@ -1202,10 +1212,29 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
         columnas_mapeo['enlace']: st.column_config.LinkColumn("🔗 Enlace", display_text="Ver artículo")
     }
     
-    # COLUMNAS A MOSTRAR (🔧 COMENTARIOS EN LUGAR DE IDIOMA)
-    columnas_mostrar = [columnas_mapeo['titulo'], "num_comentarios", "tono_emoji", "emocion_emoji", 
-                       columnas_mapeo['intensidad'], columnas_mapeo['confianza'], 
-                       columnas_mapeo['fecha'], "source", columnas_mapeo['enlace']]
+    # 🆕 AÑADIR CONFIGURACIÓN DE TEMÁTICA MODAL SI EXISTE
+    if tiene_tematica_modal:
+        column_config["tematica_modal_display"] = "📂 Temática Modal"
+    
+    # 🆕 COLUMNAS A MOSTRAR CON TEMÁTICA MODAL EN LA POSICIÓN CORRECTA
+    columnas_mostrar = [
+        columnas_mapeo['titulo'], 
+        "num_comentarios", 
+        "tono_emoji", 
+        "emocion_emoji", 
+        columnas_mapeo['intensidad']
+    ]
+    
+    # 🆕 INSERTAR TEMÁTICA MODAL ENTRE INTENSIDAD Y CONFIANZA
+    if tiene_tematica_modal:
+        columnas_mostrar.append("tematica_modal_display")
+    
+    columnas_mostrar.extend([
+        columnas_mapeo['confianza'], 
+        columnas_mapeo['fecha'], 
+        "source", 
+        columnas_mapeo['enlace']
+    ])
     
     # Filtrar columnas que realmente existen
     columnas_mostrar = [col for col in columnas_mostrar if col in df_display.columns]
@@ -1223,6 +1252,8 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
         )
     except Exception as e:
         st.error(f"💥 Error mostrando tabla: {e}")
+        st.error(f"Columnas solicitadas: {columnas_mostrar}")
+        st.error(f"Columnas disponibles: {list(df_display.columns)}")
         return
             
     # PANEL DE COMENTARIOS SI HAY ARTÍCULO SELECCIONADO
@@ -1235,6 +1266,11 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
         # Mostrar título original del artículo
         titulo_original = obtener_titulo_original(selected_article, mapping_titulos_originales)
         st.subheader(f"**📰 Artículo:** {titulo_original}")
+        
+        # 🆕 MOSTRAR TEMÁTICA MODAL SI EXISTE
+        if tiene_tematica_modal:
+            tematica_modal = selected_article.get('tematica_modal_display', 'No definida')
+            st.info(f"📂 **Temática modal de comentarios**: {tematica_modal}")
         
         # Buscar comentarios de este artículo específico
         article_link = selected_article.get(columnas_mapeo['enlace'], '')
@@ -1254,7 +1290,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
         if len(comentarios_artículo) > 0:
             st.write(f"**💬 Encontrados {len(comentarios_artículo)} comentarios:**")
     
-            # 🔧 ANÁLISIS BAJO DEMANDA 
+            # ANÁLISIS BAJO DEMANDA 
             analizador = st.session_state.get('analizador_global', None)
     
             if analizador is not None:
@@ -1263,8 +1299,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
                         from .sentiment_integration import aplicar_analisis_sentimientos
                         comentarios_analizados, _ = aplicar_analisis_sentimientos(comentarios_artículo, analizador)
                 
-                        # 🔧 NUEVO ORDEN 1: COMENTARIOS PRIMERO                        
-                        # Mostrar comentarios individuales con análisis (CON IDIOMA)
+                        # Mostrar comentarios individuales con análisis
                         for idx, comment in comentarios_analizados.iterrows():
                             comment_text = comment.get('title', '')
                             comment_author = comment.get('comment_author', 'Anónimo')
@@ -1272,7 +1307,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
                             dislikes = comment.get('dislikes', 0)
                             location = comment.get('comment_location', 'No especificada')
                             
-                            # Construir título con análisis (CON IDIOMA)
+                            # Construir título con análisis
                             titulo = f"💬 {comment_author} | 👍 {likes} | 👎 {dislikes} | 📍 {location}"
                             
                             if 'idioma' in comment:
@@ -1280,22 +1315,23 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
                                 tono = comment.get('tono_general', 'neutral')
                                 emocion = comment.get('emocion_principal', 'neutral')
                                 intensidad = comment.get('intensidad_emocional', 1)
+                                tematica = comment.get('tematica', '📄 Otros')  # 🆕 MOSTRAR TEMÁTICA
                                 
                                 emoji_idioma = '🏴󠁥󠁳󠁧󠁡󠁿' if idioma == 'gallego' else '🇪🇸'
                                 emoji_tono = '😊' if tono == 'positivo' else '😔' if tono == 'negativo' else '😐'
                                 
-                                titulo += f" | {emoji_idioma} {idioma.title()} | {emoji_tono} {tono.title()} | 🎭 {emocion.title()} | 🔥 {intensidad}/5"
+                                titulo += f" | {emoji_idioma} {idioma.title()} | {emoji_tono} {tono.title()} | 🎭 {emocion.title()} | {tematica} | 🔥 {intensidad}/5"
                             
                             with st.expander(titulo):
                                 st.write(comment_text)
                         
-                        # 🔧 NUEVO ORDEN 2: ANÁLISIS ESPECÍFICO DESPUÉS
+                        # Análisis específico después
                         st.divider()
                         mostrar_analisis_comentarios_articulo_especifico(selected_article, comentarios_analizados, columnas_mapeo)
                                 
                     except Exception as e:
                         st.error(f"❌ Error en análisis específico: {e}")
-                        # Fallback sin análisis específico - SOLO COMENTARIOS
+                        # Fallback sin análisis específico
                         st.write("**📝 Comentarios individuales:**")
                         for idx, comment in comentarios_artículo.iterrows():
                             titulo = f"💬 {comment.get('comment_author', 'Anónimo')} | 👍 {comment.get('likes', 0)} | 👎 {comment.get('dislikes', 0)}"
@@ -1318,7 +1354,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
     if reporte is not None and not event.selection.rows:
         st.divider()
         mostrar_analisis_sentimientos_comentarios_compacto(df_display, reporte, titulo)
-
+        
 def ordenar_articulos_polemicos(df_comentarios_completos):
     """
     Función auxiliar para ordenar artículos por número de comentarios

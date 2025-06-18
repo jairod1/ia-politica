@@ -75,6 +75,7 @@ def mostrar_comentarios_con_sentimientos(df_comentarios, reporte, titulo_seccion
 def resumir_sentimientos_por_articulo(df_analizado):
     """
     Agrupa los comentarios analizados por artículo y calcula estadísticas agregadas de sentimiento.
+    🆕 AÑADIDO: Cálculo de temática modal (más repetida) por artículo
 
     Args:
         df_analizado: DataFrame con una fila por comentario, y análisis de sentimientos hecho
@@ -88,6 +89,22 @@ def resumir_sentimientos_por_articulo(df_analizado):
             return 'neutral'
         return conteo.idxmax()
     
+    def calcular_tematica_modal(col):
+        """🆕 NUEVA FUNCIÓN: Calcula la temática más repetida en los comentarios del artículo"""
+        conteo = col.value_counts()
+        if len(conteo) == 0:
+            return '📄 Otros'
+        
+        # Obtener la temática más frecuente
+        tematica_modal = conteo.idxmax()
+        
+        # Si hay empate o solo hay "Otros", manejar casos especiales
+        if conteo.iloc[0] == 1 and len(conteo) > 1:
+            # Si todas las temáticas aparecen solo 1 vez, devolver "📄 Variadas"
+            return '📄 Variadas'
+        
+        return tematica_modal
+    
     # Verificar que las columnas necesarias existen
     columnas_necesarias = ['tono_general', 'emocion_principal', 'intensidad_emocional', 'confianza_analisis']
     columnas_faltantes = [col for col in columnas_necesarias if col not in df_analizado.columns]
@@ -96,7 +113,11 @@ def resumir_sentimientos_por_articulo(df_analizado):
         st.error(f"❌ Faltan columnas de análisis: {columnas_faltantes}")
         return pd.DataFrame()
 
-    agrupado = df_analizado.groupby(['title_original']).agg({
+    # 🆕 VERIFICAR SI EXISTE COLUMNA DE TEMÁTICA
+    tiene_tematica = 'tematica' in df_analizado.columns
+
+    # Configurar agregaciones base
+    agregaciones = {
         'link': 'first',  
         'tono_general': moda_o_neutral,
         'emocion_principal': moda_o_neutral,
@@ -107,9 +128,16 @@ def resumir_sentimientos_por_articulo(df_analizado):
         'date': 'first',
         'n_visualizations': 'first',
         'source': 'first'
-    }).reset_index()
+    }
+    
+    # 🆕 AÑADIR AGREGACIÓN DE TEMÁTICA MODAL SI EXISTE LA COLUMNA
+    if tiene_tematica:
+        agregaciones['tematica_modal'] = calcular_tematica_modal
 
-    agrupado.rename(columns={
+    agrupado = df_analizado.groupby(['title_original']).agg(agregaciones).reset_index()
+
+    # Renombrar columnas
+    nombres_columnas = {
         'title_original': 'title',
         'tono_general': 'tono_comentarios',
         'emocion_principal': 'emocion_dominante',
@@ -119,10 +147,15 @@ def resumir_sentimientos_por_articulo(df_analizado):
         'idioma': 'idioma_dominante',
         'link': 'article_link',
         'date': 'article_date'
-    }, inplace=True)
+    }
+    
+    # 🆕 AÑADIR RENOMBRADO DE TEMÁTICA MODAL SI EXISTE
+    if tiene_tematica:
+        nombres_columnas['tematica_modal'] = 'tematica_modal'
+
+    agrupado.rename(columns=nombres_columnas, inplace=True)
 
     return agrupado
-
 
 def procesar_comentarios_politicos_con_sentimientos(df, aplicar_analisis_sentimientos, analizador, top_n=20, filtro_popularidad=None):
     """
