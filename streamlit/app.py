@@ -1025,7 +1025,7 @@ elif opcion == "💬 Análisis de Comentarios":
         )
 
 # Función auxiliar para mostrar análisis de comentarios
-def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion, ubicacion_key, mostrar_sentimientos, analizador):
+def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion, ubicacion_key, mostrar_sentimientos, analizador, tipo_analisis_comentarios, partido_comentarios=None, politico_comentarios=None):    
     """🔧 FUNCIÓN CORREGIDA: Usar criterios unificados para artículos polémicos"""
     
     if mostrar_sentimientos:
@@ -1808,21 +1808,21 @@ elif opcion == "💬 Análisis de Comentarios":
     if ubicacion_comentarios == "🌍 Comentarios Globales":
         try:
             datos_comentarios = cargar_datos_comentarios()
-            mostrar_analisis_comentarios_con_filtros(datos_comentarios, "Comentarios Globales", "global", mostrar_sentimientos, analizador)
+            mostrar_analisis_comentarios_con_filtros(datos_comentarios, "Comentarios Globales", "global", mostrar_sentimientos, analizador, tipo_analisis_comentarios, partido_comentarios, politico_comentarios)
         except Exception as e:
             st.error(f"❌ Error cargando datos de comentarios globales: {e}")
             
     elif ubicacion_comentarios == "🏛️ Comentarios de O Morrazo y Pontevedra":
         try:
             datos_comentarios = cargar_datos_comentarios_morrazo()
-            mostrar_analisis_comentarios_con_filtros(datos_comentarios, "O Morrazo y Pontevedra", "morrazo", mostrar_sentimientos, analizador)
+            mostrar_analisis_comentarios_con_filtros(datos_comentarios, "O Morrazo y Pontevedra", "morrazo", mostrar_sentimientos, analizador, tipo_analisis_comentarios, partido_comentarios, politico_comentarios)
         except Exception as e:
             st.error(f"❌ Error cargando datos de comentarios de O Morrazo: {e}")
             
     elif ubicacion_comentarios == "📍 Comentarios de Marín":
         try:
             datos_comentarios = cargar_datos_comentarios_marin()
-            mostrar_analisis_comentarios_con_filtros(datos_comentarios, "Marín", "marin", mostrar_sentimientos, analizador)
+            mostrar_analisis_comentarios_con_filtros(datos_comentarios, "Marín", "marin", mostrar_sentimientos, analizador, tipo_analisis_comentarios, partido_comentarios, politico_comentarios)
         except Exception as e:
             st.error(f"❌ Error cargando datos de comentarios de Marín: {e}")
 
