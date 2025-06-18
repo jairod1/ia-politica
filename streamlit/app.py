@@ -1328,7 +1328,8 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                             f"{periodo.lower()} ({titulo_ubicacion} - {partido_comentarios})",
                             procesar_articulos_politicos_polemicos,
                             mostrar_tabla_articulos_polemicos,
-                            f"polemicos_{ubicacion_key}_{partido_comentarios.lower().replace(' ', '_')}_{periodo.lower().replace(' ', '_')}"
+                            f"polemicos_{ubicacion_key}_{partido_comentarios.lower().replace(' ', '_')}_{periodo.lower().replace(' ', '_')}",
+                            table_height=300
                         )
         
         with tab2:
@@ -1358,7 +1359,8 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                             f"{periodo} ({titulo_ubicacion} - {partido_comentarios})",
                             procesar_comentarios_politicos_populares,
                             lambda df, titulo, key_suffix: mostrar_tabla_comentarios(df, titulo, es_popular=True, key_suffix=key_suffix),
-                            f"populares_{ubicacion_key}_{partido_comentarios.lower().replace(' ', '_')}_{periodo.replace(' ', '_')}"
+                            f"populares_{ubicacion_key}_{partido_comentarios.lower().replace(' ', '_')}_{periodo.replace(' ', '_')}",
+                            table_height=300
                         )
         
         with tab3:
@@ -1388,7 +1390,8 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                             f"{periodo} ({titulo_ubicacion} - {partido_comentarios})",
                             procesar_comentarios_politicos_impopulares,
                             lambda df, titulo, key_suffix: mostrar_tabla_comentarios(df, titulo, es_popular=False, key_suffix=key_suffix),
-                            f"impopulares_{ubicacion_key}_{partido_comentarios.lower().replace(' ', '_')}_{periodo.replace(' ', '_')}"
+                            f"impopulares_{ubicacion_key}_{partido_comentarios.lower().replace(' ', '_')}_{periodo.replace(' ', '_')}",
+                            table_height=300
                         )
     
     elif tipo_analisis_comentarios == "👥 Comentarios sobre Políticos Locales":
@@ -1458,7 +1461,8 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                             f"{periodo.lower()} ({titulo_ubicacion} - {politico_comentarios})",
                             procesar_articulos_politicos_polemicos,
                             mostrar_tabla_articulos_polemicos,
-                            f"polemicos_{ubicacion_key}_{politico_comentarios.lower().replace(' ', '_')}_{periodo.lower().replace(' ', '_')}"
+                            f"polemicos_{ubicacion_key}_{politico_comentarios.lower().replace(' ', '_')}_{periodo.lower().replace(' ', '_')}",
+                            table_height=300
                         )
         
         with tab2:
@@ -1488,7 +1492,8 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                             f"{periodo} ({titulo_ubicacion} - {politico_comentarios})",
                             procesar_comentarios_politicos_populares,
                             lambda df, titulo, key_suffix: mostrar_tabla_comentarios(df, titulo, es_popular=True, key_suffix=key_suffix),
-                            f"populares_{ubicacion_key}_{politico_comentarios.lower().replace(' ', '_')}_{periodo.replace(' ', '_')}"
+                            f"populares_{ubicacion_key}_{politico_comentarios.lower().replace(' ', '_')}_{periodo.replace(' ', '_')}",
+                            table_height=300
                         )
         
         with tab3:
@@ -1518,7 +1523,8 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                             f"{periodo} ({titulo_ubicacion} - {politico_comentarios})",
                             procesar_comentarios_politicos_impopulares,
                             lambda df, titulo, key_suffix: mostrar_tabla_comentarios(df, titulo, es_popular=False, key_suffix=key_suffix),
-                            f"impopulares_{ubicacion_key}_{politico_comentarios.lower().replace(' ', '_')}_{periodo.replace(' ', '_')}"
+                            f"impopulares_{ubicacion_key}_{politico_comentarios.lower().replace(' ', '_')}_{periodo.replace(' ', '_')}",
+                            table_height=300
                         )
 
 # 🎨 GESTIÓN INTELIGENTE DE FONDOS

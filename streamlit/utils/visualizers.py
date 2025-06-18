@@ -871,7 +871,7 @@ def mostrar_analisis_sentimientos_compacto(df_analizado, reporte, titulo_seccion
             for tematica, cantidad in list(tematicas.items())[:4]:
                 st.write(f"• {tematica}: {cantidad} artículos")
 
-def mostrar_tabla_articulos_polemicos(df, titulo_seccion, key_suffix=""):
+def mostrar_tabla_articulos_polemicos(df, titulo_seccion, key_suffix="", table_height=600):
     """Muestra tabla de artículos más polémicos (sin cambios)"""
     if len(df) == 0:
         st.info(f"🤷‍♂️ No hay artículos polémicos para {titulo_seccion.lower()}")
@@ -907,7 +907,7 @@ def mostrar_tabla_articulos_polemicos(df, titulo_seccion, key_suffix=""):
             hide_index=True,
             on_select="rerun",
             selection_mode="single-row",
-            height=600,
+            height=table_height,
             key=f"articulos_polemicos_{key_suffix}"
         )
     except Exception as e:
