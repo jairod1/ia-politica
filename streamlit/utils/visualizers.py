@@ -1211,7 +1211,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
         
         # Mostrar título original del artículo
         titulo_original = obtener_titulo_original(selected_article, mapping_titulos_originales)
-        st.write(f"**📰 Artículo seleccionado:** {titulo_original}")
+        st.write(f"**📰 Artículo:** {titulo_original}")
         
         st.subheader("💬 Comentarios del artículo seleccionado")
 
