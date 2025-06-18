@@ -924,8 +924,6 @@ def mostrar_tabla_articulos_polemicos(df, titulo_seccion, key_suffix=""):
         titulo_original = obtener_titulo_original(selected_article, mapping_titulos_originales)
         st.subheader(f"**📰 Artículo:** {titulo_original}")
 
-        st.subheader("💬 Comentarios del artículo seleccionado")
-
         # Primero contar todos los comentarios
         total_comentarios = 0
         for i in range(1, 16):
@@ -935,7 +933,7 @@ def mostrar_tabla_articulos_polemicos(df, titulo_seccion, key_suffix=""):
 
         # Mostrar el total UNA VEZ
         if total_comentarios > 0:
-            st.subheader(f"**💬 Encontrados {total_comentarios} comentarios:**")
+            st.write(f"**💬 Encontrados {total_comentarios} comentarios:**")
         
         # Mostrar comentarios del artículo
         comentarios_mostrados = 0
