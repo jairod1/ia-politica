@@ -166,7 +166,7 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
     
     if mostrar_sentimientos and reporte is not None:
         # Verificar que las nuevas columnas existan
-        columnas_nuevas_necesarias = ["idioma", "tono_general", "emocion_principal", "confianza_analisis", "intensidad_emocional"]
+        columnas_nuevas_necesarias = ["idioma", "tono_general", "emocion_principal", "intensidad_emocional", "confianza_analisis", "tematica"]
         columnas_faltantes = [col for col in columnas_nuevas_necesarias if col not in df_display.columns]
         
         if columnas_faltantes:
@@ -175,8 +175,8 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
         else:
             # ORDEN SOLICITADO: idioma → tono → emoción primaria → emoción secundaria → resto
             if es_articulos_populares:
-                columnas_analisis = ["idioma", "tono_general", "emocion_principal", 
-                                   "confianza_analisis", "intensidad_emocional", "es_politico"]
+                columnas_analisis = ["idioma", "tono_general", "emocion_principal", "intensidad_emocional",
+                                   "confianza_analisis", "tematica", "es_politico"]
                 
                 df_tabla = df_display[columnas_basicas + columnas_analisis].copy()
                 
@@ -214,16 +214,17 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
                     "idioma_emoji": "🌍 Idioma",  # NUEVA COLUMNA PRIMERA
                     "tono_general_emoji": "😊 Tono",
                     "emocion_primaria_emoji": "🎭 Emoción principal",  # NUEVA COLUMNA
-                    "confianza_analisis": st.column_config.NumberColumn("📊 Confianza", format="%.2f"),
                     "intensidad_emocional": st.column_config.NumberColumn("🔥 Intensidad", format="%d/5"),
+                    "tematica":  "📂 Temática",
+                    "confianza_analisis": st.column_config.NumberColumn("📊 Confianza (0-1)", format="%.2f"),
                     "politico_emoji": "🏛️ ¿Político?",
                     "date": "📅 Fecha",
                     "link": st.column_config.LinkColumn("URL", display_text="🔗 Ver")
                 }
                 
                 columnas_mostrar = ["title", "n_visualizations", "idioma_emoji", "tono_general_emoji", 
-                                  "emocion_primaria_emoji", "confianza_analisis", 
-                                  "intensidad_emocional", "politico_emoji", "date", "link"]
+                                  "emocion_primaria_emoji","intensidad_emocional", "tematica",
+                                   "confianza_analisis", "politico_emoji", "date", "link"]
                 
             else:
                 # Para artículos políticos: mostrar temática en lugar de "es_político"
