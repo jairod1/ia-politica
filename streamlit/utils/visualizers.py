@@ -919,6 +919,11 @@ def mostrar_tabla_articulos_polemicos(df, titulo_seccion, key_suffix=""):
         selected_article = df.iloc[selected_idx]
         
         st.divider()
+
+        # Mostrar título original del artículo
+        titulo_original = obtener_titulo_original(selected_article, mapping_titulos_originales)
+        st.subheader(f"**📰 Artículo:** {titulo_original}")
+
         st.subheader("💬 Comentarios del artículo seleccionado")
         
         # Mostrar algunos comentarios del artículo
