@@ -1097,17 +1097,21 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
     st.subheader(f"📋 {titulo}")
     st.info("💡 Haz clic en la columna de la izquierda para ver comentarios del artículo")
     
-    # 1. CREAR MAPPING DEL DATAFRAME ORIGINAL ANTES DE CUALQUIER PROCESAMIENTO
-    mapping_titulos_originales = crear_mapping_titulos_originales(df)
+    # 🔧 CREAR MAPPING DESDE COMENTARIOS ORIGINALES (con títulos completos)
+    if df_comentarios_originales is not None:
+        mapping_titulos_originales = crear_mapping_titulos_articulos_comentarios(df_comentarios_originales)
+    else:
+        # Fallback al DataFrame actual (puede estar truncado)
+        mapping_titulos_originales = crear_mapping_titulos_originales(df)
     
-    # 2. Preparar DataFrame con presentación bonita
+    # Preparar DataFrame con presentación bonita
     df_display = df.copy()
 
-    # 3. GUARDAR TEXTO ORIGINAL ANTES DE TRUNCAR
+    # GUARDAR TEXTO ORIGINAL ANTES DE TRUNCAR
     if 'title' in df_display.columns:
         df_display['texto_original_completo'] = df_display['title'].copy()
 
-    # 4. Truncar títulos a 5 palabras
+    # Truncar títulos a 5 palabras
     if 'title' in df_display.columns:
         df_display['title'] = df_display['title'].apply(lambda x: truncar_titulo_palabras(x, 5))
     
