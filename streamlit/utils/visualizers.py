@@ -1238,7 +1238,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
             ]
         
         if len(comentarios_artículo) > 0:
-            st.subheader(f"**💬 Encontrados {len(comentarios_artículo)} comentarios para el artículo seleccionado:**")
+            st.subheader(f"**💬 Encontrados {len(comentarios_artículo)} comentarios:**")
     
             # 🔧 ANÁLISIS BAJO DEMANDA 
             analizador = st.session_state.get('analizador_global', None)
