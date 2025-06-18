@@ -1030,6 +1030,10 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
         
         Se analizará el contenido emocional de cada comentario individual.
         """)
+
+        st.info("""
+        ↖️ **Para visualizar mejor todas las columnas del análisis, cierra el menú lateral**.
+        """)
     
     if tipo_analisis_comentarios == "📊 Análisis General":
         st.title(f"💬 {titulo_ubicacion} - 📊 Análisis General")
@@ -1706,6 +1710,10 @@ elif opcion == "📊 Análisis de Visualizaciones":
     
     if mostrar_sentimientos:
         st.success("🧠 **Análisis avanzado de sentimientos y emociones activado**")
+
+        st.info("""
+        ↖️ **Para visualizar mejor todas las columnas del análisis, cierra el menú lateral**.
+        """)
             
     if sub_opcion == "📈 Artículos más Populares":
         st.title("📈 Artículos más Populares")
