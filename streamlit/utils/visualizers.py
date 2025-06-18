@@ -96,7 +96,7 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
     df_display = df.copy()
     reporte = None
 
-    # Truncar títulos a 10 palabras
+    # Truncar títulos a 5 palabras
     df_display['title'] = df_display['title'].apply(lambda x: truncar_titulo_palabras(x, 5))
 
     if mostrar_sentimientos and analizador is not None:
@@ -340,13 +340,6 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
             'net_score': 'net_score',
             'link': 'link'
         }
-
-    # Una vez creado comment_preview, truncamos la vista previa a 5 palabras
-    if texto_columna:
-        df_display['texto_original'] = df_display[texto_columna].copy()  # Guardar original
-        df_display['comment_preview'] = df_display[texto_columna].apply(
-            lambda x: truncar_titulo_palabras(x, 5)  # 5 palabras
-        )
         
     if 'comment_preview' not in df_display.columns:
         # Determinar qué columna contiene el texto del comentario
@@ -357,11 +350,13 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
         else:
             texto_columna = None
     
+        # Una vez creado comment_preview, truncamos la vista previa a 5 palabras
         if texto_columna:
-            df_display['texto_original'] = df_display[texto_columna].copy()
+            df_display['texto_original'] = df_display[texto_columna].copy()  # Guardar original
             df_display['comment_preview'] = df_display[texto_columna].apply(
-                lambda x: str(x)[:50] + "..." if pd.notna(x) and len(str(x)) > 50 else str(x) if pd.notna(x) else "Sin texto"
+                lambda x: truncar_titulo_palabras(x, 5)  # 5 palabras
             )
+
     
     # RENOMBRAR COLUMNAS PARA ESTANDARIZAR
     for nombre_estandar, nombre_real in mapeo_columnas.items():
@@ -1057,7 +1052,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
     # Preparar DataFrame con presentación bonita
     df_display = df.copy()
 
-    # Truncar títulos a 10 palabras
+    # Truncar títulos a 5 palabras
     if 'title' in df_display.columns:
         df_display['title'] = df_display['title'].apply(lambda x: truncar_titulo_palabras(x, 5))
 
