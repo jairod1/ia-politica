@@ -1063,7 +1063,7 @@ def mostrar_seccion_comentarios_temporal(titulo, descripcion, datos, titulo_secc
     try:
         datos_procesados = procesador_func(datos)
         print(f"✅ Procesador funcionó: {len(datos_procesados)} filas")
-        mostrar_func(datos_procesados, titulo_seccion, key_suffix=key_suffix)
+        mostrar_func(datos_procesados, titulo_seccion, key_suffix=key_suffix, table_height=table_height)
     except Exception as e:
         st.error(f"💥 Error procesando datos: {e}")
         st.error(f"💥 Función que falló: {procesador_func.__name__}")
