@@ -934,7 +934,7 @@ def mostrar_tabla_articulos_polemicos(df, titulo_seccion, key_suffix=""):
             comment_likes = selected_article.get(f'comment_{i}_likes', 0)
             comment_dislikes = selected_article.get(f'comment_{i}_dislikes', 0)
             
-            if len(comentarios_mostrados) > 0:
+            if comentarios_mostrados > 0:
                 st.subheader(f"**💬 Encontrados {len(comentarios_mostrados)} comentarios:**")
 
             if pd.notna(comment_text) and str(comment_text).strip() and comentarios_mostrados < 15:
