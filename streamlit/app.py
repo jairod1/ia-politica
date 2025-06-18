@@ -353,21 +353,27 @@ def procesar_comentarios_individuales_con_sentimientos(df, analizador, top_n=20,
             'tono_general',               # Tono general
             'emocion_principal',          # Emoción dominante
             'intensidad_emocional',       # Intensidad
+            'tematica',                   # Temática del comentario
             'likes_comentario',           # Likes
             'dislikes_comentario',        # Dislikes
             'confianza_analisis',         # Confianza en el análisis (0-1)
             'fuente_articulo',            # Fuente
             'enlace_articulo'             # Enlace
         ]
-        
-        # Verificar que todas las columnas existen
+
+        # Verificar que todas las columnas existen (permitir que falte temática)
         columnas_existentes = [col for col in columnas_finales if col in df_tabla_final.columns]
-        
-        if len(columnas_existentes) != len(columnas_finales):
+
+        # 🔧 NUEVO: Manejo especial para temática
+        if 'tematica' not in df_tabla_final.columns:
+            st.warning("⚠️ Columna temática no disponible en el análisis")
+            columnas_existentes = [col for col in columnas_existentes if col != 'tematica']
+
+        if len(columnas_existentes) < len(columnas_finales) - 1:  # -1 para permitir que falte temática
             columnas_faltantes = set(columnas_finales) - set(columnas_existentes)
             st.warning(f"⚠️ Algunas columnas no están disponibles: {columnas_faltantes}")
-        
-        # 7. Crear DataFrame final con solo las columnas solicitadas
+
+        # 7. Crear DataFrame final con solo las columnas disponibles
         df_resultado = df_tabla_final[columnas_existentes].copy()
         
         return df_resultado, reporte

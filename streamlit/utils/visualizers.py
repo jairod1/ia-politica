@@ -450,14 +450,10 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
                 lambda x: f"{emoji_emociones.get(x, '🤔')} {str(x).title()}" if pd.notna(x) else "🤷‍♂️ Ninguna"
             )
 
-            df_display['tematica_display'] = df_display['tematica'].fillna("📄 Otros")
-
-            # Manejar temática si existe
-            if 'tematica' in df_display.columns:
+            # 🔧 CORRECCIÓN: Manejar temática condicionalmente
+            tiene_tematica = 'tematica' in df_display.columns
+            if tiene_tematica:
                 df_display['tematica_display'] = df_display['tematica'].fillna("📄 Otros")
-                column_config["tematica_display"] = "📂 Temática"
-                # Insertar en posición correcta en columnas_mostrar
-                columnas_mostrar.insert(-3, 'tematica_display')  # Antes de intensidad
             
             # CONFIGURACIÓN CON SENTIMIENTOS
             column_config = {
@@ -475,12 +471,18 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
                 "link": st.column_config.LinkColumn("🔗 Artículo", display_text="Ver")
             }
 
-            if 'tematica' in df_display.columns:
-                column_config["tematica_display"] = "📂 Temática"
-            
+            # 🔧 CORRECCIÓN: Columnas base sin temática
             columnas_mostrar = ['comment_preview', 'comment_author', 'comment_location', 'likes', 'dislikes', 'net_score',
-                                'idioma_emoji', 'tono_general_emoji', 'emocion_principal_emoji', 'tematica_display',
-                                'intensidad_emocional', 'confianza_analisis', 'link']
+                                'idioma_emoji', 'tono_general_emoji', 'emocion_principal_emoji']
+            
+            # 🔧 AÑADIR temática solo si existe
+            if tiene_tematica:
+                column_config["tematica_display"] = "📂 Temática"
+                columnas_mostrar.append('tematica_display')
+            
+            # Añadir columnas finales
+            columnas_mostrar.extend(['intensidad_emocional', 'confianza_analisis', 'link'])
+            
         else:
             # Si faltan columnas de sentimientos, usar configuración básica
             mostrar_sentimientos = False
