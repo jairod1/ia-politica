@@ -1055,14 +1055,14 @@ def mostrar_seccion_temporal(titulo, descripcion, datos, titulo_seccion, mostrar
     st.caption(descripcion)
     mostrar_tabla_con_detalles_y_sentimientos(datos, titulo_seccion, mostrar_sentimientos, analizador, es_articulos_populares)
 
-def mostrar_seccion_comentarios_temporal(titulo, descripcion, datos, titulo_seccion, procesador_func, mostrar_func, key_suffix):
+def mostrar_seccion_comentarios_temporal(titulo, descripcion, datos, titulo_seccion, procesador_func, mostrar_func, key_suffix, table_height=600):
     """Muestra una sección de comentarios con filtros temporales (sin cambios)"""
     st.subheader(titulo)
     st.caption(descripcion)
     st.info("💡 Haz clic en la columna de la izquierda de la tabla para ver detalles del artículo")
     try:
         datos_procesados = procesador_func(datos)
-        print(f"✅ Procesador funcionó: {len(datos_procesados)} filas")  # ← AÑADIR
+        print(f"✅ Procesador funcionó: {len(datos_procesados)} filas")
         mostrar_func(datos_procesados, titulo_seccion, key_suffix=key_suffix)
     except Exception as e:
         st.error(f"💥 Error procesando datos: {e}")
