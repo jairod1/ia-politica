@@ -155,7 +155,7 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
     if mostrar_sentimientos and analizador is not None:
         with st.spinner("🧠 Aplicando análisis de sentimientos..."):
             from .sentiment_integration import aplicar_analisis_sentimientos
-            df_display, reporte = aplicar_analisis_sentimientos(df, analizador)
+            df_display, reporte = aplicar_analisis_sentimientos(df_display, analizador)
             
         if reporte is None:
             st.error("❌ Error aplicando análisis de sentimientos")
