@@ -83,7 +83,7 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
     elif tipo_analisis == "🗳️ Comentarios sobre Partidos Políticos":
         mapeo_fondos_partidos = {
             "Todos los partidos": "Todos-partidos.png",    
-            "🌹PSdeG-PSOE de Marín": "PSOE-Partido.jpg",     
+            "🌹PSdeG-PSOE de Marín": "PSOE-Partido.png",     
             "🔵Partido Popular de Marín": "PP-Partido.jpg",  
             "🌀BNG - Marín": "BNG-Partido.png"               
         }
@@ -92,7 +92,7 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
     elif tipo_analisis == "👥 Comentarios sobre Políticos Locales":
         mapeo_fondos_politicos = {
             "Todos los políticos": "Todos-candidatos.png",   
-            "🌹Manuel Pazos": "PSOE-Partido.jpg",              
+            "🌹Manuel Pazos": "PSOE-Partido.png",              
             "🔵María Ramallo": "PP-Partido.jpg",               
             "🌀Lucía Santos": "BNG-Partido.png"                
         }
@@ -105,7 +105,7 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
     elif tipo_analisis == "🏛️ Artículos sobre Partidos Políticos":
         mapeo_fondos_partidos_vis = {
             "Todos los partidos": "Todos-partidos.png",    
-            "🌹PSdeG-PSOE de Marín": "PSOE-Partido.jpg",     
+            "🌹PSdeG-PSOE de Marín": "PSOE-Partido.png",     
             "🔵Partido Popular de Marín": "PP-Partido.jpg",  
             "🌀BNG - Marín": "BNG-Partido.png"               
         }
@@ -114,7 +114,7 @@ def obtener_fondo_segun_opcion(tipo_analisis, partido_especifico=None, politico_
     elif tipo_analisis == "👥 Artículos sobre Políticos Locales":
         mapeo_fondos_politicos_vis = {
             "Todos los políticos": "Todos-candidatos.png",  
-            "🌹Manuel Pazos": "PSOE-Partido.jpg",             
+            "🌹Manuel Pazos": "PSOE-Partido.png",             
             "🔵María Ramallo": "PP-Partido.jpg",              
             "🌀Lucía Santos": "BNG-Partido.png"               
         }
