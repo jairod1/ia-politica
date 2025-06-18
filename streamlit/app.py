@@ -996,6 +996,10 @@ elif opcion == "💬 Análisis de Comentarios":
         mostrar_sentimientos = False
         st.info("⚠️ Análisis de sentimientos no disponible")
 
+    # DEFINIR VARIABLES POR DEFECTO
+    partido_comentarios = "Todos los partidos"
+    politico_comentarios = "Todos los políticos"
+
     if tipo_analisis_comentarios == "🗳️ Comentarios sobre Partidos Políticos":
         st.sidebar.subheader("🗳️ Partido Específico")
         partido_comentarios = st.sidebar.radio(
