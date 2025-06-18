@@ -926,7 +926,7 @@ def mostrar_tabla_articulos_polemicos(df, titulo_seccion, key_suffix=""):
 
         st.subheader("💬 Comentarios del artículo seleccionado")
         
-        # Mostrar algunos comentarios del artículo
+        # Mostrar comentarios del artículo
         comentarios_mostrados = 0
         for i in range(1, 16):
             comment_text = selected_article.get(f'comment_{i}_text', '')
@@ -934,6 +934,9 @@ def mostrar_tabla_articulos_polemicos(df, titulo_seccion, key_suffix=""):
             comment_likes = selected_article.get(f'comment_{i}_likes', 0)
             comment_dislikes = selected_article.get(f'comment_{i}_dislikes', 0)
             
+            if len(comentarios_mostrados) > 0:
+                st.subheader(f"**💬 Encontrados {len(comentarios_mostrados)} comentarios:**")
+
             if pd.notna(comment_text) and str(comment_text).strip() and comentarios_mostrados < 15:
                 with st.expander(f"💬 Comentario de {comment_author} | 👍 {comment_likes} | 👎 {comment_dislikes}"):
                     st.write(comment_text)
