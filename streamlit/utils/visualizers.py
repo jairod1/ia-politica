@@ -1218,9 +1218,16 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
         selected_idx = event.selection.rows[0]
         selected_article = df_display.iloc[selected_idx]
 
-        link_seleccionado = selected_article.get('link', 'NO_LINK')
-        st.write(f"**🔍 DEBUG Linkkkk seleccionado:** {link_seleccionado}")
-        st.write(f"**🔍 DEBUG ¿Está en mapping?** {link_seleccionado in mapping_titulos_originales}")
+        # 🔍 DEBUG COMPLETO del artículo seleccionado
+        st.write(f"**🔍 DEBUG Columnas del artículo:** {list(selected_article.index)}")
+        st.write(f"**🔍 DEBUG Link:** {selected_article.get('link', 'NO_LINK')}")
+        st.write(f"**🔍 DEBUG Title:** {selected_article.get('title', 'NO_TITLE')}")
+        
+        # Ver columnas que contienen 'link'
+        link_columns = [col for col in selected_article.index if 'link' in col.lower()]
+        st.write(f"**🔍 DEBUG Columnas con 'link':** {link_columns}")
+        for col in link_columns:
+            st.write(f"  - {col}: {selected_article.get(col, 'EMPTY')}")
         
         st.divider()
         
