@@ -715,7 +715,7 @@ def procesar_comentarios_con_sentimientos_directo(df, analizador, top_n=20, filt
             df_comentarios_filtrados = df_comentarios_filtrados.sort_values('net_score', ascending=False)
         elif filtro_popularidad == 'impopular':
             df_comentarios_filtrados = df_comentarios_filtrados[df_comentarios_filtrados['dislikes'] > df_comentarios_filtrados['likes']]
-            df_comentarios_filtrados = df_comentarios_filtrados.sort_values('net_score', ascending=False)
+            df_comentarios_filtrados = df_comentarios_filtrados.sort_values('net_score', ascending=True)
         
         # Limitar a top_n comentarios
         df_comentarios_filtrados = df_comentarios_filtrados.head(top_n)
@@ -789,7 +789,7 @@ def procesar_comentarios_individuales_con_sentimientos(df, analizador, top_n=20,
         df_comentarios = df_comentarios.sort_values('net_score', ascending=False)
     elif filtro_popularidad == 'impopular':
         df_comentarios = df_comentarios[df_comentarios['dislikes'] > df_comentarios['likes']]
-        df_comentarios = df_comentarios.sort_values('net_score', ascending=False)
+        df_comentarios = df_comentarios.sort_values('net_score', ascending=True)
     else:
         # Para artículos polémicos: ordenar por valor absoluto del net_score
         df_comentarios['abs_net_score'] = abs(df_comentarios['net_score'])
