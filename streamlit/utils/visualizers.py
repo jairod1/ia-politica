@@ -337,8 +337,7 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
     # Análisis de sentimientos después de los detalles del artículo
     if mostrar_sentimientos and reporte is not None:
         st.divider()
-        mostrar_analisis_sentimientos_compacto(df_display, reporte, titulo_seccion)
-        mostrar_explicacion_parametros()
+        mostrar_analisis_sentimientos_comentarios_compacto(df_display, reporte, titulo_seccion)
         
 def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_sentimientos=False, analizador=None, es_popular=True, reporte=None):
     """
@@ -608,8 +607,6 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
     if mostrar_sentimientos and reporte is not None:
         st.divider()
         mostrar_analisis_sentimientos_comentarios_compacto(df_display, reporte, titulo_seccion)
-        mostrar_explicacion_parametros()
-
 
 def mostrar_detalles_sentimientos_comentario(selected_comment):
     """
