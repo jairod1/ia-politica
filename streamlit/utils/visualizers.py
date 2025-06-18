@@ -61,6 +61,20 @@ def mostrar_explicacion_parametros():
         **En resumen**: Ya no es solo análisis, es comprensión emocional real 🎯
         """)
 
+def truncar_titulo_palabras(titulo, max_palabras=10):
+    """
+    Trunca un título a un número máximo de palabras
+    """
+    if pd.isna(titulo) or not str(titulo).strip():
+        return "Sin título"
+    
+    palabras = str(titulo).strip().split()
+    
+    if len(palabras) <= max_palabras:
+        return titulo
+    else:
+        return " ".join(palabras[:max_palabras]) + "..."
+
 def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentimientos=False, analizador=None, es_articulos_populares=True):
     """
     Tabla mejorada con las nuevas columnas en el orden solicitado:
@@ -82,7 +96,9 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
     df_display = df.copy()
     reporte = None
 
-        # 🔧 AÑADIR ESTAS LÍNEAS:
+    # Truncar títulos a 10 palabras
+    df_display['title'] = df_display['title'].apply(lambda x: truncar_titulo_palabras(x, 10))
+
     if mostrar_sentimientos and analizador is not None:
         with st.spinner("🧠 Aplicando análisis de sentimientos..."):
             from .sentiment_integration import aplicar_analisis_sentimientos
@@ -264,7 +280,7 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
             else:
                 st.info("🤷‍♂️ Sin enlace disponible")
     
-    # 🔧 CAMBIO PRINCIPAL: Análisis de sentimientos DESPUÉS de los detalles del artículo
+    # Análisis de sentimientos después de los detalles del artículo
     if mostrar_sentimientos and reporte is not None:
         st.divider()
         mostrar_analisis_sentimientos_compacto(df_display, reporte, titulo_seccion)
@@ -281,7 +297,7 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
         st.info(f"🤷‍♂️ No hay comentarios {tipo} para {titulo_seccion.lower()}")
         return
     
-    # 🔧 INICIALIZAR VARIABLES DESDE EL PRINCIPIO
+    # Inicializar variables desde el principio
     columnas_mostrar = []
     column_config = {}
     
@@ -324,6 +340,13 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
             'net_score': 'net_score',
             'link': 'link'
         }
+
+    # Una vez creado comment_preview, truncamos la vista previa a 10 palabras
+    if texto_columna:
+        df_display['texto_original'] = df_display[texto_columna].copy()  # Guardar original
+        df_display['comment_preview'] = df_display[texto_columna].apply(
+            lambda x: truncar_titulo_palabras(x, 10)  # 🔧 10 palabras en lugar de 50 caracteres
+        )
         
     if 'comment_preview' not in df_display.columns:
         # Determinar qué columna contiene el texto del comentario
@@ -813,6 +836,9 @@ def mostrar_tabla_articulos_polemicos(df, titulo_seccion, key_suffix=""):
         return
     
     df_display = df[columnas_disponibles].copy()
+
+    # Truncar títulos a 10 palabras
+    df_display['title'] = df_display['title'].apply(lambda x: truncar_titulo_palabras(x, 10))
     
     try:
         event = st.dataframe(
@@ -1030,6 +1056,10 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
     
     # Preparar DataFrame con presentación bonita
     df_display = df.copy()
+
+    # Truncar títulos a 10 palabras
+    if 'title' in df_display.columns:
+        df_display['title'] = df_display['title'].apply(lambda x: truncar_titulo_palabras(x, 10))
 
     # GUARDAR TEXTO ORIGINAL ANTES DE CUALQUIER PROCESAMIENTO
     if 'title' in df_display.columns:
