@@ -30,30 +30,7 @@ df["year"] = df["date"].dt.year
 os.makedirs(carpeta_salida, exist_ok=True)
 
 # ============================================================================
-# 1. VISUALIZACIONES POR MES (ya existía)
-# ============================================================================
-df_por_mes = df.sort_values(by=["year_month", "n_visualizations"], ascending=[False, False])
-archivo_por_mes = os.path.join(carpeta_salida, "visualizaciones_por_mes.csv")
-df_por_mes.to_csv(archivo_por_mes, index=False)
-print(f"✅ Archivo generado: {archivo_por_mes}")
-
-# ============================================================================
-# 2. VISUALIZACIONES POR AÑO
-# ============================================================================
-# Ordenar TODOS los artículos por año (descendente) y luego por visualizaciones (descendente)
-df_por_año = df.sort_values(by=["year", "n_visualizations"], ascending=[False, False])
-
-# Seleccionar columnas relevantes
-columnas_importantes = ["source", "title", "link", "date", "n_visualizations", "summary", "year_month", "year"]
-df_por_año = df_por_año[columnas_importantes]
-
-# Guardar
-archivo_por_año = os.path.join(carpeta_salida, "visualizaciones_por_año.csv")
-df_por_año.to_csv(archivo_por_año, index=False)
-print(f"✅ Archivo generado: {archivo_por_año}")
-
-# ============================================================================
-# 3. VISUALIZACIONES TOTALES (todos los artículos ordenados)
+# VISUALIZACIONES TOTALES (todos los artículos ordenados)
 # ============================================================================
 # Ordenar todos los artículos por visualizaciones descendente
 df_totales = df.sort_values("n_visualizations", ascending=False)
@@ -70,11 +47,9 @@ print(f"✅ Archivo generado: {archivo_totales}")
 # ============================================================================
 # RESUMEN
 # ============================================================================
-print(f"\n📊 RESUMEN DE ARCHIVOS GENERADOS:")
+print(f"\n📊 RESUMEN DE ARCHIVO GENERADO:")
 print(f"📁 Carpeta: {carpeta_salida}")
-print(f"1️⃣  visualizaciones_por_mes.csv - {len(df_por_mes)} artículos ordenados por mes")
-print(f"2️⃣  visualizaciones_por_año.csv - {len(df_por_año)} artículos ordenados por año y visualizaciones")
-print(f"3️⃣  visualizaciones_totales.csv - {len(df_totales)} artículos ordenados por popularidad")
+print(f"📄 visualizaciones_totales.csv - {len(df_totales)} artículos ordenados por popularidad")
 
 # Mostrar preview de artículos más vistos por año
 print(f"\n🔥 TOP ARTÍCULOS POR AÑO:")

@@ -47,12 +47,10 @@ def filtrar_articulos_politicos(df):
 os.makedirs(carpeta_salida, exist_ok=True)
 
 # ============================================================================
-# PROCESAR LOS 3 ARCHIVOS
+# PROCESAR SOLO EL ARCHIVO ESENCIAL
 # ============================================================================
 
 archivos_config = [
-    {"entrada": "visualizaciones_por_mes.csv", "salida": "politicos_por_mes.csv"},
-    {"entrada": "visualizaciones_por_año.csv", "salida": "politicos_por_año.csv"},
     {"entrada": "visualizaciones_totales.csv", "salida": "politicos_totales.csv"}
 ]
 
