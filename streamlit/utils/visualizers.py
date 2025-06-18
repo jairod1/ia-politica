@@ -424,7 +424,7 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
     
     # ANÁLISIS DE SENTIMIENTOS
     if mostrar_sentimientos and reporte is not None:
-        columnas_sentimientos = ['idioma', 'tono_general', 'emocion_principal', 'confianza_analisis', 'intensidad_emocional']
+        columnas_sentimientos = ['idioma', 'tono_general', 'emocion_principal', 'tematica', 'confianza_analisis', 'intensidad_emocional']
         columnas_faltantes = [col for col in columnas_sentimientos if col not in df_display.columns]
         
         if not columnas_faltantes:
@@ -449,6 +449,8 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
             df_display['emocion_principal_emoji'] = df_display['emocion_principal'].apply(
                 lambda x: f"{emoji_emociones.get(x, '🤔')} {str(x).title()}" if pd.notna(x) else "🤷‍♂️ Ninguna"
             )
+
+            df_display['tematica_display'] = df_display['tematica'].fillna("📄 Otros")
             
             # CONFIGURACIÓN CON SENTIMIENTOS
             column_config = {
@@ -461,14 +463,15 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
                 "idioma_emoji": "🌍 Idioma", 
                 "tono_general_emoji": "😊 Tono",
                 "emocion_principal_emoji": "🎭 Emoción",
+                "tematica_display": "📂 Temática",
                 "intensidad_emocional": st.column_config.NumberColumn("🔥 Intensidad", format="%d/5"),
                 "confianza_analisis": st.column_config.NumberColumn("📊 Confianza", format="%.2f"),
                 "link": st.column_config.LinkColumn("🔗 Artículo", display_text="Ver")
             }
             
             columnas_mostrar = ['comment_preview', 'comment_author', 'comment_location', 'likes', 'dislikes', 'net_score',
-                              'idioma_emoji', 'tono_general_emoji', 'emocion_principal_emoji', 
-                              'intensidad_emocional', 'confianza_analisis', 'link']
+                                'idioma_emoji', 'tono_general_emoji', 'emocion_principal_emoji', 'tematica_display',
+                                'intensidad_emocional', 'confianza_analisis', 'link']
         else:
             # Si faltan columnas de sentimientos, usar configuración básica
             mostrar_sentimientos = False
@@ -1354,7 +1357,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
     if reporte is not None and not event.selection.rows:
         st.divider()
         mostrar_analisis_sentimientos_comentarios_compacto(df_display, reporte, titulo)
-        
+
 def ordenar_articulos_polemicos(df_comentarios_completos):
     """
     Función auxiliar para ordenar artículos por número de comentarios
