@@ -1319,7 +1319,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
     # ESTADÍSTICAS GENERALES SOLO SI NO HAY SELECCIÓN
     if reporte is not None and not event.selection.rows:
         st.divider()
-        mostrar_analisis_sentimientos_compacto(df_display, reporte, titulo)
+        mostrar_analisis_sentimientos_comentarios_compacto(df_display, reporte, titulo)
 
 def ordenar_articulos_polemicos(df_comentarios_completos):
     """
