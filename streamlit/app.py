@@ -1426,6 +1426,13 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
         
         # Usar la misma estructura que partidos pero con políticos
         tab1, tab2, tab3 = st.tabs(["🔥 Artículos polémicos", "👍 Comentarios populares", "👎 Comentarios impopulares"])
+
+        # 🔧 DEBUG CRÍTICO
+        st.error(f"🔍 ESTADO VARIABLES:")
+        st.error(f"mostrar_sentimientos = {mostrar_sentimientos}")  
+        st.error(f"analizador is not None = {analizador is not None}")
+        st.error(f"analizador = {analizador}")
+        st.error(f"politico_comentarios = {politico_comentarios}")
         
         with tab1:
             st.subheader(f"🔥 Artículos más polémicos - {titulo_ubicacion} + {politico_comentarios}")
@@ -1436,6 +1443,9 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                                             [comentarios_mayo_2025, comentarios_anio_2025, comentarios_historico],
                                             ["Mayo 2025", "Año 2025", "Histórico"]):
                 with subtab:
+                    st.error(f"🔍 DENTRO DEL SUBTAB {periodo}:")
+                    st.error(f"mostrar_sentimientos = {mostrar_sentimientos}")
+                    st.error(f"analizador is not None = {analizador is not None}")
                     if mostrar_sentimientos and analizador is not None:
                         # ✅ USAR FUNCIÓN CON SENTIMIENTOS
                         df_resumido, reporte, df_comentarios_originales = procesar_comentarios_con_sentimientos_directo(
