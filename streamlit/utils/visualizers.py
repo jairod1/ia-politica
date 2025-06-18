@@ -638,40 +638,80 @@ def mostrar_analisis_sentimientos_comentarios_compacto(df_analizado, reporte, ti
         negativos = reporte.get('tonos_generales', {}).get('negativo', 0)
         st.metric("😔 Negativos", negativos)
     
-    # Gráficos informativos (IGUAL QUE ARTÍCULOS)
+    if reporte is None or len(reporte) == 0:
+        st.error("❌ No hay reporte disponible (se fue de vacaciones)")
+        return
+    
+    st.title(f"🧠 Análisis emocional - {titulo_seccion}")
+    
+    # Métricas principales (sin cambios)
+    col1, col2, col3, col4, col5 = st.columns(5)
+    
+    with col1:
+        st.metric("📰 Total", reporte.get('total_articulos', 0))
+    
+    with col2:
+        st.metric("🏛️ Políticos", reporte.get('articulos_politicos', 0))
+    
+    with col3:
+        intensidad = reporte.get('intensidad_promedio', 0)
+        st.metric("🔥 Intensidad media", f"{intensidad:.1f}/5")
+    
+    with col4:
+        positivos = reporte.get('tonos_generales', {}).get('positivo', 0)
+        st.metric("😊 Positivos", positivos)
+    
+    with col5:
+        negativos = reporte.get('tonos_generales', {}).get('negativo', 0)
+        st.metric("😔 Negativos", negativos)
+    
+    # 🔧 NUEVO LAYOUT: DOS COLUMNAS PRIMERO
     col1, col2 = st.columns(2)
     
     with col1:
-        st.write("**🎭 Emociones en los comentarios:**")
-        emociones_principales = reporte.get('emociones_principales', {})
-        
-        if emociones_principales:
-            # Filtrar emociones neutras si hay otras
-            if len(emociones_principales) > 1 and 'neutral' in emociones_principales:
-                emociones_principales.pop('neutral', None)
-            
-            emociones_df = pd.DataFrame(list(emociones_principales.items()), 
-                                       columns=['Emoción', 'Cantidad'])
-            if len(emociones_df) > 0:
-                st.bar_chart(emociones_df.set_index('Emoción')['Cantidad'], height=300)
-            else:
-                st.info("🤷‍♂️ No hay emociones detectadas")
-        else:
-            st.info("🤷‍♂️ Los comentarios están muy neutrales")
-    
-    with col2:
-        st.write("**📊 Análisis del sentir ciudadano:**")
+        st.write("**🎯 Cómo está el ambiente:**")
         
         # Distribución de tonos
         tonos_generales = reporte.get('tonos_generales', {})
         if tonos_generales:
-            st.write("**🎯 Cómo reacciona la gente:**")
-            total_comentarios = reporte.get('total_articulos', 1)
+            total_articulos = reporte.get('total_articulos', 1)
             for tono, cantidad in tonos_generales.items():
-                porcentaje = (cantidad / total_comentarios) * 100
+                porcentaje = (cantidad / total_articulos) * 100
                 emoji = "😊" if tono == "positivo" else "😔" if tono == "negativo" else "😐"
                 st.write(f"{emoji} **{tono.title()}**: {porcentaje:.1f}%")
         
+        # Distribución de idiomas
+        idiomas = reporte.get('distribución_idiomas', {})
+        if idiomas:
+            st.write("**🌍 Idiomas detectados:**")
+            total_articulos = reporte.get('total_articulos', 1)
+            for idioma, cantidad in idiomas.items():
+                porcentaje = (cantidad / total_articulos) * 100
+                emoji = "📘" if idioma == "gallego" else "🐂"
+                st.write(f"{emoji} **{idioma.title()}**: {porcentaje:.1f}%")
+    
+    with col2:
+        # 🔧 TEMAS EN COLUMNA SEPARADA
+        st.write("**📂 Temas que más interesan:**")
+        tematicas = reporte.get('tematicas', {})
+        if tematicas:
+            for tematica, cantidad in list(tematicas.items())[:4]:
+                st.write(f"• {tematica}: {cantidad} artículos")
+    
+    # 🔧 GRÁFICO DE EMOCIONES AL FINAL (ancho completo)
+    st.write("**🎭 Emociones que más aparecen:**")
+    emociones_principales = reporte.get('emociones_principales', {})
+    
+    if emociones_principales:
+        emociones_df = pd.DataFrame(list(emociones_principales.items()), 
+                                   columns=['Emoción', 'Cantidad'])
+        if len(emociones_df) > 0:
+            st.bar_chart(emociones_df.set_index('Emoción')['Cantidad'], height=300)
+        else:
+            st.info("🤷‍♂️ No hay emociones detectadas")
+    else:
+        st.info("🤷‍♂️ Los artículos están muy zen (sin emociones)")
+                
         # Distribución de idiomas
         idiomas = reporte.get('distribución_idiomas', {})
         if idiomas:
