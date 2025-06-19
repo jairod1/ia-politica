@@ -530,8 +530,50 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
     if event.selection.rows:
         selected_idx = event.selection.rows[0]
         selected_comment = df_display.iloc[selected_idx]
-    
+
         st.divider()
+        
+        # 🆕 AÑADIR: Información del artículo encima del comentario
+        # Obtener título del artículo
+        titulo_articulo = None
+        if 'title_original' in selected_comment and pd.notna(selected_comment['title_original']):
+            titulo_articulo = selected_comment['title_original']
+        elif 'article_title' in selected_comment and pd.notna(selected_comment['article_title']):
+            titulo_articulo = selected_comment['article_title']
+        elif mapping_titulos_articulos_originales:
+            # Usar mapping como fallback
+            link = selected_comment.get('article_link', selected_comment.get('link', ''))
+            if link and link in mapping_titulos_articulos_originales:
+                titulo_articulo = mapping_titulos_articulos_originales[link]
+        
+        # Obtener fecha del artículo y formatearla
+        fecha_articulo = None
+        if 'article_date' in selected_comment and pd.notna(selected_comment['article_date']):
+            fecha_raw = selected_comment['article_date']
+        elif 'date' in selected_comment and pd.notna(selected_comment['date']):
+            fecha_raw = selected_comment['date']
+        else:
+            fecha_raw = None
+        
+        # Formatear fecha a AAAA-MM-DD
+        if fecha_raw:
+            try:
+                # Convertir a string y tomar solo AAAA-MM-DD
+                fecha_articulo = str(fecha_raw)[:10].replace('T', ' ').split(' ')[0]
+            except:
+                fecha_articulo = str(fecha_raw)
+        
+        # 🆕 MOSTRAR: Información del artículo
+        if titulo_articulo:
+            st.markdown(f"**📰 Artículo:** {titulo_articulo}")
+        
+        if fecha_articulo:
+            st.markdown(f"**📅 Fecha:** {fecha_articulo}")
+        
+        # Si tenemos título o fecha, añadir separación visual
+        if titulo_articulo or fecha_articulo:
+            st.markdown("---")  # Línea separadora sutil
+        
         st.subheader("💬 Comentario completo")
         
         # 🔧 NUEVO: FORMATO HORIZONTAL COMPACTO EN LA PARTE SUPERIOR
@@ -1034,6 +1076,46 @@ def mostrar_tabla_comentarios(df, titulo_seccion, es_popular=True, key_suffix=""
         selected_comment = df.iloc[selected_idx]
         
         st.divider()
+        
+        # 🆕 AÑADIR: Información del artículo encima del comentario
+        # Obtener título del artículo
+        titulo_articulo = None
+        if 'article_title' in selected_comment and pd.notna(selected_comment['article_title']):
+            titulo_articulo = selected_comment['article_title']
+        elif mapping_titulos_articulos_originales:
+            # Usar mapping como fallback
+            link = selected_comment.get('article_link', '')
+            if link and link in mapping_titulos_articulos_originales:
+                titulo_articulo = mapping_titulos_articulos_originales[link]
+        
+        # Obtener fecha del artículo y formatearla
+        fecha_articulo = None
+        if 'article_date' in selected_comment and pd.notna(selected_comment['article_date']):
+            fecha_raw = selected_comment['article_date']
+        elif 'date' in selected_comment and pd.notna(selected_comment['date']):
+            fecha_raw = selected_comment['date']
+        else:
+            fecha_raw = None
+        
+        # Formatear fecha a AAAA-MM-DD
+        if fecha_raw:
+            try:
+                # Convertir a string y tomar solo AAAA-MM-DD
+                fecha_articulo = str(fecha_raw)[:10].replace('T', ' ').split(' ')[0]
+            except:
+                fecha_articulo = str(fecha_raw)
+        
+        # 🆕 MOSTRAR: Información del artículo
+        if titulo_articulo:
+            st.markdown(f"**📰 Artículo:** {titulo_articulo}")
+        
+        if fecha_articulo:
+            st.markdown(f"**📅 Fecha:** {fecha_articulo}")
+        
+        # Si tenemos título o fecha, añadir separación visual
+        if titulo_articulo or fecha_articulo:
+            st.markdown("---")  # Línea separadora sutil
+        
         st.subheader("💬 Comentario completo")
         
         col1, col2 = st.columns([3, 1])
