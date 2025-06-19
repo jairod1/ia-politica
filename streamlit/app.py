@@ -645,7 +645,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                         comentarios_mayo_2025,
                         f"mayo de 2025 ({titulo_ubicacion})",
                         procesar_comentarios_populares,
-                        lambda df, titulo, key_suffix: mostrar_tabla_comentarios(df, titulo, es_popular=True, key_suffix=key_suffix),
+                        lambda df, titulo, key_suffix, table_height=600: mostrar_tabla_comentarios(df, titulo, es_popular=True, key_suffix=key_suffix, table_height=table_height),
                         f"populares_{ubicacion_key}_mes"
                     )
             
@@ -667,7 +667,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                         comentarios_anio_2025,
                         f"año 2025 ({titulo_ubicacion})",
                         procesar_comentarios_populares,
-                        lambda df, titulo, key_suffix: mostrar_tabla_comentarios(df, titulo, es_popular=True, key_suffix=key_suffix),
+                        lambda df, titulo, key_suffix, table_height=600: mostrar_tabla_comentarios(df, titulo, es_popular=True, key_suffix=key_suffix, table_height=table_height),
                         f"populares_{ubicacion_key}_anio"
                     )
             
@@ -689,7 +689,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                         comentarios_historico,
                         f"período histórico ({titulo_ubicacion})",
                         procesar_comentarios_populares,
-                        lambda df, titulo, key_suffix: mostrar_tabla_comentarios(df, titulo, es_popular=True, key_suffix=key_suffix),
+                        lambda df, titulo, key_suffix, table_height=600: mostrar_tabla_comentarios(df, titulo, es_popular=True, key_suffix=key_suffix, table_height=table_height),
                         f"populares_{ubicacion_key}_total"
                     )
         
@@ -716,7 +716,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                         comentarios_mayo_2025,
                         f"mayo de 2025 ({titulo_ubicacion})",
                         procesar_comentarios_impopulares,
-                        lambda df, titulo, key_suffix: mostrar_tabla_comentarios(df, titulo, es_popular=False, key_suffix=key_suffix),
+                        lambda df, titulo, key_suffix, table_height=600: mostrar_tabla_comentarios(df, titulo, es_popular=False, key_suffix=key_suffix, table_height=table_height),
                         f"impopulares_{ubicacion_key}_mes"
                     )
             
@@ -738,7 +738,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                         comentarios_anio_2025,
                         f"año 2025 ({titulo_ubicacion})",
                         procesar_comentarios_impopulares,
-                        lambda df, titulo, key_suffix: mostrar_tabla_comentarios(df, titulo, es_popular=False, key_suffix=key_suffix),
+                        lambda df, titulo, key_suffix, table_height=600: mostrar_tabla_comentarios(df, titulo, es_popular=False, key_suffix=key_suffix, table_height=table_height),
                         f"impopulares_{ubicacion_key}_anio"
                     )
             
@@ -760,7 +760,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                         comentarios_historico,
                         f"período histórico ({titulo_ubicacion})",
                         procesar_comentarios_impopulares,
-                        lambda df, titulo, key_suffix: mostrar_tabla_comentarios(df, titulo, es_popular=False, key_suffix=key_suffix),
+                        lambda df, titulo, key_suffix, table_height=600: mostrar_tabla_comentarios(df, titulo, es_popular=False, key_suffix=key_suffix, table_height=table_height),
                         f"impopulares_{ubicacion_key}_total"
                     )
     
@@ -860,7 +860,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                             datos,
                             f"{periodo} ({titulo_ubicacion} - {partido_comentarios})",
                             procesar_comentarios_politicos_populares,
-                            lambda df, titulo, key_suffix: mostrar_tabla_comentarios(df, titulo, es_popular=True, key_suffix=key_suffix),
+                            lambda df, titulo, key_suffix, table_height=600: mostrar_tabla_comentarios(df, titulo, es_popular=True, key_suffix=key_suffix, table_height=table_height),
                             f"populares_{ubicacion_key}_{partido_comentarios.lower().replace(' ', '_')}_{periodo.replace(' ', '_')}",
                             table_height=300
                         )
@@ -891,7 +891,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                             datos,
                             f"{periodo} ({titulo_ubicacion} - {partido_comentarios})",
                             procesar_comentarios_politicos_impopulares,
-                            lambda df, titulo, key_suffix: mostrar_tabla_comentarios(df, titulo, es_popular=False, key_suffix=key_suffix),
+                            lambda df, titulo, key_suffix, table_height=600: mostrar_tabla_comentarios(df, titulo, es_popular=False, key_suffix=key_suffix, table_height=table_height),
                             f"impopulares_{ubicacion_key}_{partido_comentarios.lower().replace(' ', '_')}_{periodo.replace(' ', '_')}",
                             table_height=300
                         )
@@ -993,7 +993,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                             datos,
                             f"{periodo} ({titulo_ubicacion} - {politico_comentarios})",
                             procesar_comentarios_politicos_populares,
-                            lambda df, titulo, key_suffix: mostrar_tabla_comentarios(df, titulo, es_popular=True, key_suffix=key_suffix),
+                            lambda df, titulo, key_suffix, table_height=600: mostrar_tabla_comentarios(df, titulo, es_popular=True, key_suffix=key_suffix, table_height=table_height),
                             f"populares_{ubicacion_key}_{politico_comentarios.lower().replace(' ', '_')}_{periodo.replace(' ', '_')}",
                             table_height=300
                         )
@@ -1024,7 +1024,7 @@ def mostrar_analisis_comentarios_con_filtros(datos_comentarios, titulo_ubicacion
                             datos,
                             f"{periodo} ({titulo_ubicacion} - {politico_comentarios})",
                             procesar_comentarios_politicos_impopulares,
-                            lambda df, titulo, key_suffix: mostrar_tabla_comentarios(df, titulo, es_popular=False, key_suffix=key_suffix),
+                            lambda df, titulo, key_suffix, table_height=600: mostrar_tabla_comentarios(df, titulo, es_popular=False, key_suffix=key_suffix, table_height=table_height),
                             f"impopulares_{ubicacion_key}_{politico_comentarios.lower().replace(' ', '_')}_{periodo.replace(' ', '_')}",
                             table_height=300
                         )
