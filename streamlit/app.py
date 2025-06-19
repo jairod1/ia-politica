@@ -343,10 +343,16 @@ def procesar_comentarios_individuales_con_sentimientos(df, analizador, top_n=20,
         # Columna: Enlace del artículo
         df_tabla_final['enlace_articulo'] = df_tabla_final.get('link', '')
         
-        # 6. Seleccionar y ordenar columnas finales según especificación
+        if 'title_original' in df_tabla_final.columns:
+            df_tabla_final['titulo_articulo_original'] = df_tabla_final['title_original']
+        else:
+            df_tabla_final['titulo_articulo_original'] = 'No disponible'
+
+        # Y MODIFICAR columnas_finales para incluir el título del artículo:
         columnas_finales = [
             'vista_previa_comentario',    # Vista previa del comentario
             'texto_completo_original',    # Texto completo del comentario
+            'titulo_articulo_original',   # 🆕 AÑADIDO: Título del artículo
             'fecha_formateada',           # Fecha (AAAA-MM-DD)
             'ubicacion_comentario',       # Ubicación
             'idioma',                     # Idioma
@@ -360,7 +366,7 @@ def procesar_comentarios_individuales_con_sentimientos(df, analizador, top_n=20,
             'fuente_articulo',            # Fuente
             'enlace_articulo'             # Enlace
         ]
-
+        
         # Verificar que todas las columnas existen (permitir que falte temática)
         columnas_existentes = [col for col in columnas_finales if col in df_tabla_final.columns]
 

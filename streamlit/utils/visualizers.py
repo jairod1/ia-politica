@@ -534,42 +534,34 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
         st.divider()
         
         # 🆕 AÑADIR: Información del artículo encima del comentario
-        # Obtener título del artículo - BÚSQUEDA EXHAUSTIVA
+        # Obtener título del artículo
         titulo_articulo = None
-        posibles_columnas_titulo = ['title_original', 'article_title', 'title', 'texto_original_completo']
-        
-        for col in posibles_columnas_titulo:
-            if col in selected_comment and pd.notna(selected_comment[col]):
-                titulo_articulo = selected_comment[col]
-                break
-        
-        # Si no se encuentra, usar mapping como fallback
-        if not titulo_articulo and mapping_titulos_articulos_originales:
-            link = selected_comment.get('article_link', selected_comment.get('link', ''))
+        if 'titulo_articulo_original' in selected_comment and pd.notna(selected_comment['titulo_articulo_original']):
+            titulo_articulo = selected_comment['titulo_articulo_original']
+        elif 'article_title' in selected_comment and pd.notna(selected_comment['article_title']):
+            titulo_articulo = selected_comment['article_title']
+        elif mapping_titulos_articulos_originales:
+            # Usar mapping como fallback
+            link = selected_comment.get('enlace_articulo', selected_comment.get('link', ''))
             if link and link in mapping_titulos_articulos_originales:
                 titulo_articulo = mapping_titulos_articulos_originales[link]
-        
-        # Obtener fecha del artículo y formatearla - BÚSQUEDA EXHAUSTIVA
+
+        # Obtener fecha del artículo (ya formateada en app.py)
         fecha_articulo = None
-        posibles_columnas_fecha = ['article_date', 'date', 'fecha_formateada']
-        fecha_raw = None
-        
-        for col in posibles_columnas_fecha:
-            if col in selected_comment and pd.notna(selected_comment[col]):
-                fecha_raw = selected_comment[col]
-                break
-        
+        if 'fecha_formateada' in selected_comment and pd.notna(selected_comment['fecha_formateada']):
+            fecha_articulo = selected_comment['fecha_formateada']
+        elif 'article_date' in selected_comment and pd.notna(selected_comment['article_date']):
+            fecha_raw = selected_comment['article_date']
+            try:
+                fecha_articulo = str(fecha_raw)[:10].replace('T', ' ').split(' ')[0]
+            except:
+                fecha_articulo = str(fecha_raw)
+                    
         # Formatear fecha a AAAA-MM-DD
         if fecha_raw:
             try:
-                # Manejar diferentes formatos
-                fecha_str = str(fecha_raw)
-                if 'T' in fecha_str:  # Si tiene timestamp
-                    fecha_articulo = fecha_str.split('T')[0]
-                elif len(fecha_str) >= 10:  # Si es AAAA-MM-DD o más largo
-                    fecha_articulo = fecha_str[:10]
-                else:
-                    fecha_articulo = fecha_str
+                # Convertir a string y tomar solo AAAA-MM-DD
+                fecha_articulo = str(fecha_raw)[:10].replace('T', ' ').split(' ')[0]
             except:
                 fecha_articulo = str(fecha_raw)
         
