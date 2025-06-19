@@ -989,7 +989,7 @@ def mostrar_tabla_comentarios(df, titulo_seccion, es_popular=True, key_suffix=""
     # Crear previsualización del comentario ANTES de configurar columnas
     if 'comment_preview' not in df_display.columns and 'comment_text' in df_display.columns:
         df_display['comment_preview'] = df_display['comment_text'].apply(
-            lambda x: str(x)[:50] + "..." if len(str(x)) > 50 else str(x)
+            lambda x: str(x)[:20] + "..." if len(str(x)) > 20 else str(x)
         )
 
     # Configurar columnas para mostrar

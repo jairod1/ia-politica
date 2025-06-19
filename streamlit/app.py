@@ -314,7 +314,7 @@ def procesar_comentarios_individuales_con_sentimientos(df, analizador, top_n=20,
 
         # Columna: Vista previa del comentario (texto truncado)
         df_tabla_final['vista_previa_comentario'] = df_tabla_final['title'].apply(
-            lambda x: str(x)[:50] + "..." if len(str(x)) > 50 else str(x)
+            lambda x: str(x)[:20] + "..." if len(str(x)) > 20 else str(x)
         )
         
         # Columna: Fecha en formato AAAA-MM-DD
