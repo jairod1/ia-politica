@@ -899,9 +899,14 @@ def mostrar_tabla_articulos_polemicos(df, titulo_seccion, key_suffix="", table_h
     
     df_display = df[columnas_disponibles].copy()
 
-    # 🔧 NUEVO: Formatear fecha a AAAA-MM-DD
+    # Formatear fecha a AAAA-MM-DD
     if 'date' in df_display.columns:
-        df_display['date'] = pd.to_datetime(df_display['date']).dt.strftime('%Y-%m-%d')
+    # Convertir a string y tomar solo los primeros 10 caracteres (AAAA-MM-DD)
+        df_display['date'] = df_display['date'].astype(str).str[:10]
+        
+        # Limpiar cualquier formato extraño
+        df_display['date'] = df_display['date'].str.replace('T.*', '', regex=True)  # Quitar timestamp
+        df_display['date'] = df_display['date'].replace('nan', 'Sin fecha')         # Reemplazar valores nulos
 
     # Guardar títulos completos
     mapping_titulos_originales = crear_mapping_titulos_originales(df_display)
