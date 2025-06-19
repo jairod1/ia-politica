@@ -1289,12 +1289,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
         # Mostrar título original del artículo
         titulo_original = obtener_titulo_original(selected_article, mapping_titulos_originales)
         st.subheader(f"**📰 Artículo:** {titulo_original}")
-        
-        # 🆕 MOSTRAR TEMÁTICA MODAL SI EXISTE
-        if tiene_tematica_modal:
-            tematica_modal = selected_article.get('tematica_modal_display', 'No definida')
-            st.info(f"📂 **Temática modal de comentarios**: {tematica_modal}")
-        
+                
         # Buscar comentarios de este artículo específico
         article_link = selected_article.get(columnas_mapeo['enlace'], '')
         article_title = selected_article.get(columnas_mapeo['titulo'], '')
