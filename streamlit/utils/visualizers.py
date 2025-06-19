@@ -884,7 +884,7 @@ def mostrar_analisis_sentimientos_compacto(df_analizado, reporte, titulo_seccion
                 st.write(f"• {tematica}: {cantidad} artículos")
 
 def mostrar_tabla_articulos_polemicos(df, titulo_seccion, key_suffix="", table_height=600):
-    """Muestra tabla de artículos más polémicos (sin cambios)"""
+    """Muestra tabla de artículos más polémicos"""
     if len(df) == 0:
         st.info(f"🤷‍♂️ No hay artículos polémicos para {titulo_seccion.lower()}")
         return
@@ -899,6 +899,10 @@ def mostrar_tabla_articulos_polemicos(df, titulo_seccion, key_suffix="", table_h
     
     df_display = df[columnas_disponibles].copy()
 
+    # 🔧 NUEVO: Formatear fecha a AAAA-MM-DD
+    if 'date' in df_display.columns:
+        df_display['date'] = pd.to_datetime(df_display['date']).dt.strftime('%Y-%m-%d')
+
     # Guardar títulos completos
     mapping_titulos_originales = crear_mapping_titulos_originales(df_display)
 
@@ -912,7 +916,7 @@ def mostrar_tabla_articulos_polemicos(df, titulo_seccion, key_suffix="", table_h
                 "title": "Título del Artículo",
                 "n_comments": st.column_config.NumberColumn("💬 Comentarios", format="%d"),
                 "total_comment_length": st.column_config.NumberColumn("📝 Longitud Total", format="%d"),
-                "date": "📅 Fecha",
+                "date": "📅 Fecha",  # Ya formateada como AAAA-MM-DD
                 "link": st.column_config.LinkColumn("URL", display_text="🔗 Ver artículo")
             },
             use_container_width=True,
