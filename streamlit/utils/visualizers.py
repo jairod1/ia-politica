@@ -819,7 +819,7 @@ def mostrar_analisis_sentimientos_comentarios_compacto(df_analizado, reporte, ti
     
     with col2:
         # 🔧 TEMAS EN COLUMNA SEPARADA
-        st.write("**Temas que más interesan:**")
+        st.write("**Temáticas que más interesan:**")
         tematicas = reporte.get('tematicas', {})
         if tematicas:
             for tematica, cantidad in list(tematicas.items())[:4]:
@@ -960,7 +960,7 @@ def mostrar_analisis_sentimientos_compacto(df_analizado, reporte, titulo_seccion
         # Temáticas más comunes
         tematicas = reporte.get('tematicas', {})
         if tematicas:
-            st.write("**Temas que más interesan:**")
+            st.write("**Temáticas que más interesan:**")
             for tematica, cantidad in list(tematicas.items())[:4]:
                 st.write(f"• {tematica}: {cantidad} artículos")
 
