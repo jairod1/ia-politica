@@ -72,6 +72,111 @@ class EmotionResult:
     is_political: bool  
     thematic_category: str  
 
+class SarcasmDetector:
+    """NUEVA CLASE - Detecta sarcasmo e ironía contextual"""
+    def __init__(self):
+        self.patrones_sarcasmo = {
+            'contraste_mayuscula_minuscula': r'[A-Z]{3,}.*[a-z].*[A-Z]|[A-Z]{5,}.*[a-z]{3,}',
+            'errores_intencionados': {
+                'majesta': ['majestad', 'maxestade'],
+                'sempre': ['siempre'],
+                'lamecús': 'lamecu*',
+            },
+            'contextos_sarcasticos': [
+                'bienvenido.*casa.*majesta',
+                'sempre.*bienvenido.*majesta', 
+                'que.*venga.*pedro.*sanchez',
+                'delincuentes.*simpatia',
+                'súbditos.*como.*tratan.*majesta'
+            ]
+        }
+        
+        self.contextos_politicos_sarcasticos = {
+            'juan carlos': {
+                'palabras_positivas_sarcasticas': [
+                    'bienvenido', 'casa', 'sempre', 'majestad', 'majesta'
+                ],
+                'contexto': 'autoexilio, corrupción'
+            }
+        }
+    
+    def detectar_sarcasmo(self, texto: str, contexto_politico: str = None) -> float:
+        """Detecta probabilidad de sarcasmo (0.0-1.0)"""
+        import re
+        score_sarcasmo = 0.0
+        texto_lower = texto.lower()
+        
+        # 1. Patrones tipográficos  
+        if re.search(self.patrones_sarcasmo['contraste_mayuscula_minuscula'], texto):
+            score_sarcasmo += 0.4
+        
+        # 2. Errores intencionados
+        for error in self.patrones_sarcasmo['errores_intencionados']:
+            if error in texto_lower:
+                score_sarcasmo += 0.3
+        
+        # 3. Contextos sarcásticos
+        for patron in self.patrones_sarcasmo['contextos_sarcasticos']:
+            if re.search(patron, texto_lower):
+                score_sarcasmo += 0.5
+        
+        # 4. Contexto político
+        if contexto_politico in self.contextos_politicos_sarcasticos:
+            ctx = self.contextos_politicos_sarcasticos[contexto_politico]
+            palabras_positivas = sum(1 for palabra in ctx['palabras_positivas_sarcasticas'] 
+                                   if palabra in texto_lower)
+            if palabras_positivas >= 2:
+                score_sarcasmo += 0.6
+        
+        return min(score_sarcasmo, 1.0)
+
+
+class ContextoPolitico:
+    """NUEVA CLASE - Maneja contexto político específico"""
+    def __init__(self):
+        self.figuras_politicas = {
+            'juan carlos i': {
+                'sinonimos': ['juan carlos', 'rey emerito', 'emerito', 'majesta', 'majestad'],
+                'contexto_actual': 'controversia_corrupcion_autoexilio',
+                'sentimiento_base': 'negativo',
+                'palabras_trampa': ['bienvenido', 'casa', 'sempre', 'honor', 'majestad']
+            },
+            'pedro sanchez': {
+                'sinonimos': ['pedro', 'sanchez', 'presidente'],
+                'contexto_actual': 'gobierno_actual',
+                'sentimiento_base': 'polarizado',
+                'palabras_trampa': ['venga', 'molesta', 'ministros']
+            }
+        }
+    
+    def identificar_figura_politica(self, texto: str) -> str:
+        """Identifica figura política mencionada"""
+        texto_lower = texto.lower()
+        for figura, datos in self.figuras_politicas.items():
+            for sinonimo in datos['sinonimos']:
+                if sinonimo in texto_lower:
+                    return figura
+        return None
+    
+    def ajustar_sentimiento_por_contexto(self, texto: str, sentimiento: str, confianza: float):
+        """Ajusta sentimiento según contexto político"""
+        figura = self.identificar_figura_politica(texto)
+        
+        if not figura:
+            return sentimiento, confianza
+        
+        datos_figura = self.figuras_politicas[figura]
+        texto_lower = texto.lower()
+        
+        # Detectar palabras trampa
+        palabras_trampa = sum(1 for palabra in datos_figura.get('palabras_trampa', []) 
+                            if palabra in texto_lower)
+        
+        if palabras_trampa >= 2 and sentimiento == 'positivo':
+            return 'negativo', min(confianza + 0.3, 0.95)
+        
+        return sentimiento, confianza
+
 class HybridSentimentAnalyzer:
     """Analizador híbrido que funciona con o sin dependencias cloud"""
     
@@ -79,6 +184,16 @@ class HybridSentimentAnalyzer:
         self.available = True  # Siempre disponible
         self.cloud_mode = CLOUD_LIBS_AVAILABLE
         self.models_loaded = False
+        self.detector_sarcasmo = SarcasmDetector()
+        self.contexto_politico = ContextoPolitico()
+        
+        # MEJORAR PALABRAS GALLEGAS (reemplazar la lista existente)
+        self.palabras_gallegas_exclusivas = [
+            'ata', 'dende', 'coa', 'pola', 'unha', 'unhas', 'estes', 'aqueles', 'aquelas',
+            'mellor', 'moito', 'moita', 'moitos', 'moitas', 'concello', 'veciños', 'veciñas',
+            'celebrarase', 'realizarase', 'terá', 'poderá', 'despois', 'tamén', 'ademais',
+            'mentres', 'porque', 'aínda', 'sempre', 'maxestade'
+        ]
         
         # Inicializar modelos cloud solo si están disponibles
         self.sentiment_pipeline = None
@@ -328,29 +443,22 @@ class HybridSentimentAnalyzer:
             return False
     
     def detectar_idioma(self, texto: str, es_titulo: bool = False) -> str:
-        """Detecta idioma con umbrales ajustados: castellano por defecto"""
+        """MÉTODO MEJORADO - Detecta idioma con umbrales más estrictos"""
         if pd.isna(texto) or not texto.strip():
             return 'castellano'
         
-        # Método 1: Keywords locales con umbrales más estrictos
         texto_lower = texto.lower()
-        total_palabras = len(texto_lower.split())
-        coincidencias_gallego = sum(1 for palabra in self.palabras_gallegas if palabra in texto_lower)
+        palabras = texto_lower.split()
         
-        # Umbrales más estrictos: 4+ para títulos, 7+ para textos largos
-        umbral_minimo = 4 if es_titulo else 7
+        # Contar solo palabras gallegas exclusivas
+        coincidencias_exclusivas = sum(1 for palabra in self.palabras_gallegas_exclusivas 
+                                     if palabra in palabras)
         
-        if coincidencias_gallego >= umbral_minimo:
+        # Umbrales MÁS ESTRICTOS
+        umbral_minimo = 3 if es_titulo or len(palabras) < 15 else 5
+        
+        if coincidencias_exclusivas >= umbral_minimo:
             return 'gallego'
-        
-        # Método 2: langdetect (si está disponible) - solo como confirmación
-        if self.cloud_mode and coincidencias_gallego >= 2:  # Al menos 2 palabras gallegas
-            try:
-                idioma_detectado = detect(texto)
-                if idioma_detectado == 'gl' and coincidencias_gallego >= umbral_minimo:
-                    return 'gallego'
-            except:
-                pass
         
         return 'castellano'  # Por defecto castellano
     
@@ -460,67 +568,49 @@ class HybridSentimentAnalyzer:
         return emotions_scores
     
     def analizar_articulo_completo(self, titulo: str, resumen: str = "") -> EmotionResult:
-        """Análisis completo híbrido con mejoras lingüísticas"""
+        """NUEVO MÉTODO - Análisis con detección de sarcasmo y contexto político"""
         try:
-            # Cargar modelos cloud si están disponibles (lazy loading)
-            if self.cloud_mode and not self.models_loaded:
-                self._load_models()
+            texto_completo = f"{titulo} {resumen}"
             
-            texto_completo = f"{titulo} {resumen}".lower()
+            # 1. Análisis base
+            resultado_base = self.analizar_articulo_completo(titulo, resumen)
             
-            # 1. Detectar idioma con nuevos umbrales
-            es_solo_titulo = not resumen or len(resumen.strip()) < 10
-            language = self.detectar_idioma(f"{titulo} {resumen}", es_titulo=es_solo_titulo)
+            # 2. Detectar contexto político
+            figura_politica = self.contexto_politico.identificar_figura_politica(texto_completo)
             
-            # 2. Análisis de emociones con análisis lingüístico sofisticado
-            emotions_scores = self.analizar_emociones(titulo + " " + resumen)
+            # 3. Detectar sarcasmo
+            score_sarcasmo = self.detector_sarcasmo.detectar_sarcasmo(texto_completo, figura_politica)
             
-            # 3. Determinar emoción principal
-            if emotions_scores:
-                emotion_primary = max(emotions_scores.items(), key=lambda x: x[1])[0]
-                confidence_emocion = max(emotions_scores.values())
-            else:
-                emotion_primary = 'neutral'
-                confidence_emocion = 0.5
-            
-            # 4. Análisis de tono
-            general_tone, general_confidence = self.analizar_sentimiento(titulo + " " + resumen)
-            
-            # 5. Calcular confianza inteligente
-            confianza_inteligente = self._calcular_confianza_inteligente(
-                titulo + " " + resumen, 
-                emotions_scores, 
-                general_tone, 
-                self.cloud_mode and self.models_loaded
+            # 4. Ajustar sentimiento por contexto político
+            sentimiento_ajustado, confianza_ajustada = self.contexto_politico.ajustar_sentimiento_por_contexto(
+                texto_completo, 
+                resultado_base.general_tone, 
+                resultado_base.general_confidence
             )
             
-            # 6. Otras métricas
-            emotional_context = self._detectar_contexto(texto_completo)
-            emotional_intensity = self._calcular_intensidad_emocional(texto_completo, emotions_scores)
-            is_political = self._es_politico(texto_completo)
-            thematic_category, emoji = self._determinar_tematica_mejorada(texto_completo)
+            # 5. Ajustar por sarcasmo
+            if score_sarcasmo > 0.5 and sentimiento_ajustado == 'positivo':
+                sentimiento_ajustado = 'negativo'  # Sarcasmo detectado
+                confianza_ajustada = min(confianza_ajustada + score_sarcasmo * 0.3, 0.95)
             
+            # 6. Crear resultado mejorado
             return EmotionResult(
-                language=language,
-                emotion_primary=emotion_primary,
-                confidence=confidence_emocion,
-                emotions_detected=emotions_scores,
-                emotional_intensity=emotional_intensity,
-                emotional_context=emotional_context,
-                general_tone=general_tone,
-                general_confidence=confianza_inteligente,  # Usar nueva confianza inteligente
-                is_political=is_political,
-                thematic_category=f"{emoji} {thematic_category.title()}"
+                language=resultado_base.language,
+                emotion_primary=resultado_base.emotion_primary,
+                confidence=resultado_base.confidence,
+                emotions_detected=resultado_base.emotions_detected,
+                emotional_intensity=resultado_base.emotional_intensity,
+                emotional_context=resultado_base.emotional_context,
+                general_tone=sentimiento_ajustado,
+                general_confidence=confianza_ajustada,
+                is_political=figura_politica is not None,
+                thematic_category=resultado_base.thematic_category + 
+                            (f" [Sarcasmo: {score_sarcasmo:.2f}]" if score_sarcasmo > 0.3 else "")
             )
             
         except Exception as e:
-            print(f"❌ Error en análisis: {e}")
-            return EmotionResult(
-                language='castellano', emotion_primary='neutral', confidence=0.5,
-                emotions_detected={'neutral': 0.5}, emotional_intensity=1,
-                emotional_context='informativo', general_tone='neutral',
-                general_confidence=0.3, is_political=False, thematic_category='📄 Otra'
-            )
+            print(f"❌ Error en análisis mejorado: {e}")
+            return self.analizar_articulo_completo(titulo, resumen)
     
     def _detectar_contexto(self, texto: str) -> str:
         """Detecta contexto emocional"""
@@ -588,7 +678,7 @@ class HybridSentimentAnalyzer:
             resumen = str(row[columna_resumen]) if columna_resumen and pd.notna(row[columna_resumen]) else ""
             
             try:
-                resultado = self.analizar_articulo_completo(titulo, resumen)
+                resultado = self.analizar_articulo_completo_mejorado(titulo, resumen)
                 resultados.append(resultado)
             except Exception as e:
                 print(f"⚠️ Error en artículo {idx}: {e}")
