@@ -660,8 +660,8 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
                 f"{emoji_idioma} {idioma.title()}",
                 f"{emoji_tono} {tono.title()}",
                 f"{emoji_emocion} {emocion.title()}",
-                f"🔥 {intensidad}/5",
                 f"{tematica}",
+                f"🔥 {intensidad}/5",
                 f"📊 {confianza:.2f}"
             ])
 
