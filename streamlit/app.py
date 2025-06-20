@@ -71,8 +71,8 @@ try:
     )
 
     try:
-        from utils.statistics import (mostrar_estadisticas_por_politico,
-                                        mostrar_estadisticas_por_partido,
+        from utils.statistics import (mostrar_estadisticas_por_partido,
+                                        mostrar_estadisticas_por_politico,
                                         mostrar_estadisticas_temporales)
     except ImportError as e:
         st.warning("⚠️ Módulo de estadísticas no disponible")
@@ -1309,15 +1309,15 @@ elif opcion == "📊 Análisis de Visualizaciones":
                 es_articulos_populares=True
             )
 
-    if len(metricas["top10_vis"]["total"]) > 0:
-        st.divider()
-        st.subheader("📊 Estadísticas Avanzadas")
-        col1, col2 = st.columns(2)
-        with col1:
-            mostrar_estadisticas_por_politico(metricas["top10_vis"]["total"])
-        with col2:
-            mostrar_estadisticas_por_partido(metricas["top10_vis"]["total"])
-        mostrar_estadisticas_temporales(metricas["top10_vis"]["total"])
+        if len(metricas["top10_vis"]["total"]) > 0:
+            st.divider()
+            st.subheader("📊 Estadísticas Avanzadas")
+            col1, col2 = st.columns(2)
+            with col1:
+                mostrar_estadisticas_por_politico(metricas["top10_vis"]["total"])
+            with col2:
+                mostrar_estadisticas_por_partido(metricas["top10_vis"]["total"])
+            mostrar_estadisticas_temporales(metricas["top10_vis"]["total"])
 
     elif sub_opcion == "🏛️ Artículos sobre Partidos Políticos":
         mapeo_partidos = {
@@ -1343,10 +1343,10 @@ elif opcion == "📊 Análisis de Visualizaciones":
             mostrar_seccion_temporal("🗳️ Desde las elecciones locales del 28 de mayo de 2023", f"Todos los artículos sobre {partido_especifico} históricos", datos["total"], "período histórico", mostrar_sentimientos, analizador, es_articulos_populares=False)
 
         titulo, descripcion, datos = mapeo_partidos[partido_especifico]
-    if len(datos["total"]) > 0:
-        st.divider()
-        mostrar_estadisticas_por_partido(datos["total"])
-        mostrar_estadisticas_temporales(metricas["top10_vis"]["total"])
+        if len(datos["total"]) > 0:
+            st.divider()
+            mostrar_estadisticas_por_partido(datos["total"])
+            mostrar_estadisticas_temporales(metricas["top10_vis"]["total"])
 
     elif sub_opcion == "👥 Artículos sobre Políticos Locales":
         mapeo_politicos = {
