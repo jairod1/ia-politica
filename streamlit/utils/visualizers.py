@@ -580,11 +580,13 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
         # FORMATO HORIZONTAL COMPACTO EN LA PARTE SUPERIOR
         datos_horizontal = []
 
-        # Autor
-        autor_comentario = "Anónimo"  # ← AÑADIR ESTA LÍNEA PARA CAPTURAR EL AUTOR
+        # 🔧 CORRECCIÓN: Usar la misma lógica de detección de autor que la función sin sentimientos
+        autor_comentario = "Anónimo"  # Valor por defecto
+
+        # Autor - MISMA LÓGICA QUE EN mostrar_tabla_comentarios
         if 'comment_author' in selected_comment and pd.notna(selected_comment['comment_author']):
             autor = selected_comment['comment_author']
-            autor_comentario = autor  # ← GUARDAR EL AUTOR AQUÍ
+            autor_comentario = autor  # ← GUARDAR PARA USAR EN EL TÍTULO
             datos_horizontal.append(f"👤 {autor}")
 
         # Likes y Dislikes  
@@ -626,9 +628,10 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
                 f"📊 {confianza:.2f}"
             ])
 
-            if datos_horizontal:
-                linea_horizontal = " | ".join(datos_horizontal)
-                st.info(f"💬 **{autor_comentario}**: {linea_horizontal}") 
+        # 🔧 MOSTRAR INFORMACIÓN HORIZONTAL CON EL AUTOR CORRECTO
+        if datos_horizontal:
+            linea_horizontal = " | ".join(datos_horizontal)
+            st.info(f"💬 **{autor_comentario}**: {linea_horizontal}")
     
         col1, col2 = st.columns([3, 1])
         
@@ -650,7 +653,7 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
             st.write("**📊 Información:**")
             # Información básica usando nombres estandarizados
             for col, emoji, label in [
-                ('comment_author', '👤', 'Autor'),
+                ('comment_author', '👤', 'Autor'),  # ← ESTA LÍNEA YA ESTÁ BIEN
                 ('comment_location', '📍', 'Ubicación'), 
                 ('likes', '👍', 'Likes'),
                 ('dislikes', '👎', 'Dislikes'),
