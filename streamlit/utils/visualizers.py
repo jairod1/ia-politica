@@ -621,6 +621,21 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
         datos_horizontal.append(f"👍 {likes}")
         datos_horizontal.append(f"👎 {dislikes}")
 
+        # Ubicación - TAMBIÉN HACER MÁS ROBUSTA
+        posibles_columnas_ubicacion = [
+            'comment_location',
+            'ubicacion_comentario', 
+            'location',
+            'lugar'
+        ]
+
+        for col_ubicacion in posibles_columnas_ubicacion:
+            if col_ubicacion in selected_comment and pd.notna(selected_comment[col_ubicacion]):
+                ubicacion = selected_comment[col_ubicacion]
+                if str(ubicacion).strip() and ubicacion != 'No especificada':
+                    datos_horizontal.append(f"📍 {ubicacion}")
+                    break
+
         # Análisis de sentimientos (si está disponible)
         if mostrar_sentimientos and 'idioma' in selected_comment:
             idioma = selected_comment.get('idioma', 'no detectado')
