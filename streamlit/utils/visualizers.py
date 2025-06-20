@@ -797,7 +797,7 @@ def mostrar_analisis_sentimientos_comentarios_compacto(df_analizado, reporte, ti
     col1, col2 = st.columns(2)
     
     with col1:
-        st.write("** Cómo está el ambiente:**")
+        st.write("**Cómo está el ambiente:**")
         
         # Distribución de tonos
         tonos_generales = reporte.get('tonos_generales', {})
@@ -820,7 +820,7 @@ def mostrar_analisis_sentimientos_comentarios_compacto(df_analizado, reporte, ti
     
     with col2:
         # 🔧 TEMAS EN COLUMNA SEPARADA
-        st.write("**📂 Temas que más interesan:**")
+        st.write("**Temas que más interesan:**")
         tematicas = reporte.get('tematicas', {})
         if tematicas:
             for tematica, cantidad in list(tematicas.items())[:4]:
@@ -942,7 +942,7 @@ def mostrar_analisis_sentimientos_compacto(df_analizado, reporte, titulo_seccion
         # Distribución de tonos
         tonos_generales = reporte.get('tonos_generales', {})
         if tonos_generales:
-            st.write("** Cómo está el ambiente:**")
+            st.write("**Cómo está el ambiente:**")
             total_articulos = reporte.get('total_articulos', 1)
             for tono, cantidad in tonos_generales.items():
                 porcentaje = (cantidad / total_articulos) * 100
@@ -962,7 +962,7 @@ def mostrar_analisis_sentimientos_compacto(df_analizado, reporte, titulo_seccion
         # Temáticas más comunes
         tematicas = reporte.get('tematicas', {})
         if tematicas:
-            st.write("**📂 Temas que más interesan:**")
+            st.write("**Temas que más interesan:**")
             for tematica, cantidad in list(tematicas.items())[:4]:
                 st.write(f"• {tematica}: {cantidad} artículos")
 
