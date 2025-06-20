@@ -342,7 +342,7 @@ class HybridSentimentAnalyzer:
                 language='castellano', emotion_primary='neutral', confidence=0.5,
                 emotions_detected={'neutral': 0.5}, emotional_intensity=1,
                 emotional_context='informativo', general_tone='neutral',
-                general_confidence=0.5, is_political=False, thematic_category='📄 Otros'
+                general_confidence=0.5, is_political=False, thematic_category='📄 Otra'
             )
     
     def _detectar_contexto(self, texto: str) -> str:
@@ -399,7 +399,7 @@ class HybridSentimentAnalyzer:
             emoji = self.categorias_tematicas[categoria_principal]['emoji']
             return categoria_principal, emoji
         else:
-            return 'otros', '📄'
+            return 'otra', '📄'
     
     def analizar_dataset(self, df: pd.DataFrame, columna_titulo: str, columna_resumen: str = None) -> pd.DataFrame:
         """Análisis de dataset híbrido"""
@@ -419,7 +419,7 @@ class HybridSentimentAnalyzer:
                     language='castellano', emotion_primary='neutral', confidence=0.5,
                     emotions_detected={'neutral': 0.5}, emotional_intensity=1,
                     emotional_context='informativo', general_tone='neutral',
-                    general_confidence=0.5, is_political=False, thematic_category='📄 Otros'
+                    general_confidence=0.5, is_political=False, thematic_category='📄 Otra'
                 )
                 resultados.append(resultado_default)
         
@@ -489,7 +489,7 @@ class HybridSentimentAnalyzer:
                 'tonos_generales': {'neutral': total_articulos},
                 'emociones_principales': {'neutral': total_articulos},
                 'contextos_emocionales': {'informativo': total_articulos},
-                'tematicas': {'📄 Otros': total_articulos},
+                'tematicas': {'📄 Otra': total_articulos},
                 'intensidad_promedio': 1.0,
                 'confianza_promedio': 0.5
             }
