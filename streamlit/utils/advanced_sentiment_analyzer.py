@@ -16,6 +16,7 @@ import re
 import pandas as pd
 from typing import Dict, List, Tuple
 from dataclasses import dataclass
+from functools import lru_cache
 
 # Intentar importar librerías cloud (opcional)
 try:
@@ -427,6 +428,7 @@ class HybridSentimentAnalyzer:
         
         return 'otra', '📄'
     
+    @lru_cache(maxsize=1000)  # Cache para textos repetidos    
     def analizar_articulo_completo(self, titulo: str, resumen: str = "") -> EmotionResult:
         """Análisis completo CORREGIDO"""
         try:
@@ -484,31 +486,62 @@ class HybridSentimentAnalyzer:
             )
 
     def analizar_dataset(self, df: pd.DataFrame, columna_titulo: str, columna_resumen: str = None) -> pd.DataFrame:
-        """Análisis de dataset con correcciones aplicadas"""
+        """Análisis optimizado con batches y progress bar"""
+        
+        if len(df) == 0:
+            return df
+        
         resultados = []
+        batch_size = 50  # Procesar de 50 en 50
+        total_batches = (len(df) + batch_size - 1) // batch_size
         
-        for idx, row in df.iterrows():        
-            titulo = str(row[columna_titulo]) if pd.notna(row[columna_titulo]) else ""
-            resumen = str(row[columna_resumen]) if columna_resumen and pd.notna(row[columna_resumen]) else ""
-            
-            try:
-                resultado = self.analizar_articulo_completo(titulo, resumen)
-                resultados.append(resultado)
-            except Exception as e:
-                print(f"⚠️ Error en artículo {idx}: {e}")
-                resultado_default = EmotionResult(
-                    language='castellano', emotion_primary='neutral', confidence=0.5,
-                    emotions_detected={'neutral': 0.5}, emotional_intensity=2,
-                    emotional_context='informativo', general_tone='neutral',
-                    general_confidence=0.5, is_political=False, thematic_category='📄 Otra'
-                )
-                resultados.append(resultado_default)
+        # Inicializar barra de progreso si está disponible
+        progress_bar = None
+        if hasattr(st, 'progress'):
+            progress_bar = st.progress(0)
+            st.info(f"🧠 Procesando {len(df)} artículos en {total_batches} lotes...")
         
-        # Construir DataFrame resultado
         try:
+            for batch_idx in range(total_batches):
+                start_idx = batch_idx * batch_size
+                end_idx = min(start_idx + batch_size, len(df))
+                batch = df.iloc[start_idx:end_idx]
+                
+                # Procesar lote
+                batch_resultados = []
+                for idx, row in batch.iterrows():
+                    titulo = str(row[columna_titulo]) if pd.notna(row[columna_titulo]) else ""
+                    resumen = str(row[columna_resumen]) if columna_resumen and pd.notna(row[columna_resumen]) else ""
+                    
+                    try:
+                        resultado = self.analizar_articulo_completo(titulo, resumen)
+                        batch_resultados.append(resultado)
+                    except Exception as e:
+                        print(f"⚠️ Error en artículo {idx}: {e}")
+                        resultado_default = EmotionResult(
+                            language='castellano', emotion_primary='neutral', confidence=0.5,
+                            emotions_detected={'neutral': 0.5}, emotional_intensity=2,
+                            emotional_context='informativo', general_tone='neutral',
+                            general_confidence=0.5, is_political=False, thematic_category='📄 Otra'
+                        )
+                        batch_resultados.append(resultado_default)
+                
+                resultados.extend(batch_resultados)
+                
+                # Actualizar progreso
+                if progress_bar:
+                    progress = (batch_idx + 1) / total_batches
+                    progress_bar.progress(progress)
+            
+            # Limpiar barra de progreso
+            if progress_bar:
+                progress_bar.empty()
+                st.success(f"✅ Análisis completado: {len(resultados)} artículos procesados")
+            
+            # Construir DataFrame resultado (igual que antes)
             df_resultado = df.copy()
             
-            # Añadir columnas de análisis
+            # Añadir columnas optimizado
             df_resultado['idioma'] = [r.language for r in resultados]
             df_resultado['tono_general'] = [r.general_tone for r in resultados]
             df_resultado['emocion_principal'] = [r.emotion_primary for r in resultados]
@@ -519,14 +552,18 @@ class HybridSentimentAnalyzer:
             df_resultado['tematica'] = [r.thematic_category for r in resultados]
             df_resultado['confianza_emocion'] = [r.confidence for r in resultados]
             df_resultado['emociones_detectadas'] = [r.emotions_detected for r in resultados]
-                        
+            
             return df_resultado
             
         except Exception as e:
-            error_msg = f"❌ Error construyendo resultado: {e}"
+            if progress_bar:
+                progress_bar.empty()
+            error_msg = f"❌ Error en procesamiento por lotes: {e}"
             print(error_msg)
+            if hasattr(st, 'error'):
+                st.error(error_msg)
             return df
-    
+        
     def generar_reporte_completo(self, df_analizado: pd.DataFrame) -> Dict:
         """Genera reporte completo"""
         total_articulos = len(df_analizado)
@@ -590,3 +627,4 @@ def analizar_articulos_marin(df, columna_titulo='title', columna_resumen='summar
     """Función de compatibilidad corregida"""
     analizador = HybridSentimentAnalyzer()
     return analizador.analizar_dataset(df, columna_titulo, columna_resumen)
+
