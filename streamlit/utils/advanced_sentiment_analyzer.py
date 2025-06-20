@@ -89,9 +89,11 @@ class ArticleSentimentAnalyzer(BaseLanguageDetector, PoliticalContextDetector):
     """
     
     def __init__(self):
-        super().__init__()
+        # Inicializar explícitamente ambas clases padre
+        BaseLanguageDetector.__init__(self)
+        PoliticalContextDetector.__init__(self)
         
-        # 🗞️ PATRONES ESPECÍFICOS PARA ARTÍCULOS PERIODÍSTICOS
+        # PATRONES ESPECÍFICOS PARA ARTÍCULOS PERIODÍSTICOS
         self.patrones_controversy = {
             'sutil_negativo': [
                 'a pesar de que', 'sin embargo', 'no obstante', 'aunque',
@@ -117,7 +119,7 @@ class ArticleSentimentAnalyzer(BaseLanguageDetector, PoliticalContextDetector):
             ]
         }
         
-        # 🗞️ EMOCIONES ESPECÍFICAS PARA NOTICIAS
+        # EMOCIONES ESPECÍFICAS PARA NOTICIAS
         self.emociones_articulos = {
             'expectativa': [
                 'espera', 'prevé', 'planifica', 'proyecta', 'próximo',
@@ -141,7 +143,7 @@ class ArticleSentimentAnalyzer(BaseLanguageDetector, PoliticalContextDetector):
             ]
         }
         
-        # 🗞️ CATEGORÍAS TEMÁTICAS ESPECÍFICAS
+        # CATEGORÍAS TEMÁTICAS ESPECÍFICAS
         self.categorias_tematicas = {
             'administracion': {
                 'keywords': [
@@ -205,7 +207,7 @@ class ArticleSentimentAnalyzer(BaseLanguageDetector, PoliticalContextDetector):
             if patron in texto_lower:
                 score_positivo += 1.5
         
-        # 🗞️ UMBRALES ESPECÍFICOS PARA ARTÍCULOS (más conservadores)
+        # UMBRALES ESPECÍFICOS PARA ARTÍCULOS (más conservadores)
         if score_positivo > score_negativo and score_positivo >= 1.5:
             return 'positivo', min(0.7 + (score_positivo * 0.1), 0.9)
         elif score_negativo > score_positivo and score_negativo >= 1.5:
@@ -252,9 +254,11 @@ class CommentSentimentAnalyzer(BaseLanguageDetector, PoliticalContextDetector):
     """
     
     def __init__(self):
-        super().__init__()
+        # Inicializar explícitamente ambas clases padre
+        BaseLanguageDetector.__init__(self)
+        PoliticalContextDetector.__init__(self)
         
-        # 💬 PATRONES ESPECÍFICOS PARA COMENTARIOS DIRECTOS
+        # PATRONES ESPECÍFICOS PARA COMENTARIOS DIRECTOS
         self.emociones_comentarios = {
             'ira': [
                 'asqueroso', 'vergüenza', 'indignante', 'caradurismo',
@@ -284,7 +288,7 @@ class CommentSentimentAnalyzer(BaseLanguageDetector, PoliticalContextDetector):
             ]
         }
         
-        # 💬 PATRONES DE SARCASMO E IRONÍA
+        # PATRONES DE SARCASMO E IRONÍA
         self.patrones_sarcasmo = [
             'menos mal que', 'por supuesto', 'claro que sí',
             'faltaría más', 'venga aplaudamos', 'que sorpresa'
@@ -311,7 +315,7 @@ class CommentSentimentAnalyzer(BaseLanguageDetector, PoliticalContextDetector):
         if es_sarcastico and score_positivo > 0:
             score_positivo, score_negativo = score_negativo, score_positivo
         
-        # 💬 UMBRALES ESPECÍFICOS PARA COMENTARIOS (más sensibles)
+        # UMBRALES ESPECÍFICOS PARA COMENTARIOS (más sensibles)
         if score_positivo > score_negativo and score_positivo >= 0.5:
             return 'positivo', min(0.6 + (score_positivo * 0.2), 0.95)
         elif score_negativo > score_positivo and score_negativo >= 0.5:
@@ -337,47 +341,29 @@ class CommentSentimentAnalyzer(BaseLanguageDetector, PoliticalContextDetector):
         return emotions_scores
 
 class HybridSentimentCoordinator:
-    """
-    🎯 COORDINADOR PRINCIPAL
-    
-    Decide qué analizador usar según el contexto y coordina los resultados.
-    """
     
     def __init__(self):
         self.article_analyzer = ArticleSentimentAnalyzer()
         self.comment_analyzer = CommentSentimentAnalyzer()
     
     def analizar_con_contexto(self, texto: str, contexto: str = 'auto') -> EmotionResult:
-        """
-        Analiza texto usando el analizador apropiado
         
-        Args:
-            texto: Texto a analizar
-            contexto: 'article', 'comment', o 'auto' para detección automática
-        """
-        
-        # Detección automática de contexto
         if contexto == 'auto':
             contexto = self._detectar_contexto(texto)
         
-        # Seleccionar analizador apropiado
         if contexto == 'article':
             return self._analizar_articulo(texto)
         else:
             return self._analizar_comentario(texto)
     
     def _detectar_contexto(self, texto: str) -> str:
-        """Detecta automáticamente si es artículo o comentario"""
-        # Heurísticas para detectar contexto
         longitud = len(texto.split())
         
-        # Indicadores de artículo
         indicadores_articulo = [
             'adjudicado', 'concedido', 'aprobado', 'fallece',
             'celebrará', 'inauguró', 'según fuentes'
         ]
         
-        # Indicadores de comentario
         indicadores_comentario = [
             'me parece', 'creo que', 'opino', 'no entiendo',
             'que vergüenza', 'genial', 'ole'
@@ -391,10 +377,9 @@ class HybridSentimentCoordinator:
         elif tiene_comentario or longitud < 8:
             return 'comment'
         else:
-            return 'article'  # Por defecto
+            return 'article'
     
     def _analizar_articulo(self, texto: str) -> EmotionResult:
-        """Análisis usando el analizador de artículos"""
         analyzer = self.article_analyzer
         
         # Detectar idioma
@@ -440,7 +425,6 @@ class HybridSentimentCoordinator:
         )
     
     def _analizar_comentario(self, texto: str) -> EmotionResult:
-        """Análisis usando el analizador de comentarios"""
         analyzer = self.comment_analyzer
         
         # Detectar idioma
@@ -490,25 +474,20 @@ class HybridSentimentCoordinator:
             analyzer_type='comment'
         )
 
-# Funciones de compatibilidad para la aplicación existente
 class AnalizadorArticulosMarin:
-    """Clase de compatibilidad que usa el sistema especializado"""
     
     def __init__(self):
         self.coordinator = HybridSentimentCoordinator()
     
     def analizar_dataset(self, df, columna_titulo='title', columna_resumen='summary'):
-        """Analiza dataset detectando automáticamente el contexto"""
         resultados = []
         
         for _, row in df.iterrows():
             titulo = str(row[columna_titulo]) if pd.notna(row[columna_titulo]) else ""
             resumen = str(row[columna_resumen]) if columna_resumen and pd.notna(row[columna_resumen]) else ""
             
-            # Texto completo para análisis
             texto_completo = f"{titulo} {resumen}".strip()
             
-            # Decidir contexto basado en la estructura del DataFrame
             if 'comment_author' in row or 'likes' in row:
                 contexto = 'comment'
             else:
@@ -517,7 +496,6 @@ class AnalizadorArticulosMarin:
             resultado = self.coordinator.analizar_con_contexto(texto_completo, contexto)
             resultados.append(resultado)
         
-        # Convertir a DataFrame con columnas esperadas
         df_resultado = df.copy()
         
         df_resultado['idioma'] = [r.language for r in resultados]
@@ -530,18 +508,16 @@ class AnalizadorArticulosMarin:
         df_resultado['tematica'] = [r.thematic_category for r in resultados]
         df_resultado['confianza_emocion'] = [r.confidence for r in resultados]
         df_resultado['emociones_detectadas'] = [r.emotions_detected for r in resultados]
-        df_resultado['tipo_analizador'] = [r.analyzer_type for r in resultados]  # ← NUEVO
+        df_resultado['tipo_analizador'] = [r.analyzer_type for r in resultados]
         
         return df_resultado
     
     def generar_reporte(self, df_analizado):
-        """Genera reporte considerando el tipo de analizador usado"""
         total_articulos = len(df_analizado)
         
         if total_articulos == 0:
             return {'total_articulos': 0}
         
-        # Separar por tipo de analizador
         articulos = df_analizado[df_analizado.get('tipo_analizador', 'article') == 'article']
         comentarios = df_analizado[df_analizado.get('tipo_analizador', 'comment') == 'comment']
         
@@ -562,6 +538,5 @@ class AnalizadorArticulosMarin:
         return reporte
 
 def analizar_articulos_marin(df, columna_titulo='title', columna_resumen='summary'):
-    """Función de compatibilidad"""
     analizador = AnalizadorArticulosMarin()
     return analizador.analizar_dataset(df, columna_titulo, columna_resumen)
