@@ -650,12 +650,18 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
                 'sorpresa': '😲', 'nostalgia': '🥺', 'preocupación': '😟', 'neutral': '😐'
             }
             emoji_emocion = emoji_emociones.get(emocion, '🤔')
+
+            # Obtener temática si está disponible
+            tematica = selected_comment.get('tematica', '📄 Otros')
+            if pd.isna(tematica) or not str(tematica).strip():
+                tematica = '📄 Otros'
             
             datos_horizontal.extend([
                 f"{emoji_idioma} {idioma.title()}",
                 f"{emoji_tono} {tono.title()}",
                 f"{emoji_emocion} {emocion.title()}",
                 f"🔥 {intensidad}/5",
+                f"{tematica}",
                 f"📊 {confianza:.2f}"
             ])
 
