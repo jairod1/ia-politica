@@ -603,10 +603,6 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
                     autor_encontrado = True
                     break
 
-        # Añadir el autor a los datos horizontales
-        if autor_encontrado:
-            datos_horizontal.append(f"👤 {autor_comentario}")
-
         # 🔧 DEBUG: Mostrar qué columnas están disponibles si no se encuentra el autor
         if not autor_encontrado:
             st.warning(f"⚠️ DEBUG: No se encontró autor. Columnas disponibles: {list(selected_comment.index)}")
@@ -688,8 +684,7 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
             st.write("**📊 Información:**")
             # Información básica usando nombres estandarizados
             for col, emoji, label in [
-                ('comment_author', '👤', 'Autor'),  # ← ESTA LÍNEA YA ESTÁ BIEN
-                ('comment_location', '📍', 'Ubicación'), 
+                ('comment_author', '👤', 'Autor'),
                 ('likes', '👍', 'Likes'),
                 ('dislikes', '👎', 'Dislikes'),
                 ('net_score', '📊', 'Puntuación neta')
