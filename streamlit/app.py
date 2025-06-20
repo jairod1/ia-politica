@@ -71,7 +71,9 @@ try:
     )
 
     try:
-        from utils.statistics import generar_visualizaciones_politicas_streamlit
+        from utils.statistics import (mostrar_estadisticas_por_politico,
+                                        mostrar_estadisticas_por_partido,
+                                        mostrar_estadisticas_temporales)
     except ImportError as e:
         st.warning("⚠️ Módulo de estadísticas no disponible")
 
