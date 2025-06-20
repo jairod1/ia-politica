@@ -323,12 +323,6 @@ def procesar_comentarios_individuales_con_sentimientos(df, analizador, top_n=20,
         else:
             df_tabla_final['fecha_formateada'] = 'No disponible'
         
-        # 🔧 CORRECCIÓN CRÍTICA: Preservar la columna del autor
-        if 'comment_author' in df_analizado.columns:
-            df_tabla_final['autor_comentario'] = df_analizado['comment_author']
-        else:
-            df_tabla_final['autor_comentario'] = 'Anónimo'
-        
         # Columna: Ubicación del comentario
         df_tabla_final['ubicacion_comentario'] = df_tabla_final.get('comment_location', 'No especificada')
         
@@ -354,10 +348,11 @@ def procesar_comentarios_individuales_con_sentimientos(df, analizador, top_n=20,
         else:
             df_tabla_final['titulo_articulo_original'] = 'No disponible'
 
+        # Y MODIFICAR columnas_finales para incluir el título del artículo:
         columnas_finales = [
             'vista_previa_comentario',    # Vista previa del comentario
             'texto_completo_original',    # Texto completo del comentario
-            'titulo_articulo_original',   # Título del artículo
+            'titulo_articulo_original',   # 🆕 AÑADIDO: Título del artículo
             'fecha_formateada',           # Fecha (AAAA-MM-DD)
             'ubicacion_comentario',       # Ubicación
             'idioma',                     # Idioma

@@ -596,7 +596,7 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
         # Buscar el autor en cualquiera de las columnas posibles
         autor_encontrado = False
         for col_autor in posibles_columnas_autor:
-            if col_autor in selected_comment and pd.notna(selected_comment[col_autor]):
+            if col_autor in selected_comment.index and pd.notna(selected_comment[col_autor]):
                 autor_valor = selected_comment[col_autor]
                 if str(autor_valor).strip():  # Verificar que no esté vacío
                     autor_comentario = str(autor_valor).strip()
