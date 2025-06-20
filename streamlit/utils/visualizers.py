@@ -811,7 +811,6 @@ def mostrar_analisis_sentimientos_comentarios_compacto(df_analizado, reporte, ti
         # Distribución de idiomas
         idiomas = reporte.get('distribución_idiomas', {})
         if idiomas:
-            st.write("**🌍 Idiomas detectados:**")
             total_articulos = reporte.get('total_articulos', 1)
             for idioma, cantidad in idiomas.items():
                 porcentaje = (cantidad / total_articulos) * 100
@@ -952,7 +951,6 @@ def mostrar_analisis_sentimientos_compacto(df_analizado, reporte, titulo_seccion
         # Distribución de idiomas (NUEVO)
         idiomas = reporte.get('distribución_idiomas', {})
         if idiomas:
-            st.write("**🌍 Idiomas detectados:**")
             total_articulos = reporte.get('total_articulos', 1)
             for idioma, cantidad in idiomas.items():
                 porcentaje = (cantidad / total_articulos) * 100
