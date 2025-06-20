@@ -472,7 +472,7 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
             }
 
             # 🔧 CORRECCIÓN: Columnas base sin temática
-            columnas_mostrar = ['comment_preview', 'comment_author', 'comment_location', 'likes', 'dislikes', 'net_score',
+            columnas_mostrar = ['comment_preview', 'comment_location', 'likes', 'dislikes', 'net_score',
                                 'idioma_emoji', 'tono_general_emoji', 'emocion_principal_emoji']
             
             # 🔧 AÑADIR temática solo si existe
