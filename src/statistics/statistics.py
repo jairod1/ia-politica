@@ -74,15 +74,15 @@ def visualizar_por_tematica_inferida(vis_total: pd.DataFrame):
         elif any(o in texto for o in ["opinión", "editorial", "carta al director"]):
             return "💭 Opinión"
         else:
-            return "📄 Otros"
+            return "📄 Otra"
 
     vis_total["tematica"] = vis_total["title"].combine_first(vis_total["summary"]).apply(inferir_tematica)
     temas_vis = vis_total.groupby('tematica')['n_visualizations'].sum().sort_values(ascending=False)
-    temas_vis = temas_vis[temas_vis.index != "📄 Otros"]
+    temas_vis = temas_vis[temas_vis.index != "📄 Otra"]
 
     fig, ax = plt.subplots(figsize=(10, 5))
     temas_vis.plot(kind='bar', ax=ax)
-    ax.set_title("📂 Visualizaciones por temática (sin 'Otros')")
+    ax.set_title("📂 Visualizaciones por temática (sin 'Otra')")
     ax.set_xlabel("Temática")
     ax.set_ylabel("Total de visualizaciones")
     plt.xticks(rotation=45, ha='right')

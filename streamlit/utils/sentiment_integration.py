@@ -125,7 +125,7 @@ def aplicar_analisis_sentimientos(df, analizador):
                     'tonos_generales': {'neutral': len(df_analizado)},
                     'emociones_principales': {'neutral': len(df_analizado)},
                     'contextos_emocionales': {'informativo': len(df_analizado)},
-                    'tematicas': {'📄 Otros': len(df_analizado)},
+                    'tematicas': {'📄 Otra': len(df_analizado)},
                     'intensidad_promedio': 1.0,
                     'confianza_promedio': 0.5
                 }

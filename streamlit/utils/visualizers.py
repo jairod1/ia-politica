@@ -256,7 +256,7 @@ def mostrar_tabla_con_detalles_y_sentimientos(df, titulo_seccion, mostrar_sentim
                 )
                                 
                 # La temática ya viene con emoji del analizador mejorado
-                df_tabla['tematica_display'] = df_tabla['tematica'].fillna("📄 Otros")
+                df_tabla['tematica_display'] = df_tabla['tematica'].fillna("📄 Otra")
                 
                 column_config = {
                     "title": "Título",
@@ -453,7 +453,7 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
             # 🔧 CORRECCIÓN: Manejar temática condicionalmente
             tiene_tematica = 'tematica' in df_display.columns
             if tiene_tematica:
-                df_display['tematica_display'] = df_display['tematica'].fillna("📄 Otros")
+                df_display['tematica_display'] = df_display['tematica'].fillna("📄 Otra")
             
             # CONFIGURACIÓN CON SENTIMIENTOS
             column_config = {
@@ -652,9 +652,9 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
             emoji_emocion = emoji_emociones.get(emocion, '🤔')
 
             # Obtener temática si está disponible
-            tematica = selected_comment.get('tematica', '📄 Otros')
+            tematica = selected_comment.get('tematica', '📄 Otra')
             if pd.isna(tematica) or not str(tematica).strip():
-                tematica = '📄 Otros'
+                tematica = '📄 Otra'
             
             datos_horizontal.extend([
                 f"{emoji_idioma} {idioma.title()}",

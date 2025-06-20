@@ -94,11 +94,11 @@ def resumir_sentimientos_por_articulo(df_analizado):
         try:
             col_clean = col.dropna()
             if len(col_clean) == 0:
-                return '📄 Otros'
+                return '📄 Otra'
             
             conteo = col_clean.value_counts()
             if len(conteo) == 0:
-                return '📄 Otros'
+                return '📄 Otra'
             
             tematica_modal = conteo.idxmax()
             
@@ -108,7 +108,7 @@ def resumir_sentimientos_por_articulo(df_analizado):
             
             return tematica_modal
         except:
-            return '📄 Otros'
+            return '📄 Otra'
     
     # 🔧 VERIFICACIÓN BÁSICA SOLO DE COLUMNAS CRÍTICAS
     if 'title_original' not in df_analizado.columns:
