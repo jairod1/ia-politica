@@ -1456,7 +1456,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
                                 tono = comment.get('tono_general', 'neutral')
                                 emocion = comment.get('emocion_principal', 'neutral')
                                 intensidad = comment.get('intensidad_emocional', 1)
-                                tematica = comment.get('tematica', '📄 Otros')  # 🆕 MOSTRAR TEMÁTICA
+                                tematica = comment.get('tematica', '📄 Otra')  # 🆕 MOSTRAR TEMÁTICA
                                 
                                 emoji_idioma = '🏴󠁥󠁳󠁧󠁡󠁿' if idioma == 'gallego' else '🇪🇸'
                                 emoji_tono = '😊' if tono == 'positivo' else '😔' if tono == 'negativo' else '😐'
