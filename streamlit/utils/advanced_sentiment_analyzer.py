@@ -130,9 +130,25 @@ class ContextoPolitico:
         ]
     
     def es_politico(self, texto: str) -> bool:
-        """Detecta si el contenido es político"""
+        """DETECCIÓN POLÍTICA EXPANDIDA"""
         texto_lower = texto.lower()
-        return any(palabra in texto_lower for palabra in self.palabras_politicas_obligatorias)
+        
+        # Políticos específicos observados
+        politicos_reales = [
+            'pedro sánchez', 'sánchez', 'psoe', 'bng', 'pp',
+            'concello', 'alcaldesa', 'concejales', 'xunta',
+            'gobierno', 'ministros', 'casa real', 'borbones',
+            'emérito', 'juan carlos', 'defensa'
+        ]
+        
+        # Términos administrativos que son políticos
+        administrativos = [
+            'recaudación del estado', 'servicios públicos',
+            'cesión de terrenos', 'funcionarios', 'horas extras'
+        ]
+        
+        # Si menciona CUALQUIER término → es político
+        return any(termino in texto_lower for termino in politicos_reales + administrativos)
 
 class HybridSentimentAnalyzer:
     """Analizador corregido basado en datos reales"""
@@ -250,93 +266,111 @@ class HybridSentimentAnalyzer:
         }
     
     def detectar_idioma(self, texto: str, es_titulo: bool = False) -> str:
-        """MÉTODO CORREGIDO - Detecta gallego con patrones reales"""
-        if pd.isna(texto) or not texto.strip():
-            return 'castellano'
-        
+        """MANEJO DE TEXTOS MIXTOS"""
         texto_lower = texto.lower()
         
-        # 🔧 DETECCIÓN POR FRASES COMPLETAS (más confiable)
-        for frase in self.frases_gallegas:
-            if frase in texto_lower:
-                return 'gallego'
+        # Palabras que GARANTIZAN gallego
+        gallego_fuerte = ['grazas', 'moi', 'teña', 'non', 'pois', 'súa', 'desde a coruña']
         
-        # 🔧 DETECCIÓN POR PALABRAS (umbral reducido)
-        palabras = texto_lower.split()
-        coincidencias = sum(1 for palabra in self.palabras_gallegas_reales 
-                          if palabra in palabras)
-        
-        # Umbral muy bajo para capturar gallego
-        if coincidencias >= 2:  # Reducido de 3-5 a 2
+        # Patrones mixtos (gallego + castellano)
+        if any(palabra in texto_lower for palabra in gallego_fuerte):
             return 'gallego'
         
-        # 🔧 DETECCIÓN POR PATRONES ESPECÍFICOS
-        patrones_gallego = [
-            r'\bás\b', r'\bcando\b', r'\bunha\b', r'\bpersoa\b', r'\bmoi\b',
-            r'\bnega\b', r'\brúas\b', r'\benaltecen\b', r'\bao\b', r'\bse nega\b'
-        ]
+        # Umbral más bajo para detectar gallego
+        palabras_gallegas = texto_lower.split()
+        coincidencias = sum(1 for palabra in self.palabras_gallegas_reales 
+                        if palabra in palabras_gallegas)
         
-        for patron in patrones_gallego:
-            if re.search(patron, texto_lower):
-                return 'gallego'
+        # Reducir umbral a 1 palabra gallega
+        if coincidencias >= 1 and len(palabras_gallegas) <= 10:  
+            return 'gallego'
         
         return 'castellano'
     
     def analizar_sentimiento(self, texto: str) -> Tuple[str, float]:
-        """Análisis de sentimientos CORREGIDO - menos sesgo hacia neutral"""
+        """VERSIÓN AGRESIVA - eliminar conservadurismo excesivo"""
         texto_lower = texto.lower()
         
-        # 🔧 PUNTUACIÓN AGRESIVA - eliminar sesgo neutral
         score_positivo = 0
         score_negativo = 0
         
-        # Contar palabras positivas/negativas
-        for palabra in self.palabras_positivas:
-            if palabra in texto_lower:
-                score_positivo += 2  # Peso aumentado
+        # 🔧 PATRONES POSITIVOS REALES observados
+        patrones_positivos = [
+            'felicitaciones', 'estupendo', 'enhorabuena', 'me gusta', 
+            'que bueno', 'preciosísimo', 'gracias', 'buen día',
+            '😂', '👏', '❤️', '¡que viva!', 'grazas'
+        ]
         
-        for palabra in self.palabras_negativas:
-            if palabra in texto_lower:
-                score_negativo += 2  # Peso aumentado
+        # 🔧 PATRONES NEGATIVOS REALES observados  
+        patrones_negativos = [
+            'patético', 'vergonzosa', 'delincuentes', 'barbaridad',
+            'que raro que', 'absurdas', 'ineptitud', 'sofocante'
+        ]
         
-        # 🔧 PATRONES ESPECÍFICOS OBSERVADOS
-        if any(patron in texto_lower for patron in [
-            'prisión', 'asqueroso', 'siniestra figura', 'demagogia a todo trapo'
-        ]):
-            score_negativo += 5  # Muy negativo
+        # 🔧 DETECCIÓN DE SARCASMO
+        patrones_sarcasmo = [
+            'barato, barato', 'venga aplaudamos', 'que raro que',
+            'claro [nombre] no', 'menos mal que', 'por supuesto'
+        ]
         
-        if any(patron in texto_lower for patron in [
-            'ojalá que', 'parabéns', 'menos mal que', 'se lo merece'
-        ]):
-            score_positivo += 4  # Muy positivo
+        # Scoring más agresivo
+        for patron in patrones_positivos:
+            if patron in texto_lower:
+                score_positivo += 3  # Aumentado de 2
         
-        # 🔧 UMBRALES AJUSTADOS (menos neutral)
-        if score_negativo > score_positivo and score_negativo > 1:
-            confidence = min(0.7 + (score_negativo * 0.1), 0.95)
-            return 'negativo', confidence
-        elif score_positivo > score_negativo and score_positivo > 1:
-            confidence = min(0.7 + (score_positivo * 0.1), 0.95)
-            return 'positivo', confidence
+        for patron in patrones_negativos:
+            if patron in texto_lower:
+                score_negativo += 3  # Aumentado de 2
+        
+        # Detectar sarcasmo (invertir polaridad)
+        es_sarcastico = any(patron in texto_lower for patron in patrones_sarcasmo)
+        if es_sarcastico:
+            score_positivo, score_negativo = score_negativo, score_positivo
+        
+        # 🔧 UMBRALES MÁS BAJOS (menos conservador)
+        if score_positivo > score_negativo and score_positivo >= 1:  # Era >= 2
+            return 'positivo', min(0.8 + (score_positivo * 0.1), 0.95)
+        elif score_negativo > score_positivo and score_negativo >= 1:  # Era >= 2  
+            return 'negativo', min(0.8 + (score_negativo * 0.1), 0.95)
         else:
             return 'neutral', 0.6
     
     def analizar_emociones(self, texto: str) -> Dict[str, float]:
-        """Análisis de emociones CORREGIDO"""
+        """EMOCIONES REALES observadas en comentarios"""
+        
+        emociones_mejoradas = {
+            'alegría': [
+                'felicitaciones', 'estupendo', 'enhorabuena', 'me gusta',
+                'que bueno', 'preciosísimo', '😂', '👏', 'grazas',
+                'que viva', 'buen día'
+            ],
+            'ira': [
+                'vergonzosa', 'delincuentes', 'barbaridad', 'patético',
+                'ineptitud', 'absurdas', 'bribón'
+            ],
+            'desprecio': [
+                'barato, barato', 'venga aplaudamos', 'que raro que',
+                'lamecús', 'súbditos'
+            ],
+            'decepción': [
+                'no se han enterado', 'miopia', 'no acabamos nunca',
+                'deberían ser excelentes'
+            ],
+            'satisfacción': [
+                'tiene toda la razón', 'hace bien', 'debería ampliar',
+                'concuerdo'
+            ]
+        }
+        
         emotions_scores = {}
         texto_lower = texto.lower()
         
-        for emocion, keywords in self.emociones_keywords.items():
+        for emocion, keywords in emociones_mejoradas.items():
             score_total = 0
             
             for keyword in keywords:
                 if keyword in texto_lower:
-                    # 🔧 SCORING MÁS AGRESIVO
-                    if keyword in ['prisión', 'asqueroso', 'siniestra figura']:
-                        score_total += 3  # Emociones fuertes
-                    elif keyword in ['ojalá que', 'parabéns', 'menos mal que']:
-                        score_total += 2.5  # Emociones positivas claras
-                    else:
-                        score_total += 1.5  # Resto
+                    score_total += 2.5  # Más agresivo
             
             if score_total > 0:
                 emotions_scores[emocion] = min(score_total / len(keywords), 1.0)
