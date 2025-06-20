@@ -29,7 +29,7 @@ def visualizar_por_politico_st(vis_total: pd.DataFrame):
 
     fig, ax = plt.subplots(figsize=(8, 5))
     ax.bar(politicos, vis_politicos, color=['#FF6B6B', '#4ECDC4', '#45B7D1'])
-    ax.set_title("🏛️ Visualizaciones por político")
+    ax.set_title("Visualizaciones por político")
     ax.set_ylabel("Visualizaciones")
     ax.set_xlabel("Político")
     plt.tight_layout()
@@ -45,7 +45,7 @@ def visualizar_por_partido_st(vis_total: pd.DataFrame):
 
     fig, ax = plt.subplots(figsize=(8, 5))
     ax.bar(partidos, vis_partidos, color=['#6C5CE7', '#FD79A8', '#00B894'])
-    ax.set_title("🔍 Visualizaciones por partido")
+    ax.set_title("Visualizaciones por partido")
     ax.set_ylabel("Visualizaciones")
     ax.set_xlabel("Partido")
     plt.tight_layout()
@@ -90,5 +90,55 @@ def visualizar_por_tematica_inferida_st(vis_total: pd.DataFrame):
     ax.set_xlabel("Temática")
     ax.set_ylabel("Total de visualizaciones")
     plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    st.pyplot(fig)
+
+import matplotlib.pyplot as plt
+
+def mostrar_estadisticas_por_politico(vis_total: pd.DataFrame):
+    """Gráfico de barras: visualizaciones por político"""
+    politicos = ['Ramallo', 'Pazos', 'Santos']
+    vis_politicos = [
+        vis_total[vis_total['title'].str.contains("Ramallo", case=False, na=False)]['n_visualizations'].sum(),
+        vis_total[vis_total['title'].str.contains("Pazos", case=False, na=False)]['n_visualizations'].sum(),
+        vis_total[vis_total['title'].str.contains("Santos", case=False, na=False)]['n_visualizations'].sum()
+    ]
+
+    fig, ax = plt.subplots(figsize=(8, 5))
+    ax.bar(politicos, vis_politicos, color=['#FF6B6B', '#4ECDC4', '#45B7D1'])
+    ax.set_title("🏛️ Visualizaciones por político")
+    ax.set_ylabel("Visualizaciones")
+    ax.set_xlabel("Político")
+    plt.tight_layout()
+    st.pyplot(fig)
+
+def mostrar_estadisticas_por_partido(vis_total: pd.DataFrame):
+    """Gráfico de barras: visualizaciones por partido"""
+    partidos = ['PP', 'PSOE', 'BNG']
+    vis_partidos = [
+        vis_total[vis_total['title'].str.contains(r"\bPP\b|partido popular", case=False, na=False)]['n_visualizations'].sum(),
+        vis_total[vis_total['title'].str.contains("psoe|partido socialista", case=False, na=False)]['n_visualizations'].sum(),
+        vis_total[vis_total['title'].str.contains("bng|bloque", case=False, na=False)]['n_visualizations'].sum()
+    ]
+
+    fig, ax = plt.subplots(figsize=(8, 5))
+    ax.bar(partidos, vis_partidos, color=['#6C5CE7', '#FD79A8', '#00B894'])
+    ax.set_title("🔍 Visualizaciones por partido")
+    ax.set_ylabel("Visualizaciones")
+    ax.set_xlabel("Partido")
+    plt.tight_layout()
+    st.pyplot(fig)
+
+def mostrar_estadisticas_temporales(vis_total: pd.DataFrame):
+    """Gráfico de líneas: evolución temporal"""
+    vis_total['year_month'] = vis_total['date'].astype(str).str[:7]
+    monthly_views = vis_total.groupby('year_month')['n_visualizations'].sum().reset_index()
+
+    fig, ax = plt.subplots(figsize=(10, 4))
+    ax.plot(monthly_views['year_month'], monthly_views['n_visualizations'], marker='o', color='#E17055')
+    ax.set_title("📅 Visualizaciones totales por mes")
+    ax.set_ylabel("Visualizaciones")
+    ax.set_xlabel("Mes")
+    plt.xticks(rotation=45)
     plt.tight_layout()
     st.pyplot(fig)
