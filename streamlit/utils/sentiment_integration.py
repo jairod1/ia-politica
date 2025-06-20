@@ -222,7 +222,7 @@ def mostrar_analisis_sentimientos_compacto(df_analizado, reporte, titulo_seccion
             total_articulos = max(reporte.get('total_articulos', 1), 1)
             for idioma, cantidad in idiomas.items():
                 porcentaje = (cantidad / total_articulos) * 100
-                emoji = "🏴󠁥󠁳󠁧󠁡󠁿" if idioma == "gallego" else "🇪🇸"
+                emoji = "📘" if idioma == "gallego" else "🐂"
                 st.write(f"{emoji} **{idioma.title()}**: {porcentaje:.1f}%")
         
         # Temáticas más comunes
@@ -252,7 +252,7 @@ def mostrar_detalles_sentimientos_avanzado(selected_article):
         with col1:
             # Idioma detectado
             idioma = selected_article.get('idioma', 'no detectado')
-            emoji_idioma = '🏴󠁥󠁳󠁧󠁡󠁿' if idioma == 'gallego' else '🇪🇸' if idioma == 'castellano' else '🤷‍♂️'
+            emoji_idioma = '📘' if idioma == 'gallego' else '🐂' if idioma == 'castellano' else '🤷‍♂️'
             st.write(f"{emoji_idioma} **Idioma**: {idioma.title()}")
             
             # Tono general con color
@@ -358,8 +358,8 @@ def mostrar_explicacion_parametros():
         Nuestro sistema no solo lee artículos, **los entiende** a nivel emocional. Aquí te contamos cómo:
         
         #### 1. 🌍 Detección de idioma
-        - **Gallego** 🏴󠁥󠁳󠁧󠁡󠁿: Detecta palabras como "concello", "veciños", "celebrarase"
-        - **Castellano** 🇪🇸: Identifica "ayuntamiento", "vecinos", "celebrará"
+        - **Gallego** 📘: Detecta palabras como "concello", "veciños", "celebrarase"
+        - **Castellano** 🐂: Identifica "ayuntamiento", "vecinos", "celebrará"
         - Si hay dudas, asume castellano (por si acaso)
         
         #### 2. 😊 Tono general (ahora con lógica coherente)

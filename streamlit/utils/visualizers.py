@@ -18,8 +18,8 @@ def mostrar_explicacion_parametros():
         Nuestro sistema no solo lee artículos, **los entiende** a nivel emocional. Aquí te contamos cómo:
         
         #### 1. 🌍 Detección de idioma
-        - **Gallego** 🏴󠁥󠁳󠁧󠁡󠁿: Detecta palabras como "concello", "veciños", "celebrarase"
-        - **Castellano** 🇪🇸: Identifica "ayuntamiento", "vecinos", "celebrará"
+        - **Gallego** 📘: Detecta palabras como "concello", "veciños", "celebrarase"
+        - **Castellano** 🐂: Identifica "ayuntamiento", "vecinos", "celebrará"
         - Si hay dudas, asume castellano (por si acaso)
         
         #### 2. 😊 Tono general (ahora con lógica coherente)
@@ -430,8 +430,8 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
         if not columnas_faltantes:
             # Aplicar emojis
             df_display['idioma_emoji'] = df_display['idioma'].map({
-                'gallego': '🏴󠁥󠁳󠁧󠁡󠁿 Gallego',
-                'castellano': '🇪🇸 Castellano'
+                'gallego': '📘 Gallego',
+                'castellano': '🐂 Castellano'
             }).fillna('🤷‍♂️ No detectado')
             
             df_display['tono_general_emoji'] = df_display['tono_general'].map({
@@ -641,7 +641,7 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
             confianza = selected_comment.get('confianza_analisis', 0.0)
             
             # Emojis
-            emoji_idioma = '🏴󠁥󠁳󠁧󠁡󠁿' if idioma == 'gallego' else '🇪🇸' if idioma == 'castellano' else '🤷‍♂️'
+            emoji_idioma = '📘' if idioma == 'gallego' else '🐂' if idioma == 'castellano' else '🤷‍♂️'
             emoji_tono = '😊' if tono == 'positivo' else '😔' if tono == 'negativo' else '😐'
             
             emoji_emociones = {
@@ -720,7 +720,7 @@ def mostrar_detalles_sentimientos_comentario(selected_comment):
         with col1:
             # Idioma detectado
             idioma = selected_comment.get('idioma', 'no detectado')
-            emoji_idioma = '🏴󠁥󠁳󠁧󠁡󠁿' if idioma == 'gallego' else '🇪🇸' if idioma == 'castellano' else '🤷‍♂️'
+            emoji_idioma = '📘' if idioma == 'gallego' else '🐂' if idioma == 'castellano' else '🤷‍♂️'
             st.write(f"{emoji_idioma} **Idioma**: {idioma.title()}")
         
         with col2:
@@ -1456,7 +1456,7 @@ def mostrar_tabla_articulos_agregados_con_sentimientos(df, titulo, df_comentario
                                 intensidad = comment.get('intensidad_emocional', 1)
                                 tematica = comment.get('tematica', '📄 Otra')  # 🆕 MOSTRAR TEMÁTICA
                                 
-                                emoji_idioma = '🏴󠁥󠁳󠁧󠁡󠁿' if idioma == 'gallego' else '🇪🇸'
+                                emoji_idioma = '📘' if idioma == 'gallego' else '🐂'
                                 emoji_tono = '😊' if tono == 'positivo' else '😔' if tono == 'negativo' else '😐'
                                 
                                 titulo += f" | {emoji_idioma} {idioma.title()} | {emoji_tono} {tono.title()} | 🎭 {emocion.title()} | {tematica} | 🔥 {intensidad}/5"
@@ -1619,7 +1619,7 @@ def mostrar_analisis_comentarios_articulo_especifico(selected_article, comentari
             st.write("**🌍 Idiomas en comentarios:**")
             for idioma, cantidad in idiomas_articulo.items():
                 porcentaje = (cantidad / len(comentarios_articulo)) * 100
-                emoji = "🏴󠁥󠁳󠁧󠁡󠁿" if idioma == "gallego" else "🇪🇸"
+                emoji = "📘" if idioma == "gallego" else "🐂"
                 st.write(f"{emoji} **{idioma.title()}**: {porcentaje:.1f}% ({cantidad})")
         
         # Comentarios más "intensos"
