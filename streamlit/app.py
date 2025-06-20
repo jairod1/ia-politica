@@ -69,6 +69,12 @@ try:
         aplicar_fondo_comentarios_especifico,
         eliminar_fondo_inicio
     )
+
+    try:
+        from src.statistics import generar_visualizaciones_politicas_streamlit
+    except ImportError as e:
+        st.warning("⚠️ Módulo de estadísticas no disponible")
+
 except ImportError as e:
     st.error(f"❌ Error importando módulos: {e}")
     st.error("🔧 Asegúrate de que todos los archivos están en la carpeta 'utils/'")
@@ -1301,6 +1307,9 @@ elif opcion == "📊 Análisis de Visualizaciones":
                 es_articulos_populares=True
             )
 
+        if len(metricas["top10_vis"]["total"]) > 0:
+            generar_visualizaciones_politicas_streamlit(metricas["top10_vis"]["total"])
+
     elif sub_opcion == "🏛️ Artículos sobre Partidos Políticos":
         mapeo_partidos = {
             "Todos los partidos": ("🏛️ Artículos sobre Partidos Políticos 🏛️", "Top 10 artículos que mencionan **PP, PSOE, BNG**", metricas["top10_partidos"]),
@@ -1324,6 +1333,11 @@ elif opcion == "📊 Análisis de Visualizaciones":
         with tab3:
             mostrar_seccion_temporal("🗳️ Desde las elecciones locales del 28 de mayo de 2023", f"Todos los artículos sobre {partido_especifico} históricos", datos["total"], "período histórico", mostrar_sentimientos, analizador, es_articulos_populares=False)
 
+        titulo, descripcion, datos = mapeo_partidos[partido_especifico]
+        if len(datos["total"]) > 0:
+            generar_visualizaciones_politicas_streamlit(datos["total"])
+
+
     elif sub_opcion == "👥 Artículos sobre Políticos Locales":
         mapeo_politicos = {
             "Todos los políticos": ("👥 Artículos sobre Políticos Locales 👥", "Top 10 artículos que mencionan **Pazos, Ramallo, Santos**", metricas["top10_politicos"]),
@@ -1346,6 +1360,10 @@ elif opcion == "📊 Análisis de Visualizaciones":
         
         with tab3:
             mostrar_seccion_temporal("🗳️ Desde las elecciones locales del 28 de mayo de 2023", f"Todos los artículos sobre {politico_especifico} históricos", datos["total"], "período histórico", mostrar_sentimientos, analizador, es_articulos_populares=False)
+
+        titulo, descripcion, datos = mapeo_politicos[politico_especifico]
+        if len(datos["total"]) > 0:
+            generar_visualizaciones_politicas_streamlit(datos["total"])
 
 elif opcion == "💬 Análisis de Comentarios":
     if ubicacion_comentarios == "🌍 Comentarios Globales":
