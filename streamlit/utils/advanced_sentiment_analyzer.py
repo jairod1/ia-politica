@@ -1,10 +1,17 @@
 """
-Hybrid Sentiment Analyzer - HorizontAI 
-======================================
+Hybrid Sentiment Analyzer - HorizontAI (VERSIÓN MEJORADA)
+=========================================================
 
 🎯 VERSIÓN HÍBRIDA: Funciona con o sin dependencias cloud
 - CON dependencias cloud → Usa transformers + keywords
 - SIN dependencias cloud → Solo keywords (como tu versión original)
+
+🧠 MEJORAS LINGUÍSTICAS AVANZADAS:
+- Detección de negaciones contextuales
+- Análisis de intensificadores y atenuadores
+- Sistema de confianza inteligente (no más 0.5 constante)
+- 9 emociones claras (eliminadas las complejas)
+- Detección de idioma más estricta (4+ palabras gallegas en títulos, 7+ en textos)
 """
 
 import re
@@ -158,6 +165,126 @@ class HybridSentimentAnalyzer:
         # Palabras políticas
         self.palabras_politicas = ['alcaldesa', 'alcalde', 'concejal', 'concejala', 'psoe', 'pp', 'bng', 'pazos', 'ramallo', 'santos']
     
+    def _detectar_negacion(self, texto: str, posicion_keyword: int) -> bool:
+        """Detecta si una palabra emocional está negada"""
+        palabras = texto.lower().split()
+        
+        # Buscar negaciones en las 3 palabras anteriores
+        inicio = max(0, posicion_keyword - 3)
+        contexto_previo = ' '.join(palabras[inicio:posicion_keyword])
+        
+        return any(negacion in contexto_previo for negacion in self.patrones_negacion)
+    
+    def _calcular_intensificacion(self, texto: str, posicion_keyword: int) -> float:
+        """Calcula factor de intensificación para una palabra emocional"""
+        palabras = texto.lower().split()
+        
+        # Buscar intensificadores en las 2 palabras anteriores y posteriores
+        inicio = max(0, posicion_keyword - 2)
+        fin = min(len(palabras), posicion_keyword + 3)
+        contexto = ' '.join(palabras[inicio:fin])
+        
+        factor = 1.0
+        
+        # Amplificadores aumentan intensidad
+        for amplificador in self.intensificadores['amplificadores']:
+            if amplificador in contexto:
+                factor += 0.4
+        
+        for superlativo in self.intensificadores['superlativos']:
+            if superlativo in contexto:
+                factor += 0.6
+        
+        # Atenuadores reducen intensidad
+        for atenuador in self.intensificadores['atenuadores']:
+            if atenuador in contexto:
+                factor -= 0.3
+        
+        # Absolutos aumentan mucho
+        for absoluto in self.intensificadores['absolutos']:
+            if absoluto in contexto:
+                factor += 0.5
+        
+        return max(0.1, min(2.0, factor))  # Entre 0.1 y 2.0
+    
+    def _calcular_confianza_inteligente(self, texto: str, emotions_scores: Dict[str, float], 
+                                      tono: str, es_cloud_disponible: bool) -> float:
+        """Sistema de confianza inteligente basado en múltiples factores"""
+        
+        if not texto or len(texto.strip()) < 3:
+            return 0.2
+        
+        factores = {}
+        
+        # 1. Coherencia emocional (0.0-1.0)
+        emociones_positivas = ['alegría', 'orgullo', 'esperanza', 'satisfacción']
+        emociones_negativas = ['tristeza', 'ira', 'miedo', 'decepción', 'indignación']
+        
+        score_pos = sum(score for emocion, score in emotions_scores.items() if emocion in emociones_positivas)
+        score_neg = sum(score for emocion, score in emotions_scores.items() if emocion in emociones_negativas)
+        
+        if score_pos > 0 and score_neg > 0:
+            coherencia = 1.0 - min(score_pos, score_neg) / max(score_pos, score_neg)
+        else:
+            coherencia = 1.0
+        
+        factores['coherencia'] = coherencia
+        
+        # 2. Densidad de keywords emocionales (0.0-1.0)
+        palabras_texto = len(texto.split())
+        keywords_encontradas = sum(1 for score in emotions_scores.values() if score > 0)
+        
+        if palabras_texto > 0:
+            densidad = min(1.0, keywords_encontradas / max(1, palabras_texto / 10))
+        else:
+            densidad = 0.0
+        
+        factores['densidad'] = densidad
+        
+        # 3. Longitud y contexto (0.0-1.0)
+        if palabras_texto < 5:
+            contexto = 0.3
+        elif palabras_texto < 15:
+            contexto = 0.6
+        elif palabras_texto < 30:
+            contexto = 0.8
+        else:
+            contexto = 1.0
+        
+        factores['contexto'] = contexto
+        
+        # 4. Presencia de ambigüedad (0.0-1.0)
+        texto_lower = texto.lower()
+        ambiguedad_detectada = any(marcador in texto_lower for marcador in self.marcadores_ambiguedad)
+        claridad = 0.4 if ambiguedad_detectada else 1.0
+        
+        factores['claridad'] = claridad
+        
+        # 5. Concordancia cloud-keywords (0.0-1.0)
+        if es_cloud_disponible:
+            # Si hay modelos cloud, mayor confianza cuando coinciden
+            concordancia = 0.9
+        else:
+            # Solo keywords, confianza ajustada según otros factores
+            concordancia = 0.7
+        
+        factores['concordancia'] = concordancia
+        
+        # Fórmula ponderada
+        confianza_final = (
+            factores['coherencia'] * 0.25 +
+            factores['densidad'] * 0.25 +
+            factores['contexto'] * 0.20 +
+            factores['claridad'] * 0.15 +
+            factores['concordancia'] * 0.15
+        )
+        
+        # Ajuste final: si no hay emociones detectadas, confianza baja
+        if not emotions_scores or max(emotions_scores.values()) == 0:
+            confianza_final = min(confianza_final, 0.4)
+        
+        return round(confianza_final, 2)
+    
     def _load_models(self):
         """Carga los modelos cloud si están disponibles"""
         if not self.cloud_mode:
@@ -194,31 +321,32 @@ class HybridSentimentAnalyzer:
             self.models_loaded = False
             return False
     
-    def detectar_idioma(self, texto: str) -> str:
-        """Detecta idioma usando keywords + langdetect (si disponible)"""
+    def detectar_idioma(self, texto: str, es_titulo: bool = False) -> str:
+        """Detecta idioma con umbrales ajustados: castellano por defecto"""
         if pd.isna(texto) or not texto.strip():
             return 'castellano'
         
-        # Método 1: Keywords locales (siempre disponible)
+        # Método 1: Keywords locales con umbrales más estrictos
         texto_lower = texto.lower()
         total_palabras = len(texto_lower.split())
         coincidencias_gallego = sum(1 for palabra in self.palabras_gallegas if palabra in texto_lower)
         
-        if coincidencias_gallego >= 3 and (total_palabras > 0 and coincidencias_gallego / total_palabras >= 0.08):
+        # Umbrales más estrictos: 4+ para títulos, 7+ para textos largos
+        umbral_minimo = 4 if es_titulo else 7
+        
+        if coincidencias_gallego >= umbral_minimo:
             return 'gallego'
         
-        # Método 2: langdetect (si está disponible)
-        if self.cloud_mode:
+        # Método 2: langdetect (si está disponible) - solo como confirmación
+        if self.cloud_mode and coincidencias_gallego >= 2:  # Al menos 2 palabras gallegas
             try:
                 idioma_detectado = detect(texto)
-                if idioma_detectado == 'gl':
+                if idioma_detectado == 'gl' and coincidencias_gallego >= umbral_minimo:
                     return 'gallego'
-                elif idioma_detectado in ['es', 'ca']:
-                    return 'castellano'
             except:
                 pass
         
-        return 'castellano'
+        return 'castellano'  # Por defecto castellano
     
     def analizar_sentimiento(self, texto: str) -> Tuple[str, float]:
         """Análisis de sentimientos híbrido"""
@@ -256,19 +384,41 @@ class HybridSentimentAnalyzer:
             return 'neutral', 0.5
     
     def analizar_emociones(self, texto: str) -> Dict[str, float]:
-        """Análisis de emociones híbrido"""
+        """Análisis de emociones híbrido con análisis lingüístico sofisticado"""
         emotions_scores = {}
         texto_lower = texto.lower()
+        palabras = texto_lower.split()
         
-        # Método 1: Keywords (siempre disponible)
+        # Método 1: Keywords con análisis lingüístico sofisticado
         for emocion, keywords in self.emociones_keywords.items():
-            score = 0
+            score_total = 0
+            
             for keyword in keywords:
                 if keyword in texto_lower:
-                    score += 1
+                    # Encontrar posición de la keyword
+                    try:
+                        posicion = palabras.index(keyword)
+                    except ValueError:
+                        # Si no está como palabra completa, buscar en el texto
+                        posicion = len(palabras) // 2  # Posición aproximada
+                    
+                    # Calcular score base
+                    score_base = 1.0
+                    
+                    # Aplicar factor de intensificación
+                    factor_intensidad = self._calcular_intensificacion(texto, posicion)
+                    score_base *= factor_intensidad
+                    
+                    # Aplicar detección de negación
+                    if self._detectar_negacion(texto, posicion):
+                        # Si está negado, invertir o reducir drásticamente
+                        score_base *= -0.8 if emocion in ['tristeza', 'ira', 'miedo', 'decepción', 'indignación'] else 0.2
+                    
+                    score_total += max(0, score_base)
             
-            if score > 0:
-                emotions_scores[emocion] = min(score / len(keywords), 1.0)
+            if score_total > 0:
+                # Normalizar por número de keywords de esa emoción
+                emotions_scores[emocion] = min(score_total / len(keywords), 1.0)
         
         # Método 2: Modelo cloud (si disponible)
         if self.cloud_mode and self.models_loaded and self.emotion_pipeline:
@@ -280,8 +430,7 @@ class HybridSentimentAnalyzer:
                     'joy': 'alegría', 'happiness': 'alegría',
                     'sadness': 'tristeza', 'grief': 'tristeza',
                     'anger': 'ira', 'rage': 'ira',
-                    'fear': 'miedo', 'anxiety': 'preocupación',
-                    'surprise': 'sorpresa',
+                    'fear': 'miedo', 'anxiety': 'miedo',
                     'disgust': 'indignación', 'contempt': 'indignación',
                     'pride': 'orgullo',
                     'hope': 'esperanza', 'optimism': 'esperanza'
@@ -293,17 +442,19 @@ class HybridSentimentAnalyzer:
                     
                     if emocion_en in mapeo_emociones:
                         emocion_es = mapeo_emociones[emocion_en]
-                        if emocion_es in emotions_scores:
-                            emotions_scores[emocion_es] = max(emotions_scores[emocion_es], score_cloud * 0.8)
-                        else:
-                            emotions_scores[emocion_es] = score_cloud * 0.8
+                        # Solo considerar emociones que están en nuestro set reducido
+                        if emocion_es in self.emociones_keywords:
+                            if emocion_es in emotions_scores:
+                                emotions_scores[emocion_es] = max(emotions_scores[emocion_es], score_cloud * 0.8)
+                            else:
+                                emotions_scores[emocion_es] = score_cloud * 0.8
             except:
                 pass
         
         return emotions_scores
     
     def analizar_articulo_completo(self, titulo: str, resumen: str = "") -> EmotionResult:
-        """Análisis completo híbrido"""
+        """Análisis completo híbrido con mejoras lingüísticas"""
         try:
             # Cargar modelos cloud si están disponibles (lazy loading)
             if self.cloud_mode and not self.models_loaded:
@@ -311,24 +462,33 @@ class HybridSentimentAnalyzer:
             
             texto_completo = f"{titulo} {resumen}".lower()
             
-            # 1. Detectar idioma
-            language = self.detectar_idioma(f"{titulo} {resumen}")
+            # 1. Detectar idioma con nuevos umbrales
+            es_solo_titulo = not resumen or len(resumen.strip()) < 10
+            language = self.detectar_idioma(f"{titulo} {resumen}", es_titulo=es_solo_titulo)
             
-            # 2. Análisis de emociones
+            # 2. Análisis de emociones con análisis lingüístico sofisticado
             emotions_scores = self.analizar_emociones(titulo + " " + resumen)
             
             # 3. Determinar emoción principal
             if emotions_scores:
                 emotion_primary = max(emotions_scores.items(), key=lambda x: x[1])[0]
-                confidence = max(emotions_scores.values())
+                confidence_emocion = max(emotions_scores.values())
             else:
                 emotion_primary = 'neutral'
-                confidence = 0.5
+                confidence_emocion = 0.5
             
             # 4. Análisis de tono
             general_tone, general_confidence = self.analizar_sentimiento(titulo + " " + resumen)
             
-            # 5. Otras métricas
+            # 5. Calcular confianza inteligente
+            confianza_inteligente = self._calcular_confianza_inteligente(
+                titulo + " " + resumen, 
+                emotions_scores, 
+                general_tone, 
+                self.cloud_mode and self.models_loaded
+            )
+            
+            # 6. Otras métricas
             emotional_context = self._detectar_contexto(texto_completo)
             emotional_intensity = self._calcular_intensidad_emocional(texto_completo, emotions_scores)
             is_political = self._es_politico(texto_completo)
@@ -337,12 +497,12 @@ class HybridSentimentAnalyzer:
             return EmotionResult(
                 language=language,
                 emotion_primary=emotion_primary,
-                confidence=confidence,
+                confidence=confidence_emocion,
                 emotions_detected=emotions_scores,
                 emotional_intensity=emotional_intensity,
                 emotional_context=emotional_context,
                 general_tone=general_tone,
-                general_confidence=general_confidence,
+                general_confidence=confianza_inteligente,  # Usar nueva confianza inteligente
                 is_political=is_political,
                 thematic_category=f"{emoji} {thematic_category.title()}"
             )
@@ -353,7 +513,7 @@ class HybridSentimentAnalyzer:
                 language='castellano', emotion_primary='neutral', confidence=0.5,
                 emotions_detected={'neutral': 0.5}, emotional_intensity=1,
                 emotional_context='informativo', general_tone='neutral',
-                general_confidence=0.5, is_political=False, thematic_category='📄 Otra'
+                general_confidence=0.3, is_political=False, thematic_category='📄 Otra'
             )
     
     def _detectar_contexto(self, texto: str) -> str:
@@ -375,9 +535,9 @@ class HybridSentimentAnalyzer:
         return max(contexto_scores, key=contexto_scores.get) if contexto_scores else 'informativo'
     
     def _calcular_intensidad_emocional(self, texto: str, emotions_scores: Dict[str, float]) -> int:
-        """Calcula intensidad emocional"""
+        """Calcula intensidad emocional usando solo las 9 emociones claras"""
         intensificadores = ['muy', 'mucho', 'gran', 'enorme', 'tremendo', 'moi', 'moito']
-        emociones_intensas = ['ira', 'tristeza', 'alegría', 'miedo', 'indignación', 'sorpresa']
+        emociones_intensas = ['ira', 'tristeza', 'alegría', 'miedo', 'indignación']  # Eliminadas las complejas
         
         intensidad_base = 1
         
@@ -430,7 +590,7 @@ class HybridSentimentAnalyzer:
                     language='castellano', emotion_primary='neutral', confidence=0.5,
                     emotions_detected={'neutral': 0.5}, emotional_intensity=1,
                     emotional_context='informativo', general_tone='neutral',
-                    general_confidence=0.5, is_political=False, thematic_category='📄 Otra'
+                    general_confidence=0.3, is_political=False, thematic_category='📄 Otra'
                 )
                 resultados.append(resultado_default)
         
