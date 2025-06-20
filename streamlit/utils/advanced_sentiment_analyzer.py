@@ -567,13 +567,76 @@ class HybridSentimentAnalyzer:
         
         return emotions_scores
     
+    def analizar_articulo_completo_original(self, titulo: str, resumen: str = "") -> EmotionResult:
+        """Análisis completo híbrido ORIGINAL con mejoras lingüísticas"""
+        try:
+            # Cargar modelos cloud si están disponibles (lazy loading)
+            if self.cloud_mode and not self.models_loaded:
+                self._load_models()
+            
+            texto_completo = f"{titulo} {resumen}".lower()
+            
+            # 1. Detectar idioma con nuevos umbrales
+            es_solo_titulo = not resumen or len(resumen.strip()) < 10
+            language = self.detectar_idioma(f"{titulo} {resumen}", es_titulo=es_solo_titulo)
+            
+            # 2. Análisis de emociones con análisis lingüístico sofisticado
+            emotions_scores = self.analizar_emociones(titulo + " " + resumen)
+            
+            # 3. Determinar emoción principal
+            if emotions_scores:
+                emotion_primary = max(emotions_scores.items(), key=lambda x: x[1])[0]
+                confidence_emocion = max(emotions_scores.values())
+            else:
+                emotion_primary = 'neutral'
+                confidence_emocion = 0.5
+            
+            # 4. Análisis de tono
+            general_tone, general_confidence = self.analizar_sentimiento(titulo + " " + resumen)
+            
+            # 5. Calcular confianza inteligente
+            confianza_inteligente = self._calcular_confianza_inteligente(
+                titulo + " " + resumen, 
+                emotions_scores, 
+                general_tone, 
+                self.cloud_mode and self.models_loaded
+            )
+            
+            # 6. Otras métricas
+            emotional_context = self._detectar_contexto(texto_completo)
+            emotional_intensity = self._calcular_intensidad_emocional(texto_completo, emotions_scores)
+            is_political = self._es_politico(texto_completo)
+            thematic_category, emoji = self._determinar_tematica_mejorada(texto_completo)
+            
+            return EmotionResult(
+                language=language,
+                emotion_primary=emotion_primary,
+                confidence=confidence_emocion,
+                emotions_detected=emotions_scores,
+                emotional_intensity=emotional_intensity,
+                emotional_context=emotional_context,
+                general_tone=general_tone,
+                general_confidence=confianza_inteligente,
+                is_political=is_political,
+                thematic_category=f"{emoji} {thematic_category.title()}"
+            )
+            
+        except Exception as e:
+            print(f"❌ Error en análisis: {e}")
+            return EmotionResult(
+                language='castellano', emotion_primary='neutral', confidence=0.5,
+                emotions_detected={'neutral': 0.5}, emotional_intensity=1,
+                emotional_context='informativo', general_tone='neutral',
+                general_confidence=0.3, is_political=False, thematic_category='📄 Otra'
+            )
+
     def analizar_articulo_completo(self, titulo: str, resumen: str = "") -> EmotionResult:
-        """NUEVO MÉTODO - Análisis con detección de sarcasmo y contexto político"""
+        """MÉTODO MEJORADO - Análisis con detección de sarcasmo y contexto político"""
         try:
             texto_completo = f"{titulo} {resumen}"
             
-            # 1. Análisis base
-            resultado_base = self.analizar_articulo_completo(titulo, resumen)
+            # 1. Análisis base usando el método original
+            resultado_base = self.analizar_articulo_completo_original(titulo, resumen)
             
             # 2. Detectar contexto político
             figura_politica = self.contexto_politico.identificar_figura_politica(texto_completo)
@@ -610,7 +673,7 @@ class HybridSentimentAnalyzer:
             
         except Exception as e:
             print(f"❌ Error en análisis mejorado: {e}")
-            return self.analizar_articulo_completo(titulo, resumen)
+            return self.analizar_articulo_completo_original(titulo, resumen)
     
     def _detectar_contexto(self, texto: str) -> str:
         """Detecta contexto emocional"""
@@ -678,7 +741,8 @@ class HybridSentimentAnalyzer:
             resumen = str(row[columna_resumen]) if columna_resumen and pd.notna(row[columna_resumen]) else ""
             
             try:
-                resultado = self.analizar_articulo_completo_mejorado(titulo, resumen)
+                # 🔧 CORREGIDO: Usar el método principal mejorado
+                resultado = self.analizar_articulo_completo(titulo, resumen)
                 resultados.append(resultado)
             except Exception as e:
                 print(f"⚠️ Error en artículo {idx}: {e}")
