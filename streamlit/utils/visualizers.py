@@ -580,26 +580,46 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
         # FORMATO HORIZONTAL COMPACTO EN LA PARTE SUPERIOR
         datos_horizontal = []
 
-        # 🔧 CORRECCIÓN: Usar la misma lógica de detección de autor que la función sin sentimientos
+        # 🔧 DETECCIÓN ROBUSTA DEL AUTOR - PROBAR MÚLTIPLES COLUMNAS POSIBLES
         autor_comentario = "Anónimo"  # Valor por defecto
 
-        # Autor - MISMA LÓGICA QUE EN mostrar_tabla_comentarios
-        if 'comment_author' in selected_comment and pd.notna(selected_comment['comment_author']):
-            autor = selected_comment['comment_author']
-            autor_comentario = autor  # ← GUARDAR PARA USAR EN EL TÍTULO
-            datos_horizontal.append(f"👤 {autor}")
+        # Lista de posibles nombres de columna para el autor
+        posibles_columnas_autor = [
+            'comment_author',        # Estándar
+            'autor',                 # Español
+            'author',                # Inglés simple
+            'comment_author_name',   # Variante
+            'user_name',             # Otra variante
+            'username'               # Otra posibilidad
+        ]
+
+        # Buscar el autor en cualquiera de las columnas posibles
+        autor_encontrado = False
+        for col_autor in posibles_columnas_autor:
+            if col_autor in selected_comment and pd.notna(selected_comment[col_autor]):
+                autor_valor = selected_comment[col_autor]
+                if str(autor_valor).strip():  # Verificar que no esté vacío
+                    autor_comentario = str(autor_valor).strip()
+                    autor_encontrado = True
+                    break
+
+        # Añadir el autor a los datos horizontales
+        if autor_encontrado:
+            datos_horizontal.append(f"👤 {autor_comentario}")
+
+        # 🔧 DEBUG: Mostrar qué columnas están disponibles si no se encuentra el autor
+        if not autor_encontrado:
+            st.warning(f"⚠️ DEBUG: No se encontró autor. Columnas disponibles: {list(selected_comment.index)}")
+            # Buscar cualquier columna que contenga 'author' en el nombre
+            columnas_con_author = [col for col in selected_comment.index if 'author' in col.lower()]
+            if columnas_con_author:
+                st.info(f"🔍 Columnas relacionadas con 'author': {columnas_con_author}")
 
         # Likes y Dislikes  
         likes = selected_comment.get('likes', 0)
         dislikes = selected_comment.get('dislikes', 0)
         datos_horizontal.append(f"👍 {likes}")
         datos_horizontal.append(f"👎 {dislikes}")
-
-        # Ubicación
-        if 'comment_location' in selected_comment and pd.notna(selected_comment['comment_location']):
-            ubicacion = selected_comment['comment_location']
-            if ubicacion != 'No especificada':
-                datos_horizontal.append(f"📍 {ubicacion}")
 
         # Análisis de sentimientos (si está disponible)
         if mostrar_sentimientos and 'idioma' in selected_comment:
