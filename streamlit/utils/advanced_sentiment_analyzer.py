@@ -107,7 +107,8 @@ class HybridSentimentAnalyzer:
         
         # Emociones con palabras clave (REDUCIDAS A 9 CLARAS)
         self.emociones_keywords = {
-            'alegría': ['celebra', 'festeja', 'felicidad', 'contento', 'avance', 'progreso', 'celébrase', 'festéxase', 'ledicia', 'disfruta', 'goza'],
+            'alegría': ['celebra', 'festeja', 'felicidad', 'contento', 'avance', 'progreso', 'celébrase', 'festéxase', 'ledicia', 'disfruta', 'goza',
+                        'gracias', 'graciñas', 'enhorabuena'],
             'orgullo': ['orgullo', 'honor', 'prestigio', 'reconocimiento', 'distinción', 'mérito', 'conquista', 'mejor', 'mellor', 'excelente'],
             'esperanza': ['espera', 'esperanza', 'optimismo', 'futuro', 'proyecto', 'promete', 'confía', 'ilusión', 'expectativa', 'mejorará'],
             'satisfacción': ['satisfacción', 'complacencia', 'agrado', 'satisfecho', 'cumplido', 'realizado', 'completado', 'logrado'],
@@ -115,19 +116,23 @@ class HybridSentimentAnalyzer:
             'ira': ['ira', 'enfado', 'rabia', 'molestia', 'irritación', 'ataca', 'censura', 'repudia', 'furioso', 'indignado'],
             'miedo': ['miedo', 'temor', 'alarma', 'alerta', 'peligro', 'riesgo', 'amenaza', 'incertidumbre', 'preocupa'],
             'decepción': ['decepción', 'desilusión', 'frustración', 'desencanto', 'fracaso', 'falla', 'incumple', 'decepciona'],
-            'indignación': ['indignación', 'asco', 'repugnancia', 'desprecio', 'desdén', 'rechazo', 'condena', 'critica', 'vergüenza']
+            'indignación': ['indignación', 'asco', 'repugnancia', 'desprecio', 'desdén', 'rechazo', 'condena', 'critica', 'vergüenza',
+                            'patético']
         }
         
         # Patrones lingüísticos sofisticados
         self.patrones_negacion = [
-            'no ', 'non ', 'nin ', 'nada', 'nunca', 'jamás', 'sin ', 'sen ', 'falta', 'carece'
+            'no ', 'non ', 'nin ', 'nada', 'nunca', 'jamás', 'sin ', 'sen ', 'falta', 'carece', 'pero no', 'pero non', 'pero nunca',
         ]
         
         self.intensificadores = {
-            'amplificadores': ['muy', 'súper', 'totalmente', 'completamente', 'extremadamente', 'moi', 'moito', 'moita'],
-            'superlativos': ['ísimo', 'ísima', 'máximo', 'máxima', 'total', 'absoluto', 'absoluta'],
+            'amplificadores': ['muy', 'super', 'totalmente', 'completamente', 'extremadamente', 'moi', 'moito', 'moita'
+                               'mucho', 'mucha', 'muchos', 'muchas'],
+            'superlativos': ['ísimo', 'ísima', 'errimo', 'máximo', 'maxima', 'total', 'absoluto', 'absoluta'],
             'atenuadores': ['un poco', 'algo', 'ligeramente', 'relativamente', 'apenas', 'case'],
-            'absolutos': ['siempre', 'sempre', 'todo', 'toda', 'todos', 'todas', 'nada', 'ningún', 'ninguna']
+            'absolutos': ['siempre', 'sempre', 'todo', 'toda', 'todos', 'todas', 'nada', 'ningún', 'ninguna', 'totalmente',
+                          'absolutamente', 'completamente', 'perfectamente', 'absolutamente'],
+            'positivos': ['bueno', 'buena', 'buenos', 'buenas', 'boa', 'bo', 'excelente', 'maravilloso', 'fantástico', 'increíble', 'espectacular', 'magnífico',]
         }
         
         self.marcadores_ambiguedad = ['quizás', 'tal vez', 'posiblemente', 'puede que', 'probablemente', 'a lo mejor', 'igual']
@@ -136,7 +141,8 @@ class HybridSentimentAnalyzer:
         self.palabras_positivas = [
             'celebra', 'festeja', 'éxito', 'logro', 'mejor', 'bueno', 'excelente', 
             'progreso', 'avance', 'felicidad', 'alegría', 'satisfacción', 'honor',
-            'reconocimiento', 'premio', 'inauguración', 'apertura', 'mejora'
+            'reconocimiento', 'premio', 'inauguración', 'apertura', 'mejora',
+            'bueno', 'buena', 'bo', 'boa'
         ]
         
         self.palabras_negativas = [
