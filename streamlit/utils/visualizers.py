@@ -533,7 +533,6 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
 
         st.divider()
         
-        # 🆕 AÑADIR: Información del artículo encima del comentario
         # Obtener título del artículo
         titulo_articulo = None
         if 'titulo_articulo_original' in selected_comment and pd.notna(selected_comment['titulo_articulo_original']):
@@ -578,26 +577,28 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
         
         st.subheader("💬 Comentario completo")
         
-        # 🔧 NUEVO: FORMATO HORIZONTAL COMPACTO EN LA PARTE SUPERIOR
+        # FORMATO HORIZONTAL COMPACTO EN LA PARTE SUPERIOR
         datos_horizontal = []
-        
+
         # Autor
+        autor_comentario = "Anónimo"  # ← AÑADIR ESTA LÍNEA PARA CAPTURAR EL AUTOR
         if 'comment_author' in selected_comment and pd.notna(selected_comment['comment_author']):
             autor = selected_comment['comment_author']
+            autor_comentario = autor  # ← GUARDAR EL AUTOR AQUÍ
             datos_horizontal.append(f"👤 {autor}")
-        
+
         # Likes y Dislikes  
         likes = selected_comment.get('likes', 0)
         dislikes = selected_comment.get('dislikes', 0)
         datos_horizontal.append(f"👍 {likes}")
         datos_horizontal.append(f"👎 {dislikes}")
-        
+
         # Ubicación
         if 'comment_location' in selected_comment and pd.notna(selected_comment['comment_location']):
             ubicacion = selected_comment['comment_location']
             if ubicacion != 'No especificada':
                 datos_horizontal.append(f"📍 {ubicacion}")
-        
+
         # Análisis de sentimientos (si está disponible)
         if mostrar_sentimientos and 'idioma' in selected_comment:
             idioma = selected_comment.get('idioma', 'no detectado')
@@ -624,11 +625,10 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
                 f"🔥 {intensidad}/5",
                 f"📊 {confianza:.2f}"
             ])
-        
-        # 🔧 MOSTRAR INFORMACIÓN HORIZONTAL ARRIBA
-        if datos_horizontal:
-            linea_horizontal = " | ".join(datos_horizontal)
-            st.info(f"ℹ️ **Detalles**: {linea_horizontal}")
+
+            if datos_horizontal:
+                linea_horizontal = " | ".join(datos_horizontal)
+                st.info(f"💬 **{autor_comentario}**: {linea_horizontal}") 
     
         col1, col2 = st.columns([3, 1])
         
