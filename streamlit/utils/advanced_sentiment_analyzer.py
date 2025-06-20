@@ -12,6 +12,7 @@ Hybrid Sentiment Analyzer - HorizontAI (VERSIÓN MEJORADA)
 - Sistema de confianza inteligente (no más 0.5 constante)
 - 9 emociones claras (eliminadas las complejas)
 - Detección de idioma más estricta (4+ palabras gallegas en títulos, 7+ en textos)
+- SARCASMO Y IRONÍA: Detección contextual política mejorada
 """
 
 import re
@@ -73,7 +74,7 @@ class EmotionResult:
     thematic_category: str  
 
 class SarcasmDetector:
-    """NUEVA CLASE - Detecta sarcasmo e ironía contextual"""
+    """NUEVA CLASE MEJORADA - Detecta sarcasmo e ironía contextual"""
     def __init__(self):
         self.patrones_sarcasmo = {
             'contraste_mayuscula_minuscula': r'[A-Z]{3,}.*[a-z].*[A-Z]|[A-Z]{5,}.*[a-z]{3,}',
@@ -87,18 +88,40 @@ class SarcasmDetector:
                 'sempre.*bienvenido.*majesta', 
                 'que.*venga.*pedro.*sanchez',
                 'delincuentes.*simpatia',
-                'súbditos.*como.*tratan.*majesta'
+                'súbditos.*como.*tratan.*majesta',
+                'aplaudamos.*emerito',
+                'venga.*aplaudamos',
+                'tratarnos.*de.*tontos',
+                'tratan.*como.*lo.*que.*es',
+                'que.*barbaridad',
+                'que.*barbaro'
             ]
         }
         
         self.contextos_politicos_sarcasticos = {
             'juan carlos': {
                 'palabras_positivas_sarcasticas': [
-                    'bienvenido', 'casa', 'sempre', 'majestad', 'majesta'
+                    'bienvenido', 'casa', 'sempre', 'majestad', 'majesta', 'aplaudamos'
                 ],
                 'contexto': 'autoexilio, corrupción'
+            },
+            'pedro sanchez': {
+                'palabras_positivas_sarcasticas': [
+                    'venga', 'aplaudamos', 'tratarnos'
+                ],
+                'contexto': 'crítica política'
             }
         }
+        
+        # NUEVOS: Patrones de crítica indirecta
+        self.patrones_critica_indirecta = [
+            'delincuentes.*simpatia',
+            'tratan.*como.*lo.*que.*es',
+            'que.*barbaridad',
+            'que.*barbaro',
+            'vergonzosa',
+            'ceguera.*real'
+        ]
     
     def detectar_sarcasmo(self, texto: str, contexto_politico: str = None) -> float:
         """Detecta probabilidad de sarcasmo (0.0-1.0)"""
@@ -115,39 +138,53 @@ class SarcasmDetector:
             if error in texto_lower:
                 score_sarcasmo += 0.3
         
-        # 3. Contextos sarcásticos
+        # 3. Contextos sarcásticos específicos
         for patron in self.patrones_sarcasmo['contextos_sarcasticos']:
             if re.search(patron, texto_lower):
-                score_sarcasmo += 0.5
+                score_sarcasmo += 0.6  # Aumentado de 0.5 a 0.6
         
-        # 4. Contexto político
+        # 4. Crítica indirecta
+        for patron in self.patrones_critica_indirecta:
+            if re.search(patron, texto_lower):
+                score_sarcasmo += 0.7  # Alto score para crítica indirecta
+        
+        # 5. Contexto político específico
         if contexto_politico in self.contextos_politicos_sarcasticos:
             ctx = self.contextos_politicos_sarcasticos[contexto_politico]
             palabras_positivas = sum(1 for palabra in ctx['palabras_positivas_sarcasticas'] 
                                    if palabra in texto_lower)
-            if palabras_positivas >= 2:
+            if palabras_positivas >= 1:  # Reducido de 2 a 1 para ser más sensible
                 score_sarcasmo += 0.6
         
         return min(score_sarcasmo, 1.0)
 
 
 class ContextoPolitico:
-    """NUEVA CLASE - Maneja contexto político específico"""
+    """NUEVA CLASE MEJORADA - Maneja contexto político específico"""
     def __init__(self):
         self.figuras_politicas = {
             'juan carlos i': {
-                'sinonimos': ['juan carlos', 'rey emerito', 'emerito', 'majesta', 'majestad'],
+                'sinonimos': ['juan carlos', 'rey emerito', 'emerito', 'majesta', 'majestad', 'borbon', 'borbones'],
                 'contexto_actual': 'controversia_corrupcion_autoexilio',
                 'sentimiento_base': 'negativo',
-                'palabras_trampa': ['bienvenido', 'casa', 'sempre', 'honor', 'majestad']
+                'palabras_trampa': ['bienvenido', 'casa', 'sempre', 'honor', 'majestad', 'aplaudamos']
             },
             'pedro sanchez': {
-                'sinonimos': ['pedro', 'sanchez', 'presidente'],
+                'sinonimos': ['pedro', 'sanchez', 'presidente', 'pedro sanchez'],
                 'contexto_actual': 'gobierno_actual',
                 'sentimiento_base': 'polarizado',
-                'palabras_trampa': ['venga', 'molesta', 'ministros']
+                'palabras_trampa': ['venga', 'molesta', 'ministros', 'tratarnos']
             }
         }
+        
+        # NUEVO: Patrones de crítica política general
+        self.patrones_critica_politica = [
+            'delincuentes.*simpatia',
+            'vergonzosa',
+            'ceguera.*real',
+            'barbaridad',
+            'barbaro'
+        ]
     
     def identificar_figura_politica(self, texto: str) -> str:
         """Identifica figura política mencionada"""
@@ -159,20 +196,25 @@ class ContextoPolitico:
         return None
     
     def ajustar_sentimiento_por_contexto(self, texto: str, sentimiento: str, confianza: float):
-        """Ajusta sentimiento según contexto político"""
+        """Ajusta sentimiento según contexto político MEJORADO"""
         figura = self.identificar_figura_politica(texto)
-        
-        if not figura:
-            return sentimiento, confianza
-        
-        datos_figura = self.figuras_politicas[figura]
         texto_lower = texto.lower()
         
-        # Detectar palabras trampa
-        palabras_trampa = sum(1 for palabra in datos_figura.get('palabras_trampa', []) 
-                            if palabra in texto_lower)
+        # 1. Ajuste por figura política específica
+        if figura:
+            datos_figura = self.figuras_politicas[figura]
+            
+            # Detectar palabras trampa
+            palabras_trampa = sum(1 for palabra in datos_figura.get('palabras_trampa', []) 
+                                if palabra in texto_lower)
+            
+            if palabras_trampa >= 1 and sentimiento in ['positivo', 'neutral']:
+                return 'negativo', min(confianza + 0.4, 0.95)
         
-        if palabras_trampa >= 2 and sentimiento == 'positivo':
+        # 2. Ajuste por crítica política general (sin figura específica)
+        critica_detectada = any(re.search(patron, texto_lower) for patron in self.patrones_critica_politica)
+        
+        if critica_detectada and sentimiento in ['positivo', 'neutral']:
             return 'negativo', min(confianza + 0.3, 0.95)
         
         return sentimiento, confianza
@@ -232,7 +274,7 @@ class HybridSentimentAnalyzer:
             'miedo': ['miedo', 'temor', 'alarma', 'alerta', 'peligro', 'riesgo', 'amenaza', 'incertidumbre', 'preocupa'],
             'decepción': ['decepción', 'desilusión', 'frustración', 'desencanto', 'fracaso', 'falla', 'incumple', 'decepciona'],
             'indignación': ['indignación', 'asco', 'repugnancia', 'desprecio', 'desdén', 'rechazo', 'condena', 'critica', 'vergüenza',
-                            'patético']
+                            'patético', 'barbaridad', 'barbaro', 'delincuentes', 'vergonzosa']  # AÑADIDAS PALABRAS CRÍTICAS
         }
         
         # Patrones lingüísticos sofisticados
@@ -260,10 +302,15 @@ class HybridSentimentAnalyzer:
             'bueno', 'buena', 'bo', 'boa'
         ]
         
+        # PALABRAS NEGATIVAS MEJORADAS - Más completas
         self.palabras_negativas = [
             'problema', 'crisis', 'malo', 'peor', 'fracaso', 'error', 'falla',
             'tristeza', 'pena', 'muerte', 'fallece', 'luto', 'dolor', 'ira',
-            'enfado', 'critica', 'censura', 'repudia', 'ataca', 'alarma'
+            'enfado', 'critica', 'censura', 'repudia', 'ataca', 'alarma',
+            # NUEVAS PALABRAS CRÍTICAS:
+            'delincuentes', 'barbaridad', 'barbaro', 'vergonzosa', 'vergonzoso',
+            'ceguera', 'implume', 'súbditos', 'lamecús', 'tontos', 'patético',
+            'desprecio', 'asco', 'repugnancia', 'indignación'
         ]
         
         # Categorías temáticas
@@ -280,11 +327,18 @@ class HybridSentimentAnalyzer:
             'necrológicas': {'keywords': ['fallece', 'muerte', 'falleció', 'defunción', 'funeral'], 'emoji': '🕊️'},
             'festividades': {'keywords': ['fiesta', 'celebración', 'carnaval', 'navidad', 'semana santa'], 'emoji': '🎉'},
             'transporte': {'keywords': ['transporte', 'autobús', 'tren', 'ferry', 'tráfico'], 'emoji': '🚌'},
-            'laboral': {'keywords': ['contrato', 'sueldo', 'despido', 'negociación', 'sindicato'], 'emoji': '🧑‍💼'}
+            'laboral': {'keywords': ['contrato', 'sueldo', 'despido', 'negociación', 'sindicato'], 'emoji': '🧑‍💼'},
+            # NUEVA CATEGORÍA:
+            'politica': {'keywords': ['emerito', 'rey', 'borbon', 'presidente', 'ministro', 'politico', 'gobierno'], 'emoji': '🏛️'}
         }
         
-        # Palabras políticas
-        self.palabras_politicas = ['alcaldesa', 'alcalde', 'concejal', 'concejala', 'psoe', 'pp', 'bng', 'pazos', 'ramallo', 'santos']
+        # Palabras políticas EXPANDIDAS
+        self.palabras_politicas = [
+            'alcaldesa', 'alcalde', 'concejal', 'concejala', 'psoe', 'pp', 'bng', 
+            'pazos', 'ramallo', 'santos', 'emerito', 'rey', 'borbon', 'borbones',
+            'majestad', 'majesta', 'presidente', 'sanchez', 'pedro', 'politico',
+            'gobierno', 'ministro', 'ministros'
+        ]
     
     def _detectar_negacion(self, texto: str, posicion_keyword: int) -> bool:
         """Detecta si una palabra emocional está negada"""
@@ -463,12 +517,16 @@ class HybridSentimentAnalyzer:
         return 'castellano'  # Por defecto castellano
     
     def analizar_sentimiento(self, texto: str) -> Tuple[str, float]:
-        """Análisis de sentimientos híbrido"""
+        """Análisis de sentimientos híbrido MEJORADO"""
         # Método 1: Keywords (siempre disponible)
         texto_lower = texto.lower()
         
         score_positivo = sum(1 for palabra in self.palabras_positivas if palabra in texto_lower)
         score_negativo = sum(1 for palabra in self.palabras_negativas if palabra in texto_lower)
+        
+        # MEJORA: Boost para palabras muy negativas
+        palabras_muy_negativas = ['delincuentes', 'barbaridad', 'vergonzosa', 'lamecús', 'implume']
+        score_negativo += sum(2 for palabra in palabras_muy_negativas if palabra in texto_lower)
         
         # Método 2: Modelo cloud (si disponible)
         if self.cloud_mode and self.models_loaded and self.sentiment_pipeline:
@@ -487,13 +545,13 @@ class HybridSentimentAnalyzer:
             except:
                 pass
         
-        # Determinar tono final
-        if score_positivo > score_negativo and score_positivo > 0.3:
-            confidence = min(score_positivo / (score_positivo + score_negativo + 0.1), 0.95)
-            return 'positivo', confidence
-        elif score_negativo > score_positivo and score_negativo > 0.3:
+        # Determinar tono final con umbrales ajustados
+        if score_negativo > score_positivo and score_negativo > 0.5:  # Umbral más bajo para negativo
             confidence = min(score_negativo / (score_positivo + score_negativo + 0.1), 0.95)
             return 'negativo', confidence
+        elif score_positivo > score_negativo and score_positivo > 0.7:  # Umbral más alto para positivo
+            confidence = min(score_positivo / (score_positivo + score_negativo + 0.1), 0.95)
+            return 'positivo', confidence
         else:
             return 'neutral', 0.5
     
@@ -518,6 +576,10 @@ class HybridSentimentAnalyzer:
                     
                     # Calcular score base
                     score_base = 1.0
+                    
+                    # MEJORA: Boost para palabras muy críticas
+                    if keyword in ['delincuentes', 'barbaridad', 'vergonzosa', 'lamecús']:
+                        score_base = 2.0
                     
                     # Aplicar factor de intensificación
                     factor_intensidad = self._calcular_intensificacion(texto, posicion)
@@ -651,12 +713,12 @@ class HybridSentimentAnalyzer:
                 resultado_base.general_confidence
             )
             
-            # 5. Ajustar por sarcasmo
-            if score_sarcasmo > 0.5 and sentimiento_ajustado == 'positivo':
+            # 5. LÓGICA MEJORADA: Ajustar por sarcasmo (neutral Y positivo → negativo)
+            if score_sarcasmo > 0.4 and sentimiento_ajustado in ['positivo', 'neutral']:  # Umbral reducido
                 sentimiento_ajustado = 'negativo'  # Sarcasmo detectado
                 confianza_ajustada = min(confianza_ajustada + score_sarcasmo * 0.3, 0.95)
             
-            # 6. Crear resultado mejorado
+            # 6. Crear resultado mejorado - SIN MOSTRAR [Sarcasmo: X.XX]
             return EmotionResult(
                 language=resultado_base.language,
                 emotion_primary=resultado_base.emotion_primary,
@@ -667,8 +729,7 @@ class HybridSentimentAnalyzer:
                 general_tone=sentimiento_ajustado,
                 general_confidence=confianza_ajustada,
                 is_political=figura_politica is not None,
-                thematic_category=resultado_base.thematic_category + 
-                            (f" [Sarcasmo: {score_sarcasmo:.2f}]" if score_sarcasmo > 0.3 else "")
+                thematic_category=resultado_base.thematic_category  # SIN añadir [Sarcasmo: X.XX]
             )
             
         except Exception as e:
@@ -679,7 +740,7 @@ class HybridSentimentAnalyzer:
         """Detecta contexto emocional"""
         contextos_emocionales = {
             'celebratorio': ['inauguración', 'apertura', 'éxito', 'logro', 'victoria', 'festejo'],
-            'conflictivo': ['polémica', 'controversia', 'disputa', 'enfrentamiento', 'conflicto'],
+            'conflictivo': ['polémica', 'controversia', 'disputa', 'enfrentamiento', 'conflicto', 'barbaridad', 'delincuentes'],
             'informativo': ['anuncia', 'informa', 'comunica', 'declara', 'presenta', 'propone'],
             'preocupante': ['problema', 'crisis', 'dificultad', 'obstáculo', 'complicación'],
             'solemne': ['funeral', 'recordatorio', 'memoria', 'luto', 'despedida', 'tributo']
@@ -712,8 +773,8 @@ class HybridSentimentAnalyzer:
         return min(round(intensidad_base), 5)
     
     def _es_politico(self, texto: str) -> bool:
-        """Determina si es político"""
-        return any(palabra in texto for palabra in self.palabras_politicas)
+        """Determina si es político MEJORADO"""
+        return any(palabra in texto.lower() for palabra in self.palabras_politicas)
     
     def _determinar_tematica_mejorada(self, texto: str) -> Tuple[str, str]:
         """Determina categoría temática"""
