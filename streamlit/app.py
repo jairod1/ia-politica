@@ -1451,3 +1451,79 @@ if SENTIMENTS_AVAILABLE:
     st.caption(f"✅ **Estado**: Todos los sistemas operativos | 🎭 **Emociones**: 10 tipos | 🌍 **Idiomas**: 2 | 📂 **Temáticas**: 9 | 🗺️ **Análisis**: Global + O Morrazo + Marín | {estado_analizador}")
 else:
     st.caption("⚠️ **Estado**: Sistema parcial | 📊 Métricas: Sí | 💬 Comentarios: Sí | 🧠 IA: No | 🗺️ Análisis: Global + O Morrazo + Marín")
+
+# AÑADIR AL FINAL DE app.py - OPCIÓN DE DEBUG TEMPORAL
+
+# En el sidebar, después de las opciones principales:
+if st.sidebar.button("🧪 Test Sarcasmo en Vivo"):
+    st.title("🧪 Test de Detección de Sarcasmo")
+    
+    # Obtener analizador
+    analizador = get_analizador_global()
+    
+    if analizador is None:
+        st.error("❌ Analizador no disponible")
+    else:
+        st.success("✅ Analizador cargado")
+        
+        # Test directo con los casos problemáticos
+        casos_test = [
+            'BIENVENIDO SEMPRE á súa casa, Majesta',
+            'desde A CORUÑA LAMECÚS é un espectáculo divertido ver a estes "SÚBDITOS"',
+            'Los delincuentes siempre se tienen simpatía entre ellos'
+        ]
+        
+        st.subheader("🎯 Casos de Test")
+        
+        for i, caso in enumerate(casos_test, 1):
+            st.write(f"**Caso {i}:** {caso}")
+            
+            # Crear DataFrame temporal
+            df_temp = pd.DataFrame([{'title': caso, 'summary': ''}])
+            
+            # Aplicar análisis
+            try:
+                df_analizado, reporte = aplicar_analisis_sentimientos(df_temp, analizador)
+                
+                if len(df_analizado) > 0:
+                    resultado = df_analizado.iloc[0]
+                    
+                    col1, col2, col3, col4 = st.columns(4)
+                    with col1:
+                        st.metric("Tono", resultado.get('tono_general', 'N/A'))
+                    with col2:
+                        st.metric("Emoción", resultado.get('emocion_principal', 'N/A'))
+                    with col3:
+                        st.metric("Idioma", resultado.get('idioma', 'N/A'))
+                    with col4:
+                        st.metric("Político", resultado.get('es_politico', 'N/A'))
+                    
+                    # Verificar si se detectó sarcasmo
+                    tematica = resultado.get('tematica', '')
+                    if 'Sarcasmo:' in str(tematica):
+                        st.success(f"✅ Sarcasmo detectado: {tematica}")
+                    else:
+                        st.error("❌ Sarcasmo NO detectado")
+                else:
+                    st.error("❌ No se pudo analizar")
+                    
+            except Exception as e:
+                st.error(f"💥 Error: {e}")
+            
+            st.divider()
+
+# TAMBIÉN AÑADIR INFORMACIÓN DE DEBUG EN EL FOOTER:
+if st.sidebar.checkbox("🔧 Modo Debug"):
+    st.sidebar.write("**Debug Info:**")
+    st.sidebar.write(f"Analizador global: {'✅' if st.session_state.get('analizador_global') else '❌'}")
+    st.sidebar.write(f"SENTIMENTS_AVAILABLE: {SENTIMENTS_AVAILABLE}")
+    
+    # Verificar qué método se está usando
+    if SENTIMENTS_AVAILABLE and st.session_state.get('analizador_global'):
+        analizador = st.session_state.analizador_global
+        
+        # Verificar que tenga los nuevos detectores
+        tiene_sarcasmo = hasattr(analizador, 'detector_sarcasmo')
+        tiene_contexto = hasattr(analizador, 'contexto_politico')
+        
+        st.sidebar.write(f"Detector sarcasmo: {'✅' if tiene_sarcasmo else '❌'}")
