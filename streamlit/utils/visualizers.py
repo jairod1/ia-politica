@@ -546,19 +546,19 @@ def mostrar_tabla_comentarios_con_sentimientos(df, titulo_seccion, mostrar_senti
             if link and link in mapping_titulos_articulos_originales:
                 titulo_articulo = mapping_titulos_articulos_originales[link]
 
-        # Obtener fecha del artículo (ya formateada en app.py)
+        # 🔧 CORRECCIÓN: Inicializar fecha_raw correctamente
         fecha_articulo = None
+        fecha_raw = None  # ← AÑADIR ESTA LÍNEA
+        
         if 'fecha_formateada' in selected_comment and pd.notna(selected_comment['fecha_formateada']):
             fecha_articulo = selected_comment['fecha_formateada']
         elif 'article_date' in selected_comment and pd.notna(selected_comment['article_date']):
             fecha_raw = selected_comment['article_date']
-            try:
-                fecha_articulo = str(fecha_raw)[:10].replace('T', ' ').split(' ')[0]
-            except:
-                fecha_articulo = str(fecha_raw)
+        elif 'date' in selected_comment and pd.notna(selected_comment['date']):
+            fecha_raw = selected_comment['date']
                     
-        # Formatear fecha a AAAA-MM-DD
-        if fecha_raw:
+        # Formatear fecha a AAAA-MM-DD SOLO si fecha_raw tiene valor
+        if fecha_raw is not None:  # ← CAMBIAR ESTA CONDICIÓN
             try:
                 # Convertir a string y tomar solo AAAA-MM-DD
                 fecha_articulo = str(fecha_raw)[:10].replace('T', ' ').split(' ')[0]
