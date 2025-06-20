@@ -352,7 +352,8 @@ def procesar_comentarios_individuales_con_sentimientos(df, analizador, top_n=20,
         columnas_finales = [
             'vista_previa_comentario',    # Vista previa del comentario
             'texto_completo_original',    # Texto completo del comentario
-            'titulo_articulo_original',   # 🆕 AÑADIDO: Título del artículo
+            'comment_author',             # Autor del comentario
+            'titulo_articulo_original',   # Título del artículo
             'fecha_formateada',           # Fecha (AAAA-MM-DD)
             'ubicacion_comentario',       # Ubicación
             'idioma',                     # Idioma
