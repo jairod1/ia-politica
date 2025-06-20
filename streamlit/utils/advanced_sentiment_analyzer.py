@@ -98,21 +98,32 @@ class HybridSentimentAnalyzer:
             'porque', 'xa', 'aínda', 'sempre', 'nunca'
         ]
         
-        # Emociones con palabras clave
+        # Emociones con palabras clave (REDUCIDAS A 9 CLARAS)
         self.emociones_keywords = {
-            'alegría': ['celebra', 'festeja', 'felicidad', 'contento', 'avance', 'progreso', 'celébrase', 'festéxase', 'ledicia'],
-            'orgullo': ['orgullo', 'honor', 'prestigio', 'reconocimiento', 'distinción', 'mérito', 'conquista', 'mejor', 'mellor'],
-            'esperanza': ['espera', 'esperanza', 'optimismo', 'futuro', 'proyecto', 'promete', 'confía', 'ilusión', 'expectativa'],
-            'satisfacción': ['satisfacción', 'complacencia', 'agrado', 'satisfecho', 'cumplido', 'realizado', 'completado'],
-            'tristeza': ['tristeza', 'pena', 'dolor', 'luto', 'pesar', 'melancolía', 'fallece', 'muerte', 'pérdida', 'despedida'],
-            'ira': ['ira', 'enfado', 'rabia', 'molestia', 'irritación', 'ataca', 'censura', 'repudia'],
-            'miedo': ['miedo', 'temor', 'alarma', 'alerta', 'peligro', 'riesgo', 'amenaza', 'incertidumbre'],
-            'decepción': ['decepción', 'desilusión', 'frustración', 'desencanto', 'fracaso', 'falla', 'incumple'],
-            'indignación': ['indignación', 'asco', 'repugnancia', 'desprecio', 'desdén', 'rechazo', 'condena', 'critica'],
-            'sorpresa': ['sorpresa', 'asombro', 'impacto', 'inesperado', 'imprevisto', 'repentino', 'súbito'],
-            'nostalgia': ['nostalgia', 'añoranza', 'recuerdo', 'memoria', 'pasado', 'historia', 'tradición', 'antaño'],
-            'preocupación': ['preocupación', 'inquietud', 'intranquilidad', 'zozobra', 'desasosiego', 'duda']
+            'alegría': ['celebra', 'festeja', 'felicidad', 'contento', 'avance', 'progreso', 'celébrase', 'festéxase', 'ledicia', 'disfruta', 'goza'],
+            'orgullo': ['orgullo', 'honor', 'prestigio', 'reconocimiento', 'distinción', 'mérito', 'conquista', 'mejor', 'mellor', 'excelente'],
+            'esperanza': ['espera', 'esperanza', 'optimismo', 'futuro', 'proyecto', 'promete', 'confía', 'ilusión', 'expectativa', 'mejorará'],
+            'satisfacción': ['satisfacción', 'complacencia', 'agrado', 'satisfecho', 'cumplido', 'realizado', 'completado', 'logrado'],
+            'tristeza': ['tristeza', 'pena', 'dolor', 'luto', 'pesar', 'melancolía', 'fallece', 'muerte', 'pérdida', 'despedida', 'lamentable'],
+            'ira': ['ira', 'enfado', 'rabia', 'molestia', 'irritación', 'ataca', 'censura', 'repudia', 'furioso', 'indignado'],
+            'miedo': ['miedo', 'temor', 'alarma', 'alerta', 'peligro', 'riesgo', 'amenaza', 'incertidumbre', 'preocupa'],
+            'decepción': ['decepción', 'desilusión', 'frustración', 'desencanto', 'fracaso', 'falla', 'incumple', 'decepciona'],
+            'indignación': ['indignación', 'asco', 'repugnancia', 'desprecio', 'desdén', 'rechazo', 'condena', 'critica', 'vergüenza']
         }
+        
+        # Patrones lingüísticos sofisticados
+        self.patrones_negacion = [
+            'no ', 'non ', 'nin ', 'nada', 'nunca', 'jamás', 'sin ', 'sen ', 'falta', 'carece'
+        ]
+        
+        self.intensificadores = {
+            'amplificadores': ['muy', 'súper', 'totalmente', 'completamente', 'extremadamente', 'moi', 'moito', 'moita'],
+            'superlativos': ['ísimo', 'ísima', 'máximo', 'máxima', 'total', 'absoluto', 'absoluta'],
+            'atenuadores': ['un poco', 'algo', 'ligeramente', 'relativamente', 'apenas', 'case'],
+            'absolutos': ['siempre', 'sempre', 'todo', 'toda', 'todos', 'todas', 'nada', 'ningún', 'ninguna']
+        }
+        
+        self.marcadores_ambiguedad = ['quizás', 'tal vez', 'posiblemente', 'puede que', 'probablemente', 'a lo mejor', 'igual']
         
         # Tono por keywords
         self.palabras_positivas = [
