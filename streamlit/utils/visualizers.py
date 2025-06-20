@@ -797,7 +797,7 @@ def mostrar_analisis_sentimientos_comentarios_compacto(df_analizado, reporte, ti
     col1, col2 = st.columns(2)
     
     with col1:
-        st.write("**🎯 Cómo está el ambiente:**")
+        st.write("** Cómo está el ambiente:**")
         
         # Distribución de tonos
         tonos_generales = reporte.get('tonos_generales', {})
@@ -827,7 +827,7 @@ def mostrar_analisis_sentimientos_comentarios_compacto(df_analizado, reporte, ti
                 st.write(f"• {tematica}: {cantidad} artículos")
     
     # 🔧 GRÁFICO DE EMOCIONES AL FINAL (ancho completo)
-    st.write("**🎭 Emociones que más aparecen:**")
+    st.markdown("<div style='text-align: center;'><strong> Emociones que más aparecen:</strong></div>", unsafe_allow_html=True)
     emociones_principales = reporte.get('emociones_principales', {})
     
     if emociones_principales:
@@ -925,7 +925,7 @@ def mostrar_analisis_sentimientos_compacto(df_analizado, reporte, titulo_seccion
     col1, col2 = st.columns(2)
     
     with col1:
-        st.write("**🎭 Emociones que más aparecen:**")
+        st.markdown("<div style='text-align: center;'><strong> Emociones que más aparecen:</strong></div>", unsafe_allow_html=True)
         emociones_principales = reporte.get('emociones_principales', {})
         
         if emociones_principales:
@@ -942,7 +942,7 @@ def mostrar_analisis_sentimientos_compacto(df_analizado, reporte, titulo_seccion
         # Distribución de tonos
         tonos_generales = reporte.get('tonos_generales', {})
         if tonos_generales:
-            st.write("**🎯 Cómo está el ambiente:**")
+            st.write("** Cómo está el ambiente:**")
             total_articulos = reporte.get('total_articulos', 1)
             for tono, cantidad in tonos_generales.items():
                 porcentaje = (cantidad / total_articulos) * 100
