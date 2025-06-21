@@ -1312,11 +1312,6 @@ elif opcion == "📊 Análisis de Visualizaciones":
         if len(metricas["top10_vis"]["total"]) > 0:
             st.divider()
             st.subheader("📊 Estadísticas Avanzadas")
-            col1, col2 = st.columns(2)
-            with col1:
-                mostrar_estadisticas_por_politico(metricas["top10_vis"]["total"])
-            with col2:
-                mostrar_estadisticas_por_partido(metricas["top10_vis"]["total"])
             mostrar_estadisticas_temporales(metricas["top10_vis"]["total"])
 
     elif sub_opcion == "🏛️ Artículos sobre Partidos Políticos":
