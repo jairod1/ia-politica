@@ -8,7 +8,7 @@ Hybrid Sentiment Analyzer - HorizontAI (VERSIÓN MEJORADA Y OPTIMIZADA)
 - HybridSentimentAnalyzer: Wrapper con validación cruzada y correcciones automáticas
 
 🆕 NUEVAS CARACTERÍSTICAS:
-- Categorización temática expandida (gastronomía, accidentes, etc.)
+- Categorización temática expandida (gastronomía, etc.)
 - Sistema de coherencia tono-emoción mejorado
 - Validación cruzada automática
 - Correcciones automáticas inteligentes
@@ -354,9 +354,6 @@ class VisualizacionesSentimentAnalyzer:
                 'problema', 'dificultad', 'crisis', 'reducción', 'corte',
                 'suspensión', 'retraso', 'conflicto', 'denuncia', 'queja',
                 'esperando', 'espera', 'demora', 'paralizado', 'bloqueo',
-                # 🆕 ACCIDENTES Y SITUACIONES GRAVES
-                'accidente', 'choque', 'heridos', 'colisión', 'impacto',
-                'frontolateral', 'atropello', 'rescate', 'ambulancia',
                 'grave', 'estado crítico', 'preocupados'
             ],
             'satisfacción': [
@@ -380,18 +377,7 @@ class VisualizacionesSentimentAnalyzer:
                 'priority': 1,
                 'emoji': '🕊️'
             },
-            'accidentes_trafico': {  # 🆕 NUEVA CATEGORÍA CON ALTA PRIORIDAD
-                'keywords': [
-                    'accidente', 'choque', 'colisión', 'atropello', 'carretera',
-                    'tráfico', 'vehículo', 'coche', 'moto', 'heridos',
-                    'ambulancia', 'guardia civil', 'bomberos', 'rescate',
-                    'frontolateral', 'impacto', 'circulaban', 'sentidos opuestos',
-                    'colisión frontal', 'grave accidente', 'resultado de',
-                    'ocupantes', 'conductor', 'pasajeros', 'turistas'
-                ],
-                'priority': 2,
-                'emoji': '🚗💥'
-            },
+
             'gastronomia': {  # 🆕 NUEVA CATEGORÍA IMPORTANTE
                 'keywords': [
                     'reabre', 'restaurante', 'gastronómico', 'cocina', 'chef',
@@ -401,7 +387,7 @@ class VisualizacionesSentimentAnalyzer:
                     'espacio gastronómico', 'vuelve a abrir', 'nueva apertura',
                     'moderniza', 'renueva', 'espacio', 'comedor'
                 ],
-                'priority': 3,
+                'priority': 2,
                 'emoji': '🍽️'
             },
             'festividades': {  # TERCERA PRIORIDAD (antes segunda)
@@ -415,7 +401,7 @@ class VisualizacionesSentimentAnalyzer:
                     'abrirá al público', 'viernes', 'sábado', 'domingo',
                     'programa', 'actividades', 'espectáculos'
                 ],
-                'priority': 4,
+                'priority': 3,
                 'emoji': '🎉'
             },
             'deportes': {  # CUARTA PRIORIDAD
@@ -431,7 +417,7 @@ class VisualizacionesSentimentAnalyzer:
                     'se proclama', 'proclama', 'conseguido', 'título',
                     'avencia estatal', 'la avencia'
                 ],
-                'priority': 5,
+                'priority': 4,
                 'emoji': '⚽'
             },
             'politica': {
@@ -441,7 +427,7 @@ class VisualizacionesSentimentAnalyzer:
                     'oposición', 'debate', 'moción', 'presupuesto', 'ordenanza',
                     'xunta', 'tramita', 'concesión', 'licencia', 'explotación'
                 ],
-                'priority': 6,
+                'priority': 5,
                 'emoji': '🏛️'
             },
             'infraestructura': {
@@ -451,7 +437,7 @@ class VisualizacionesSentimentAnalyzer:
                     'viviendas', 'kiosko', 'pabellón', 'paseo', 'auditorio',
                     'aparcamiento', 'parking', 'lago castiñeiras', 'ardán'
                 ],
-                'priority': 7,
+                'priority': 6,
                 'emoji': '🏗️'
             },
             'economia': {
@@ -461,7 +447,7 @@ class VisualizacionesSentimentAnalyzer:
                     'tecnopesca', 'hostelería', 'adjudicados', 'puestos',
                     'mercado', 'abastos', 'millón', 'euros', 'dinero'
                 ],
-                'priority': 8,
+                'priority': 7,
                 'emoji': '💰'
             },
             'religion': {
@@ -470,7 +456,7 @@ class VisualizacionesSentimentAnalyzer:
                     'franciscano', 'san diego', 'san narciso', 'misa', 'fiesta religiosa',
                     'colegio inmaculada', 'caridad', 'hermanas', 'tricentenaria'
                 ],
-                'priority': 9,
+                'priority': 8,
                 'emoji': '⛪'
             },
             'educacion': {
@@ -478,7 +464,7 @@ class VisualizacionesSentimentAnalyzer:
                     'colegio', 'instituto', 'universidad', 'educación', 'estudiante',
                     'profesor', 'curso', 'escuela', 'formación', 'alumnos'
                 ],
-                'priority': 10,
+                'priority': 9,
                 'emoji': '📚'
             },
             'medio_ambiente': {
@@ -486,7 +472,7 @@ class VisualizacionesSentimentAnalyzer:
                     'parque', 'jardín', 'verde', 'sostenible', 'ecológico',
                     'medio ambiente', 'reciclaje', 'limpieza'
                 ],
-                'priority': 11,
+                'priority': 10,
                 'emoji': '🌱'
             }
         }
@@ -504,9 +490,8 @@ class VisualizacionesSentimentAnalyzer:
             ],
             
             'contextual_negativo': [
-                # Accidentes específicos
-                'accidente', 'choque', 'heridos', 'muerte', 'fallecimiento',
-                'impacto', 'colisión', 'atropello', 'grave accidente',
+                # Problemas generales
+                'muerte', 'fallecimiento',
                 # Cierres y problemas
                 'cierre definitivo', 'clausura', 'pérdida', 'problema'
             ],
@@ -606,8 +591,6 @@ class VisualizacionesSentimentAnalyzer:
         palabras_alta_intensidad = [
             # Necrológicas (alta intensidad emocional)
             'fallece', 'fallecimiento', 'muerte', 'falleció', 'última hora',
-            # Accidentes graves
-            'grave accidente', 'accidente', 'choque', 'heridos', 'impacto',
             # Éxitos importantes
             'campeón', 'triunfa', 'oro', 'primer puesto', 'récord',
             # Eventos especiales
@@ -626,9 +609,6 @@ class VisualizacionesSentimentAnalyzer:
         if any(word in texto_completo for word in ['fallece', 'fallecimiento', 'muerte']):
             intensidad_base += 2  # Necrológicas son siempre intensas
         
-        if any(word in texto_completo for word in ['accidente', 'choque', 'heridos']):
-            intensidad_base += 2  # Accidentes también
-        
         if any(word in texto_completo for word in ['campeón', 'triunfa', 'oro']):
             intensidad_base += 1  # Éxitos deportivos/personales
         
@@ -645,7 +625,7 @@ class VisualizacionesSentimentAnalyzer:
         texto_completo = f"{titulo} {resumen}".lower()
         
         # 🚀 ORDEN DE PRIORIDAD ACTUALIZADO:
-        # 1. Necrológicas, 2. Accidentes, 3. Gastronomía, 4. Festividades, 5. Deportes, 6. Política
+        # 1. Necrológicas, 2. Gastronomía, 3. Festividades, 4. Deportes, 5. Política
         categorias_por_prioridad = sorted(
             self.categorias_tematicas_articulos.items(),
             key=lambda x: x[1].get('priority', 999)
@@ -665,13 +645,6 @@ class VisualizacionesSentimentAnalyzer:
         correcciones = []
         
         # REGLAS DE COHERENCIA ESPECÍFICAS
-        
-        # Si detectamos palabras de accidente pero tono positivo -> corregir
-        palabras_accidente = ['accidente', 'choque', 'heridos', 'muerte', 'colisión']
-        if any(palabra in texto_lower for palabra in palabras_accidente):
-            if tono == 'positivo':
-                correcciones.append("Accidente clasificado como positivo -> corregido a negativo")
-                return 'negativo', 'preocupación', max(confidence, 0.80)
         
         # Si detectamos reapertura/inauguración pero tono negativo -> corregir
         palabras_apertura = ['reabre', 'inaugura', 'abre', 'nueva apertura', 'gastronómico']
@@ -699,10 +672,6 @@ class VisualizacionesSentimentAnalyzer:
         """🚀 NUEVA FUNCIÓN: Detecta contextos específicos con mayor precisión"""
         texto_completo = f"{titulo} {resumen}".lower()
         contextos = {}
-        
-        # Contexto de accidente de tráfico
-        if any(word in texto_completo for word in ['accidente', 'choque', 'tráfico', 'carretera', 'heridos']):
-            contextos['accidente_trafico'] = 0.9
         
         # Contexto gastronómico
         if any(word in texto_completo for word in ['reabre', 'restaurante', 'bar', 'gastronómico']):
@@ -786,25 +755,15 @@ class HybridSentimentAnalyzer:
             alertas.append("⚠️ Necrológica clasificada como positiva")
             sugerencias.append("Revisar: probablemente debería ser negativo/tristeza")
         
-        # Validación 2: Accidentes no deberían ser festividades
-        if 'accidente' in titulo_lower and 'festividades' in tematica.lower():
-            alertas.append("⚠️ Accidente clasificado como festividad")
-            sugerencias.append("Revisar: debería ser categoría 'accidentes' o 'general'")
-        
-        # Validación 3: Reaperturas no deberían ser necrológicas
+        # Validación 2: Reaperturas no deberían ser necrológicas
         if any(word in titulo_lower for word in ['reabre', 'abre', 'gastronómico']) and 'necrologicas' in tematica.lower():
             alertas.append("⚠️ Reapertura clasificada como necrológica")
             sugerencias.append("Revisar: debería ser 'gastronomia' o 'eventos'")
         
-        # Validación 4: Éxitos deportivos deberían ser positivos
+        # Validación 3: Éxitos deportivos deberían ser positivos
         if any(word in titulo_lower for word in ['campeón', 'oro', 'triunfa', 'medalla']) and tono != 'positivo':
             alertas.append("⚠️ Éxito deportivo no clasificado como positivo")
             sugerencias.append("Revisar: debería ser positivo/orgullo")
-        
-        # 🆕 Validación 5: Accidentes deberían ser negativos
-        if 'accidente' in titulo_lower and tono == 'positivo':
-            alertas.append("⚠️ Accidente clasificado como positivo")
-            sugerencias.append("Revisar: debería ser negativo/preocupación")
         
         self.validaciones_realizadas += 1
         
@@ -836,15 +795,7 @@ class HybridSentimentAnalyzer:
                 correcciones_fila.append("Reapertura gastronómica corregida")
                 correcciones_aplicadas += 1
             
-            # Corrección 2: Accidentes de tráfico mal clasificados
-            if 'accidente' in titulo_lower and row.get('tono_general') == 'positivo':
-                df_resultado.at[idx, 'tono_general'] = 'negativo'
-                df_resultado.at[idx, 'emocion_principal'] = 'preocupación'
-                df_resultado.at[idx, 'tematica'] = '🚗💥 Accidentes'
-                correcciones_fila.append("Accidente corregido a negativo")
-                correcciones_aplicadas += 1
-            
-            # Corrección 3: Éxitos deportivos mal clasificados
+            # Corrección 2: Éxitos deportivos mal clasificados
             if any(word in titulo_lower for word in ['campeón', 'oro', 'triunfa', 'mejor de']) and row.get('tono_general') != 'positivo':
                 df_resultado.at[idx, 'tono_general'] = 'positivo'
                 df_resultado.at[idx, 'emocion_principal'] = 'orgullo'
@@ -852,7 +803,7 @@ class HybridSentimentAnalyzer:
                 correcciones_fila.append("Éxito deportivo corregido a positivo")
                 correcciones_aplicadas += 1
             
-            # Corrección 4: Necrológicas mal clasificadas como positivas
+            # Corrección 3: Necrológicas mal clasificadas como positivas
             if any(word in titulo_lower for word in ['fallece', 'fallecimiento']) and row.get('tono_general') == 'positivo':
                 df_resultado.at[idx, 'tono_general'] = 'negativo'
                 df_resultado.at[idx, 'emocion_principal'] = 'tristeza'
