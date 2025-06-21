@@ -1,15 +1,11 @@
 """
-Hybrid Sentiment Analyzer - HorizontAI (VERSIÓN CORREGIDA BASADA EN DATOS REALES)
-================================================================================
+Hybrid Sentiment Analyzer - HorizontAI (VERSIÓN REFACTORIZADA)
+==============================================================
 
-🔧 CORRECCIONES APLICADAS basadas en análisis de 15 comentarios reales:
-- Detección de gallego mejorada con patrones reales
-- Eliminado sesgo hacia "neutral" 
-- Detección política agresiva
-- Intensidades realistas
-- Emociones más precisas según contexto político
-
-🎯 CALIBRADO ESPECÍFICAMENTE para comentarios políticos de Galicia
+🔧 REFACTORIZACIÓN: Separación clara entre análisis de comentarios y visualizaciones
+- ComentariosSentimentAnalyzer: Optimizado para comentarios individuales (emocional, coloquial)
+- VisualizacionesSentimentAnalyzer: Optimizado para artículos/títulos (informativo, formal)
+- HybridSentimentAnalyzer: Wrapper que decide qué analizador usar
 """
 
 import re
@@ -70,23 +66,16 @@ class EmotionResult:
     thematic_category: str  
 
 class SarcasmDetector:
-    """Detecta sarcasmo e ironía contextual - MEJORADO"""
+    """Detecta sarcasmo e ironía contextual"""
     def __init__(self):
-        # 🔧 PATRONES REALES observados en los comentarios
         self.patrones_sarcasmo = {
             'elogios_falsos': [
-                'menos mal que',
-                'ojalá que',
-                'parabéns por',
-                'de cando en vez',
-                'ás veces pasa'
+                'menos mal que', 'ojalá que', 'parabéns por',
+                'de cando en vez', 'ás veces pasa'
             ],
             'criticas_indirectas': [
-                'demagogia a todo trapo',
-                'espectáculo circense',
-                'fantochada',
-                'siniestra figura',
-                'madre mía esto es asqueroso'
+                'demagogia a todo trapo', 'espectáculo circense',
+                'fantochada', 'siniestra figura', 'madre mía esto es asqueroso'
             ]
         }
     
@@ -95,12 +84,10 @@ class SarcasmDetector:
         texto_lower = texto.lower()
         score_sarcasmo = 0.0
         
-        # Patrones de elogios falsos
         for patron in self.patrones_sarcasmo['elogios_falsos']:
             if patron in texto_lower:
                 score_sarcasmo += 0.6
         
-        # Críticas indirectas
         for patron in self.patrones_sarcasmo['criticas_indirectas']:
             if patron in texto_lower:
                 score_sarcasmo += 0.8
@@ -108,9 +95,8 @@ class SarcasmDetector:
         return min(score_sarcasmo, 1.0)
 
 class ContextoPolitico:
-    """Detecta contexto político - MEJORADO con datos reales"""
+    """Detecta contexto político"""
     def __init__(self):
-        # 🔧 TÉRMINOS POLÍTICOS REALES observados
         self.figuras_politicas = {
             'carmela silva': {
                 'variantes': ['carmela silva', 'carmela', 'silva'],
@@ -122,79 +108,40 @@ class ContextoPolitico:
             }
         }
         
-        # Términos que GARANTIZAN categoría política
         self.palabras_politicas_obligatorias = [
             'pp', 'psoe', 'bng', 'partido popular', 'socialista', 'bloque',
             'alcaldesa', 'alcalde', 'gobierno', 'dictadura', 'franco', 'franquista',
             'democracia', 'demócrata', 'memoria histórica', 'golpismo',
-            'carmela silva', 'feijoo', 'politico', 'política', 'prisión'
+            'carmela silva', 'feijoo', 'politico', 'política', 'prisión',
+            'concello', 'concejales', 'xunta', 'ministros'
         ]
     
     def es_politico(self, texto: str) -> bool:
-        """DETECCIÓN POLÍTICA EXPANDIDA"""
+        """Detección política expandida"""
         texto_lower = texto.lower()
-        
-        # Políticos específicos observados
-        politicos_reales = [
-            'pedro sánchez', 'sánchez', 'psoe', 'bng', 'pp',
-            'concello', 'alcaldesa', 'concejales', 'xunta',
-            'gobierno', 'ministros', 'casa real', 'borbones',
-            'emérito', 'juan carlos', 'defensa'
-        ]
-        
-        # Términos administrativos que son políticos
-        administrativos = [
-            'recaudación del estado', 'servicios públicos',
-            'cesión de terrenos', 'funcionarios', 'horas extras'
-        ]
-        
-        # Si menciona CUALQUIER término → es político
-        return any(termino in texto_lower for termino in politicos_reales + administrativos)
+        return any(termino in texto_lower for termino in self.palabras_politicas_obligatorias)
 
-class HybridSentimentAnalyzer:
-    """Analizador corregido basado en datos reales"""
+class ComentariosSentimentAnalyzer:
+    """Analizador específico para comentarios individuales (emocional, coloquial)"""
     
     def __init__(self):
-        self.available = True
-        self.cloud_mode = CLOUD_LIBS_AVAILABLE
-        self.models_loaded = False
         self.detector_sarcasmo = SarcasmDetector()
         self.contexto_politico = ContextoPolitico()
         
-        # 🔧 PATRONES DE GALLEGO REALES (observados en comentarios)
-        self.palabras_gallegas_reales = [
-            # Observadas en comentarios reales:
+        # Palabras gallegas específicas de comentarios
+        self.palabras_gallegas_comentarios = [
             'cando', 'vez', 'ás veces', 'unha', 'persoa', 'demócrata', 'moi', 'mais', 'pode',
             'parabéns', 'vir', 'civilización', 'agora', 'convenza', 'nega', 'cambiar', 'rúas',
             'enaltecen', 'golpismo', 'desde', 'grove', 'esa', 'se nega', 'ao',
-            # Tradicionales:
-            'dende', 'coa', 'polo', 'pola', 'na', 'no', 'da', 'do', 'das', 'dos',
-            'ata', 'sempre', 'nunca', 'tamén', 'ademais', 'porque', 'aínda',
-            'concello', 'veciños', 'celebrarase', 'realizarase', 'terá', 'poderá'
+            'grazas', 'teña', 'non', 'pois', 'súa', 'desde a coruña'
         ]
         
-        # Frases completas en gallego observadas
-        self.frases_gallegas = [
-            'de cando en vez', 'ás veces pasa', 'persoa decente e demócrata',
-            'parabéns por vir', 'agora que convenza', 'esa alcaldesa de marín',
-            'que se nega a cambiar', 'rúas que enaltecen ao golpismo'
-        ]
-        
-        self._init_keywords()
-        
-        if self.cloud_mode:
-            print("🌥️ Modo cloud habilitado")
-        else:
-            print("🔧 Modo keywords únicamente")
-    
-    def _init_keywords(self):
-        """Inicializa palabras clave CORREGIDAS"""
-        
-        # 🔧 EMOCIONES REALES observadas en comentarios
-        self.emociones_keywords = {
+        # Emociones específicas para comentarios (más granulares y emocionales)
+        self.emociones_comentarios = {
             'ira': [
                 'asqueroso', 'prisión', 'tiene que estar en prisión', 'madre mía',
-                'barbaridad', 'barbaro', 'delincuentes', 'vergonzosa', 'asco'
+                'barbaridad', 'barbaro', 'delincuentes', 'vergonzosa', 'asco',
+                'patético', 'ineptitud', 'bribón'
             ],
             'indignación': [
                 'demagogia', 'fantochada', 'siniestra figura', 'caradurismo',
@@ -202,7 +149,7 @@ class HybridSentimentAnalyzer:
             ],
             'decepción': [
                 'perdió el norte', 'da más pena', 'difícil de entender',
-                'en contra de todo', 'cada vez da más pena'
+                'en contra de todo', 'cada vez da más pena', 'no se han enterado'
             ],
             'esperanza': [
                 'ojalá que', 'futuro inmenso', 'se lo merece', 'aparece unha persoa decente',
@@ -210,281 +157,515 @@ class HybridSentimentAnalyzer:
             ],
             'satisfacción': [
                 'menos mal que', 'hay alguna demócrata', 'condena la dictadura',
-                'persoa decente', 'pode pasar'
+                'persoa decente', 'pode pasar', 'tiene toda la razón'
             ],
             'desprecio': [
                 'demagogia a todo trapo', 'siniestra figura', 'puntos oscuros',
-                'caradurismo', 'hacer equilibrio'
-            ],
-            'tristeza': [
-                'da más pena', 'cada vez da más pena', 'tiempo pasados',
-                'memoria histórica', 'odios y enfrentamientos'
-            ],
-            'preocupación': [
-                'cuanto tiempo ha de pasar', 'engendran odios', 'futuro violento',
-                'jóvenes desconozcan', 'tiempos pasados'
+                'caradurismo', 'hacer equilibrio', 'lamecús', 'súbditos'
             ],
             'alegría': [
-                'parabéns', 'civilización', 'democracia', 'aparece unha persoa',
-                'convenza a feijoo'
+                'felicitaciones', 'estupendo', 'enhorabuena', 'me gusta',
+                'que bueno', 'preciosísimo', 'grazas', 'que viva'
             ]
         }
         
-        # 🔧 PALABRAS NEGATIVAS REALES
-        self.palabras_negativas = [
-            'perdió el norte', 'da más pena', 'demagogia', 'caradurismo', 'siniestra',
-            'puntos oscuros', 'fantochada', 'asqueroso', 'prisión', 'dictadura',
-            'golpismo', 'odios', 'enfrentamientos', 'violento', 'difícil de entender',
-            'en contra de todo', 'demagogia a todo trapo'
+        # Palabras de intensidad para comentarios
+        self.palabras_intensas_comentarios = [
+            'prisión', 'asqueroso', 'madre mía', 'siniestra figura',
+            'ojalá que', 'futuro inmenso', 'parabéns', 'barbaridad',
+            'patético', 'vergonzosa', 'delincuentes'
         ]
-        
-        # 🔧 PALABRAS POSITIVAS REALES  
-        self.palabras_positivas = [
-            'ojalá que', 'futuro inmenso', 'se lo merece', 'menos mal que',
-            'demócrata', 'condena la dictadura', 'parabéns', 'persoa decente',
-            'democracia', 'civilización', 'aparece unha persoa', 'pode pasar'
-        ]
-        
-        # 🔧 CATEGORÍAS TEMÁTICAS CORREGIDAS
-        self.categorias_tematicas = {
-            'politica': {
-                'keywords': [
-                    'pp', 'psoe', 'bng', 'partido', 'alcaldesa', 'alcalde', 'gobierno',
-                    'dictadura', 'franco', 'franquista', 'democracia', 'demócrata',
-                    'memoria histórica', 'golpismo', 'carmela silva', 'feijoo',
-                    'prisión', 'política', 'político', 'militancia', 'líderes'
-                ],
-                'emoji': '🏛️'
-            },
-            'social': {
-                'keywords': ['futuro', 'jóvenes', 'tiempos', 'historia', 'civilización'],
-                'emoji': '🤝'
-            },
-            'construcción': {
-                'keywords': ['obra', 'construcción', 'edificio', 'vivienda', 'rúas'],
-                'emoji': '🏗️'
-            }
-        }
     
-    def detectar_idioma(self, texto: str, es_titulo: bool = False) -> str:
-        """MANEJO DE TEXTOS MIXTOS"""
+    def detectar_idioma_comentario(self, texto: str) -> str:
+        """Detección de idioma específica para comentarios"""
         texto_lower = texto.lower()
         
-        # Palabras que GARANTIZAN gallego
-        gallego_fuerte = ['grazas', 'moi', 'teña', 'non', 'pois', 'súa', 'desde a coruña']
+        # Palabras que GARANTIZAN gallego en comentarios
+        gallego_fuerte = ['grazas', 'moi', 'teña', 'non', 'pois', 'súa']
         
-        # Patrones mixtos (gallego + castellano)
         if any(palabra in texto_lower for palabra in gallego_fuerte):
             return 'gallego'
         
-        # Umbral más bajo para detectar gallego
+        # Umbral más bajo para comentarios cortos
         palabras_gallegas = texto_lower.split()
-        coincidencias = sum(1 for palabra in self.palabras_gallegas_reales 
-                        if palabra in palabras_gallegas)
+        coincidencias = sum(1 for palabra in self.palabras_gallegas_comentarios 
+                          if palabra in palabras_gallegas)
         
-        # Reducir umbral a 1 palabra gallega
         if coincidencias >= 1 and len(palabras_gallegas) <= 10:  
             return 'gallego'
         
         return 'castellano'
     
-    def analizar_sentimiento(self, texto: str) -> Tuple[str, float]:
-        """VERSIÓN AGRESIVA - eliminar conservadurismo excesivo"""
+    def analizar_sentimiento_comentario(self, texto: str) -> Tuple[str, float]:
+        """Análisis de sentimiento específico para comentarios"""
         texto_lower = texto.lower()
         
         score_positivo = 0
         score_negativo = 0
         
-        # 🔧 PATRONES POSITIVOS REALES observados
-        patrones_positivos = [
+        # Patrones específicos de comentarios
+        patrones_positivos_comentarios = [
             'felicitaciones', 'estupendo', 'enhorabuena', 'me gusta', 
             'que bueno', 'preciosísimo', 'gracias', 'buen día',
-            '😂', '👏', '❤️', '¡que viva!', 'grazas'
+            'grazas', 'tiene toda la razón', 'hace bien'
         ]
         
-        # 🔧 PATRONES NEGATIVOS REALES observados  
-        patrones_negativos = [
+        patrones_negativos_comentarios = [
             'patético', 'vergonzosa', 'delincuentes', 'barbaridad',
-            'que raro que', 'absurdas', 'ineptitud', 'sofocante'
+            'que raro que', 'absurdas', 'ineptitud', 'sofocante',
+            'asqueroso', 'prisión', 'madre mía'
         ]
         
-        # 🔧 DETECCIÓN DE SARCASMO
-        patrones_sarcasmo = [
-            'barato, barato', 'venga aplaudamos', 'que raro que',
-            'claro [nombre] no', 'menos mal que', 'por supuesto'
-        ]
-        
-        # Scoring más agresivo
-        for patron in patrones_positivos:
+        # Scoring agresivo para comentarios emocionales
+        for patron in patrones_positivos_comentarios:
             if patron in texto_lower:
-                score_positivo += 3  # Aumentado de 2
+                score_positivo += 3
         
-        for patron in patrones_negativos:
+        for patron in patrones_negativos_comentarios:
             if patron in texto_lower:
-                score_negativo += 3  # Aumentado de 2
+                score_negativo += 3
         
-        # Detectar sarcasmo (invertir polaridad)
-        es_sarcastico = any(patron in texto_lower for patron in patrones_sarcasmo)
-        if es_sarcastico:
+        # Detectar sarcasmo
+        es_sarcastico = self.detector_sarcasmo.detectar_sarcasmo(texto)
+        if es_sarcastico > 0.5:
             score_positivo, score_negativo = score_negativo, score_positivo
         
-        # 🔧 UMBRALES MÁS BAJOS (menos conservador)
-        if score_positivo > score_negativo and score_positivo >= 1:  # Era >= 2
+        # Umbrales bajos para comentarios
+        if score_positivo > score_negativo and score_positivo >= 1:
             return 'positivo', min(0.8 + (score_positivo * 0.1), 0.95)
-        elif score_negativo > score_positivo and score_negativo >= 1:  # Era >= 2  
+        elif score_negativo > score_positivo and score_negativo >= 1:
             return 'negativo', min(0.8 + (score_negativo * 0.1), 0.95)
         else:
             return 'neutral', 0.6
     
-    def analizar_emociones(self, texto: str) -> Dict[str, float]:
-        """EMOCIONES REALES observadas en comentarios"""
-        
-        emociones_mejoradas = {
-            'alegría': [
-                'felicitaciones', 'estupendo', 'enhorabuena', 'me gusta',
-                'que bueno', 'preciosísimo', '😂', '👏', 'grazas',
-                'que viva', 'buen día'
-            ],
-            'ira': [
-                'vergonzosa', 'delincuentes', 'barbaridad', 'patético',
-                'ineptitud', 'absurdas', 'bribón'
-            ],
-            'desprecio': [
-                'barato, barato', 'venga aplaudamos', 'que raro que',
-                'lamecús', 'súbditos'
-            ],
-            'decepción': [
-                'no se han enterado', 'miopia', 'no acabamos nunca',
-                'deberían ser excelentes'
-            ],
-            'satisfacción': [
-                'tiene toda la razón', 'hace bien', 'debería ampliar',
-                'concuerdo'
-            ]
-        }
-        
+    def analizar_emociones_comentario(self, texto: str) -> Dict[str, float]:
+        """Análisis de emociones específico para comentarios"""
         emotions_scores = {}
         texto_lower = texto.lower()
         
-        for emocion, keywords in emociones_mejoradas.items():
+        for emocion, keywords in self.emociones_comentarios.items():
             score_total = 0
             
             for keyword in keywords:
                 if keyword in texto_lower:
-                    score_total += 2.5  # Más agresivo
+                    score_total += 2.5  # Más agresivo para comentarios
             
             if score_total > 0:
                 emotions_scores[emocion] = min(score_total / len(keywords), 1.0)
         
         return emotions_scores
     
-    def _calcular_intensidad_realista(self, texto: str, emotions_scores: Dict[str, float]) -> int:
-        """Calcula intensidad REALISTA (no siempre 1)"""
+    def calcular_intensidad_comentario(self, texto: str, emotions_scores: Dict[str, float]) -> int:
+        """Intensidad específica para comentarios"""
         texto_lower = texto.lower()
+        intensidad_base = 2
         
-        # 🔧 BASE según longitud y contenido
-        intensidad_base = 2  # Cambiar de 1 a 2
-        
-        # Palabras que indican alta intensidad
-        palabras_intensas = [
-            'prisión', 'asqueroso', 'madre mía', 'siniestra figura',
-            'ojalá que', 'futuro inmenso', 'parabéns', 'barbaridad'
-        ]
-        
-        for palabra in palabras_intensas:
+        # Palabras intensas en comentarios
+        for palabra in self.palabras_intensas_comentarios:
             if palabra in texto_lower:
                 intensidad_base += 1
         
-        # Signos de exclamación/interrogación
+        # Signos de exclamación/interrogación (común en comentarios)
         if '!' in texto or '¡' in texto:
             intensidad_base += 1
         
-        # Mayúsculas (énfasis)
+        # Mayúsculas (énfasis en comentarios)
         if len([c for c in texto if c.isupper()]) > 5:
             intensidad_base += 1
         
-        # Máximo score de emociones detectadas
+        # Máximo score de emociones
         if emotions_scores:
             max_emotion_score = max(emotions_scores.values())
             if max_emotion_score > 0.7:
                 intensidad_base += 1
         
         return min(intensidad_base, 5)
+
+class VisualizacionesSentimentAnalyzer:
+    """Analizador específico para artículos/visualizaciones (informativo, formal)"""
     
-    def _determinar_tematica_politica(self, texto: str) -> Tuple[str, str]:
-        """Determinación temática AGRESIVA hacia política"""
-        texto_lower = texto.lower()
+    def __init__(self):
+        self.contexto_politico = ContextoPolitico()
         
-        # 🔧 SI DETECTA CUALQUIER TÉRMINO POLÍTICO → POLÍTICA
-        if self.contexto_politico.es_politico(texto):
+        # Palabras gallegas específicas para artículos
+        self.palabras_gallegas_articulos = [
+            'concello', 'veciños', 'celebrarase', 'realizarase', 'terá', 'poderá',
+            'desde', 'coa', 'polo', 'pola', 'na', 'no', 'da', 'do', 'das', 'dos',
+            'ata', 'sempre', 'nunca', 'tamén', 'ademais', 'porque', 'aínda'
+        ]
+        
+        # Emociones más suaves para artículos informativos
+        self.emociones_articulos = {
+            'esperanza': [
+                'desarrollo', 'crecimiento', 'mejora', 'avance', 'progreso',
+                'inversión', 'modernización', 'renovación', 'futuro'
+            ],
+            'preocupación': [
+                'problema', 'dificultad', 'crisis', 'reducción', 'corte',
+                'suspensión', 'retraso', 'conflicto'
+            ],
+            'satisfacción': [
+                'éxito', 'logro', 'inauguración', 'apertura', 'finalización',
+                'completado', 'conseguido'
+            ],
+            'orgullo': [
+                'reconocimiento', 'premio', 'distinción', 'honor', 'celebración',
+                'conmemoración', 'homenaje'
+            ],
+            'tristeza': [
+                'cierre', 'clausura', 'pérdida', 'fallecimiento', 'despedida',
+                'fin', 'último'
+            ],
+            'alegría': [
+                'fiesta', 'festival', 'celebración', 'inauguración', 'boda',
+                'nacimiento', 'graduación'
+            ]
+        }
+        
+        # Categorías temáticas específicas para artículos
+        self.categorias_tematicas_articulos = {
+            'politica': {
+                'keywords': [
+                    'alcalde', 'alcaldesa', 'concejo', 'concello', 'pleno', 'concejal',
+                    'partido', 'político', 'elecciones', 'campaña', 'gobierno',
+                    'oposición', 'debate', 'moción', 'presupuesto', 'ordenanza'
+                ],
+                'emoji': '🏛️'
+            },
+            'economia': {
+                'keywords': [
+                    'empresa', 'negocio', 'empleo', 'trabajo', 'industria',
+                    'comercio', 'inversión', 'económico', 'financiación'
+                ],
+                'emoji': '💰'
+            },
+            'cultura': {
+                'keywords': [
+                    'festival', 'concierto', 'exposición', 'teatro', 'museo',
+                    'biblioteca', 'cultural', 'arte', 'tradición'
+                ],
+                'emoji': '🎭'
+            },
+            'deportes': {
+                'keywords': [
+                    'fútbol', 'baloncesto', 'deportivo', 'club', 'equipo',
+                    'competición', 'torneo', 'liga', 'entrenamiento'
+                ],
+                'emoji': '⚽'
+            },
+            'educacion': {
+                'keywords': [
+                    'colegio', 'instituto', 'universidad', 'educación', 'estudiante',
+                    'profesor', 'curso', 'escuela', 'formación'
+                ],
+                'emoji': '📚'
+            },
+            'salud': {
+                'keywords': [
+                    'hospital', 'centro de salud', 'médico', 'sanitario',
+                    'paciente', 'tratamiento', 'salud', 'clínica'
+                ],
+                'emoji': '🏥'
+            },
+            'infraestructura': {
+                'keywords': [
+                    'carretera', 'puente', 'obra', 'construcción', 'urbanismo',
+                    'saneamiento', 'agua', 'luz', 'gas', 'internet'
+                ],
+                'emoji': '🏗️'
+            },
+            'medio_ambiente': {
+                'keywords': [
+                    'parque', 'jardín', 'verde', 'sostenible', 'ecológico',
+                    'medio ambiente', 'reciclaje', 'limpieza'
+                ],
+                'emoji': '🌱'
+            },
+            'necrologicas': {
+                'keywords': [
+                    'fallecimiento', 'muerte', 'esquela', 'funeral', 'defunción',
+                    'velatorio', 'cementerio', 'sepelio'
+                ],
+                'emoji': '🕊️'
+            }
+        }
+    
+    def detectar_idioma_articulo(self, titulo: str, resumen: str = "") -> str:
+        """Detección de idioma específica para artículos"""
+        texto_completo = f"{titulo} {resumen}".lower()
+        
+        # Para artículos, buscar patrones más formales
+        patrones_gallego_formal = [
+            'concello de', 'veciños e veciñas', 'celebrarase o',
+            'realizarase na', 'terá lugar', 'poderá participar'
+        ]
+        
+        if any(patron in texto_completo for patron in patrones_gallego_formal):
+            return 'gallego'
+        
+        # Conteo de palabras gallegas con umbral más alto para artículos
+        palabras = texto_completo.split()
+        coincidencias = sum(1 for palabra in self.palabras_gallegas_articulos 
+                          if palabra in palabras)
+        
+        # Umbral más alto para artículos (más conservador)
+        if coincidencias >= 2 and len(palabras) > 5:
+            return 'gallego'
+        
+        return 'castellano'
+    
+    def analizar_sentimiento_articulo(self, titulo: str, resumen: str = "") -> Tuple[str, float]:
+        """Análisis de sentimiento específico para artículos"""
+        texto_completo = f"{titulo} {resumen}".lower()
+        
+        score_positivo = 0
+        score_negativo = 0
+        
+        # Patrones más informativos y menos emocionales
+        patrones_positivos_articulos = [
+            'inauguración', 'apertura', 'nuevo', 'moderna', 'mejora',
+            'desarrollo', 'crecimiento', 'éxito', 'logro', 'premio',
+            'inversión', 'renovación', 'modernización'
+        ]
+        
+        patrones_negativos_articulos = [
+            'cierre', 'clausura', 'problema', 'conflicto', 'crisis',
+            'retraso', 'suspensión', 'reducción', 'corte', 'dificultad'
+        ]
+        
+        # Scoring más conservador para artículos
+        for patron in patrones_positivos_articulos:
+            if patron in texto_completo:
+                score_positivo += 2
+        
+        for patron in patrones_negativos_articulos:
+            if patron in texto_completo:
+                score_negativo += 2
+        
+        # Umbrales más altos para artículos (más conservador)
+        if score_positivo > score_negativo and score_positivo >= 2:
+            return 'positivo', min(0.7 + (score_positivo * 0.05), 0.85)
+        elif score_negativo > score_positivo and score_negativo >= 2:
+            return 'negativo', min(0.7 + (score_negativo * 0.05), 0.85)
+        else:
+            return 'neutral', 0.7
+    
+    def analizar_emociones_articulo(self, titulo: str, resumen: str = "") -> Dict[str, float]:
+        """Análisis de emociones específico para artículos"""
+        emotions_scores = {}
+        texto_completo = f"{titulo} {resumen}".lower()
+        
+        for emocion, keywords in self.emociones_articulos.items():
+            score_total = 0
+            
+            for keyword in keywords:
+                if keyword in texto_completo:
+                    # Dar más peso al título
+                    if keyword in titulo.lower():
+                        score_total += 2.0
+                    else:
+                        score_total += 1.0
+            
+            if score_total > 0:
+                emotions_scores[emocion] = min(score_total / len(keywords), 1.0)
+        
+        return emotions_scores
+    
+    def calcular_intensidad_articulo(self, titulo: str, resumen: str, emotions_scores: Dict[str, float]) -> int:
+        """Intensidad específica para artículos (más conservadora)"""
+        intensidad_base = 1  # Más bajo para artículos
+        
+        # Palabras que indican mayor importancia en artículos
+        palabras_importantes = [
+            'histórico', 'primer', 'único', 'gran', 'importante',
+            'nuevo', 'innovador', 'revolucionario'
+        ]
+        
+        texto_completo = f"{titulo} {resumen}".lower()
+        
+        for palabra in palabras_importantes:
+            if palabra in texto_completo:
+                intensidad_base += 1
+        
+        # Máximo score de emociones (más conservador)
+        if emotions_scores:
+            max_emotion_score = max(emotions_scores.values())
+            if max_emotion_score > 0.5:  # Umbral más bajo
+                intensidad_base += 1
+        
+        return min(intensidad_base, 4)  # Máximo más bajo para artículos
+    
+    def determinar_tematica_articulo(self, titulo: str, resumen: str = "") -> Tuple[str, str]:
+        """Determinación temática específica para artículos"""
+        texto_completo = f"{titulo} {resumen}".lower()
+        
+        # Primero verificar si es político
+        if self.contexto_politico.es_politico(texto_completo):
             return 'politica', '🏛️'
         
-        # Verificar otras categorías solo si NO es político
-        for categoria, info in self.categorias_tematicas.items():
+        # Buscar en otras categorías
+        for categoria, info in self.categorias_tematicas_articulos.items():
             if categoria != 'politica':
-                score = sum(1 for keyword in info['keywords'] if keyword in texto_lower)
+                score = sum(1 for keyword in info['keywords'] if keyword in texto_completo)
                 if score > 0:
                     return categoria, info['emoji']
         
-        return 'otra', '📄'
+        return 'general', '📄'
+
+class HybridSentimentAnalyzer:
+    """Wrapper que decide qué analizador usar según el tipo de contenido"""
     
-    @lru_cache(maxsize=1000)  # Cache para textos repetidos    
+    def __init__(self):
+        self.available = True
+        self.cloud_mode = CLOUD_LIBS_AVAILABLE
+        self.models_loaded = False
+        
+        # Inicializar analizadores específicos
+        self.comentarios_analyzer = ComentariosSentimentAnalyzer()
+        self.visualizaciones_analyzer = VisualizacionesSentimentAnalyzer()
+        
+        if self.cloud_mode:
+            print("🌥️ Modo cloud habilitado")
+        else:
+            print("🔧 Modo keywords únicamente")
+    
+    def detectar_tipo_contenido(self, texto: str, tiene_resumen: bool = False) -> str:
+        """Detecta si es un comentario o un artículo/visualización"""
+        # Si tiene resumen, es claramente un artículo
+        if tiene_resumen:
+            return 'articulo'
+        
+        # Heurísticas para determinar el tipo
+        if len(texto) < 100:  # Comentarios suelen ser más cortos
+            return 'comentario'
+        
+        # Buscar patrones típicos de títulos de artículo
+        patrones_articulo = [
+            'inaugura', 'presenta', 'celebra', 'anuncia', 'aprueba',
+            'concello', 'ayuntamiento', 'alcalde', 'alcaldesa'
+        ]
+        
+        if any(patron in texto.lower() for patron in patrones_articulo):
+            return 'articulo'
+        
+        # Por defecto, asumir comentario
+        return 'comentario'
+    
     def analizar_articulo_completo(self, titulo: str, resumen: str = "") -> EmotionResult:
-        """Análisis completo CORREGIDO"""
+        """Análisis completo que decide qué analizador usar"""
         try:
-            texto_completo = f"{titulo} {resumen}"
+            # Determinar tipo de contenido
+            tipo_contenido = self.detectar_tipo_contenido(titulo, bool(resumen.strip()))
             
-            # 1. Detectar idioma (corregido)
-            language = self.detectar_idioma(texto_completo)
-            
-            # 2. Análisis de emociones (corregido)
-            emotions_scores = self.analizar_emociones(texto_completo)
-            
-            # 3. Emoción principal
-            if emotions_scores:
-                emotion_primary = max(emotions_scores.items(), key=lambda x: x[1])[0]
-                confidence_emocion = max(emotions_scores.values())
+            if tipo_contenido == 'comentario':
+                return self._analizar_comentario(titulo)
             else:
-                emotion_primary = 'neutral'
-                confidence_emocion = 0.5
-            
-            # 4. Tono (corregido)
-            general_tone, general_confidence = self.analizar_sentimiento(texto_completo)
-            
-            # 5. Intensidad realista
-            emotional_intensity = self._calcular_intensidad_realista(texto_completo, emotions_scores)
-            
-            # 6. Temática (corregido)
-            thematic_category, emoji = self._determinar_tematica_politica(texto_completo)
-            
-            # 7. Detección política
-            is_political = self.contexto_politico.es_politico(texto_completo)
-            
-            # 8. Contexto emocional
-            emotional_context = 'conflictivo' if general_tone == 'negativo' else 'esperanzador' if general_tone == 'positivo' else 'informativo'
-            
-            return EmotionResult(
-                language=language,
-                emotion_primary=emotion_primary,
-                confidence=confidence_emocion,
-                emotions_detected=emotions_scores,
-                emotional_intensity=emotional_intensity,
-                emotional_context=emotional_context,
-                general_tone=general_tone,
-                general_confidence=general_confidence,
-                is_political=is_political,
-                thematic_category=f"{emoji} {thematic_category.title()}"
-            )
-            
+                return self._analizar_articulo(titulo, resumen)
+                
         except Exception as e:
             print(f"❌ Error en análisis: {e}")
-            return EmotionResult(
-                language='castellano', emotion_primary='neutral', confidence=0.5,
-                emotions_detected={'neutral': 0.5}, emotional_intensity=2,
-                emotional_context='informativo', general_tone='neutral',
-                general_confidence=0.5, is_political=False, thematic_category='📄 Otra'
-            )
-
+            return self._crear_resultado_default()
+    
+    def _analizar_comentario(self, texto: str) -> EmotionResult:
+        """Análisis específico para comentarios"""
+        analyzer = self.comentarios_analyzer
+        
+        # Detectar idioma
+        language = analyzer.detectar_idioma_comentario(texto)
+        
+        # Análisis de emociones
+        emotions_scores = analyzer.analizar_emociones_comentario(texto)
+        
+        # Emoción principal
+        if emotions_scores:
+            emotion_primary = max(emotions_scores.items(), key=lambda x: x[1])[0]
+            confidence_emocion = max(emotions_scores.values())
+        else:
+            emotion_primary = 'neutral'
+            confidence_emocion = 0.5
+        
+        # Tono general
+        general_tone, general_confidence = analyzer.analizar_sentimiento_comentario(texto)
+        
+        # Intensidad
+        emotional_intensity = analyzer.calcular_intensidad_comentario(texto, emotions_scores)
+        
+        # Contexto y categoría
+        is_political = analyzer.contexto_politico.es_politico(texto)
+        emotional_context = 'conflictivo' if general_tone == 'negativo' else 'esperanzador' if general_tone == 'positivo' else 'conversacional'
+        thematic_category = '🏛️ Política' if is_political else '💬 Comentario'
+        
+        return EmotionResult(
+            language=language,
+            emotion_primary=emotion_primary,
+            confidence=confidence_emocion,
+            emotions_detected=emotions_scores,
+            emotional_intensity=emotional_intensity,
+            emotional_context=emotional_context,
+            general_tone=general_tone,
+            general_confidence=general_confidence,
+            is_political=is_political,
+            thematic_category=thematic_category
+        )
+    
+    def _analizar_articulo(self, titulo: str, resumen: str = "") -> EmotionResult:
+        """Análisis específico para artículos/visualizaciones"""
+        analyzer = self.visualizaciones_analyzer
+        
+        # Detectar idioma
+        language = analyzer.detectar_idioma_articulo(titulo, resumen)
+        
+        # Análisis de emociones
+        emotions_scores = analyzer.analizar_emociones_articulo(titulo, resumen)
+        
+        # Emoción principal
+        if emotions_scores:
+            emotion_primary = max(emotions_scores.items(), key=lambda x: x[1])[0]
+            confidence_emocion = max(emotions_scores.values())
+        else:
+            emotion_primary = 'neutral'
+            confidence_emocion = 0.6
+        
+        # Tono general
+        general_tone, general_confidence = analyzer.analizar_sentimiento_articulo(titulo, resumen)
+        
+        # Intensidad
+        emotional_intensity = analyzer.calcular_intensidad_articulo(titulo, resumen, emotions_scores)
+        
+        # Temática y contexto
+        tematica, emoji = analyzer.determinar_tematica_articulo(titulo, resumen)
+        is_political = analyzer.contexto_politico.es_politico(f"{titulo} {resumen}")
+        emotional_context = 'informativo' if general_tone == 'neutral' else 'optimista' if general_tone == 'positivo' else 'preocupante'
+        thematic_category = f"{emoji} {tematica.title()}"
+        
+        return EmotionResult(
+            language=language,
+            emotion_primary=emotion_primary,
+            confidence=confidence_emocion,
+            emotions_detected=emotions_scores,
+            emotional_intensity=emotional_intensity,
+            emotional_context=emotional_context,
+            general_tone=general_tone,
+            general_confidence=general_confidence,
+            is_political=is_political,
+            thematic_category=thematic_category
+        )
+    
+    def _crear_resultado_default(self) -> EmotionResult:
+        """Crea un resultado por defecto en caso de error"""
+        return EmotionResult(
+            language='castellano',
+            emotion_primary='neutral',
+            confidence=0.5,
+            emotions_detected={'neutral': 0.5},
+            emotional_intensity=2,
+            emotional_context='informativo',
+            general_tone='neutral',
+            general_confidence=0.5,
+            is_political=False,
+            thematic_category='📄 General'
+        )
+    
     def analizar_dataset(self, df: pd.DataFrame, columna_titulo: str, columna_resumen: str = None) -> pd.DataFrame:
         """Análisis optimizado con batches y progress bar"""
         
@@ -492,14 +673,14 @@ class HybridSentimentAnalyzer:
             return df
         
         resultados = []
-        batch_size = 50  # Procesar de 50 en 50
+        batch_size = 50
         total_batches = (len(df) + batch_size - 1) // batch_size
         
         # Inicializar barra de progreso si está disponible
         progress_bar = None
         if hasattr(st, 'progress'):
             progress_bar = st.progress(0)
-            st.info(f"🧠 Procesando {len(df)} artículos en {total_batches} lotes...")
+            st.info(f"🧠 Procesando {len(df)} elementos en {total_batches} lotes...")
         
         try:
             for batch_idx in range(total_batches):
@@ -517,14 +698,8 @@ class HybridSentimentAnalyzer:
                         resultado = self.analizar_articulo_completo(titulo, resumen)
                         batch_resultados.append(resultado)
                     except Exception as e:
-                        print(f"⚠️ Error en artículo {idx}: {e}")
-                        resultado_default = EmotionResult(
-                            language='castellano', emotion_primary='neutral', confidence=0.5,
-                            emotions_detected={'neutral': 0.5}, emotional_intensity=2,
-                            emotional_context='informativo', general_tone='neutral',
-                            general_confidence=0.5, is_political=False, thematic_category='📄 Otra'
-                        )
-                        batch_resultados.append(resultado_default)
+                        print(f"⚠️ Error en elemento {idx}: {e}")
+                        batch_resultados.append(self._crear_resultado_default())
                 
                 resultados.extend(batch_resultados)
                 
@@ -536,12 +711,12 @@ class HybridSentimentAnalyzer:
             # Limpiar barra de progreso
             if progress_bar:
                 progress_bar.empty()
-                st.success(f"✅ Análisis completado: {len(resultados)} artículos procesados")
+                st.success(f"✅ Análisis completado: {len(resultados)} elementos procesados")
             
-            # Construir DataFrame resultado (igual que antes)
+            # Construir DataFrame resultado
             df_resultado = df.copy()
             
-            # Añadir columnas optimizado
+            # Añadir columnas
             df_resultado['idioma'] = [r.language for r in resultados]
             df_resultado['tono_general'] = [r.general_tone for r in resultados]
             df_resultado['emocion_principal'] = [r.emotion_primary for r in resultados]
@@ -604,14 +779,14 @@ class HybridSentimentAnalyzer:
                 'tonos_generales': {'neutral': total_articulos},
                 'emociones_principales': {'neutral': total_articulos},
                 'contextos_emocionales': {'informativo': total_articulos},
-                'tematicas': {'📄 Otra': total_articulos},
+                'tematicas': {'📄 General': total_articulos},
                 'intensidad_promedio': 2.0,
                 'confianza_promedio': 0.7
             }
 
 # Clases de compatibilidad
 class AnalizadorArticulosMarin:
-    """Clase de compatibilidad corregida"""
+    """Clase de compatibilidad refactorizada"""
     
     def __init__(self):
         self.analizador = HybridSentimentAnalyzer()
@@ -624,6 +799,6 @@ class AnalizadorArticulosMarin:
 
 # Función de compatibilidad
 def analizar_articulos_marin(df, columna_titulo='title', columna_resumen='summary'):
-    """Función de compatibilidad corregida"""
+    """Función de compatibilidad refactorizada"""
     analizador = HybridSentimentAnalyzer()
     return analizador.analizar_dataset(df, columna_titulo, columna_resumen)
