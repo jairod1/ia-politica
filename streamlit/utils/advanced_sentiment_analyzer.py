@@ -1,11 +1,18 @@
 """
-Hybrid Sentiment Analyzer - HorizontAI (VERSIÓN REFACTORIZADA)
-==============================================================
+Hybrid Sentiment Analyzer - HorizontAI (VERSIÓN MEJORADA Y OPTIMIZADA)
+========================================================================
 
-🔧 REFACTORIZACIÓN: Separación clara entre análisis de comentarios y visualizaciones
+🚀 VERSIÓN MEJORADA: Análisis más preciso y categorización expandida
 - ComentariosSentimentAnalyzer: Optimizado para comentarios individuales (emocional, coloquial)
-- VisualizacionesSentimentAnalyzer: Optimizado para artículos/títulos (informativo, formal)
-- HybridSentimentAnalyzer: Wrapper que decide qué analizador usar
+- VisualizacionesSentimentAnalyzer: MEJORADO para artículos/títulos (informativo, formal)
+- HybridSentimentAnalyzer: Wrapper con validación cruzada y correcciones automáticas
+
+🆕 NUEVAS CARACTERÍSTICAS:
+- Categorización temática expandida (gastronomía, accidentes, etc.)
+- Sistema de coherencia tono-emoción mejorado
+- Validación cruzada automática
+- Correcciones automáticas inteligentes
+- Detección de contextos específicos
 """
 
 import re
@@ -63,7 +70,11 @@ class EmotionResult:
     general_tone: str  
     general_confidence: float  
     is_political: bool  
-    thematic_category: str  
+    thematic_category: str
+    # 🆕 Nuevos campos para validación
+    validation_alerts: List[str] = None
+    needs_review: bool = False
+    applied_corrections: List[str] = None
 
 class SarcasmDetector:
     """Detecta sarcasmo e ironía contextual"""
@@ -282,7 +293,7 @@ class ComentariosSentimentAnalyzer:
         return min(intensidad_base, 5)
 
 class VisualizacionesSentimentAnalyzer:
-    """Analizador específico para artículos/visualizaciones (informativo, formal) - VERSIÓN OPTIMIZADA"""
+    """🚀 Analizador específico para artículos/visualizaciones - VERSIÓN MEJORADA Y OPTIMIZADA"""
     
     def __init__(self):
         self.contexto_politico = ContextoPolitico()
@@ -294,14 +305,17 @@ class VisualizacionesSentimentAnalyzer:
             'ata', 'sempre', 'nunca', 'tamén', 'ademais', 'porque', 'aínda'
         ]
         
-        # 🔧 EMOCIONES EXPANDIDAS Y MÁS ESPECÍFICAS para artículos
+        # 🚀 EMOCIONES EXPANDIDAS Y MÁS ESPECÍFICAS para artículos
         self.emociones_articulos = {
             'tristeza': [
                 # Necrológicas - palabras clave más específicas
                 'fallece', 'fallecimiento', 'muerte', 'muere', 'falleció',
                 'esquela', 'funeral', 'defunción', 'velatorio', 'cementerio',
                 'sepelio', 'duelo', 'luto', 'despedida', 'último adiós',
-                'cierre', 'clausura', 'pérdida', 'despedida', 'fin', 'último'
+                'cierre', 'clausura', 'pérdida', 'despedida', 'fin', 'último',
+                # 🆕 NUEVAS PALABRAS DETECTADAS
+                'restos mortales', 'capilla ardiente', 'sala velatorio', 'tanatorio',
+                'empresa indica', 'mañana domingo', 'jóvenes fallecidos'
             ],
             'alegría': [
                 # Eventos positivos, fiestas, celebraciones
@@ -312,7 +326,10 @@ class VisualizacionesSentimentAnalyzer:
                 'espectáculo', 'grupo', 'cantantes',
                 # 🎯 ÉXITOS DEPORTIVOS/PERSONALES - EXPANDIDO
                 'éxito', 'exitoso', 'victoria', 'gana', 'ganador', 'primer puesto',
-                'medalla', 'premio', 'distinción', 'honor', 'homenaje', 'llenó'
+                'medalla', 'premio', 'distinción', 'honor', 'homenaje', 'llenó',
+                # 🆕 GASTRONOMÍA Y REAPERTURAS
+                'reabre', 'vuelve a abrir', 'nueva apertura', 'renueva',
+                'abre sus puertas', 'moderniza', 'espacio gastronómico'
             ],
             'orgullo': [
                 # 🎯 ÉXITOS DEPORTIVOS ESPECÍFICOS - NUEVA SECCIÓN EXPANDIDA
@@ -328,13 +345,19 @@ class VisualizacionesSentimentAnalyzer:
                 # Desarrollo, mejoras, proyectos futuros
                 'desarrollo', 'crecimiento', 'mejora', 'avance', 'progreso',
                 'inversión', 'modernización', 'renovación', 'futuro',
-                'proyecto', 'planifica', 'construirá', 'ampliará'
+                'proyecto', 'planifica', 'construirá', 'ampliará',
+                # 🆕 EVENTOS FUTUROS POSITIVOS
+                'abrirá al público', 'viernes', 'programa', 'actividades'
             ],
             'preocupación': [
                 # Problemas, conflictos, demoras
                 'problema', 'dificultad', 'crisis', 'reducción', 'corte',
                 'suspensión', 'retraso', 'conflicto', 'denuncia', 'queja',
-                'esperando', 'espera', 'demora', 'paralizado', 'bloqueo'
+                'esperando', 'espera', 'demora', 'paralizado', 'bloqueo',
+                # 🆕 ACCIDENTES Y SITUACIONES GRAVES
+                'accidente', 'choque', 'heridos', 'colisión', 'impacto',
+                'frontolateral', 'atropello', 'rescate', 'ambulancia',
+                'grave', 'estado crítico', 'preocupados'
             ],
             'satisfacción': [
                 # Finalizaciones exitosas, completaciones
@@ -343,29 +366,59 @@ class VisualizacionesSentimentAnalyzer:
             ]
         }
         
-        # 🔧 CATEGORÍAS TEMÁTICAS EXPANDIDAS para artículos
+        # 🚀 CATEGORÍAS TEMÁTICAS EXPANDIDAS Y CON PRIORIDADES para artículos
         self.categorias_tematicas_articulos = {
             'necrologicas': {  # PRIMERA PRIORIDAD
                 'keywords': [
                     'fallecimiento', 'fallece', 'falleció', 'muerte', 'muere',
                     'esquela', 'funeral', 'defunción', 'velatorio', 'cementerio',
                     'sepelio', 'duelo', 'luto', 'despedida', 'último adiós',
-                    'descanse en paz', 'd.e.p', 'años de edad'
+                    'descanse en paz', 'd.e.p', 'años de edad', 'tanatorio',
+                    'restos mortales', 'capilla ardiente', 'sala velatorio',
+                    'empresa indica', 'mañana domingo'
                 ],
+                'priority': 1,
                 'emoji': '🕊️'
             },
-            'festividades': {  # SEGUNDA PRIORIDAD
+            'accidentes_trafico': {  # 🆕 NUEVA CATEGORÍA CON ALTA PRIORIDAD
+                'keywords': [
+                    'accidente', 'choque', 'colisión', 'atropello', 'carretera',
+                    'tráfico', 'vehículo', 'coche', 'moto', 'heridos',
+                    'ambulancia', 'guardia civil', 'bomberos', 'rescate',
+                    'frontolateral', 'impacto', 'circulaban', 'sentidos opuestos',
+                    'colisión frontal', 'grave accidente', 'resultado de',
+                    'ocupantes', 'conductor', 'pasajeros', 'turistas'
+                ],
+                'priority': 2,
+                'emoji': '🚗💥'
+            },
+            'gastronomia': {  # 🆕 NUEVA CATEGORÍA IMPORTANTE
+                'keywords': [
+                    'reabre', 'restaurante', 'gastronómico', 'cocina', 'chef',
+                    'menú', 'bar', 'taberna', 'cervecería', 'marisquería',
+                    'abre sus puertas', 'nueva carta', 'degustación',
+                    'terraza', 'local', 'hostelería', 'camarero',
+                    'espacio gastronómico', 'vuelve a abrir', 'nueva apertura',
+                    'moderniza', 'renueva', 'espacio', 'comedor'
+                ],
+                'priority': 3,
+                'emoji': '🍽️'
+            },
+            'festividades': {  # TERCERA PRIORIDAD (antes segunda)
                 'keywords': [
                     'fiesta', 'festival', 'celebración', 'celebra', 'celebrar',
                     'festividad', 'evento', 'verbena', 'romería', 'procesión',
                     'feria', 'carnaval', 'concierto', 'actuación', 'espectáculo',
                     'homenaje', 'inauguración', 'apertura', 'clausura',
                     'grupo', 'cantantes', 'músicos', 'folclore', 'tradicional',
-                    'cultural', 'arte', 'exposición', 'muestra'
+                    'cultural', 'arte', 'exposición', 'muestra',
+                    'abrirá al público', 'viernes', 'sábado', 'domingo',
+                    'programa', 'actividades', 'espectáculos'
                 ],
+                'priority': 4,
                 'emoji': '🎉'
             },
-            'deportes': {  # TERCERA PRIORIDAD
+            'deportes': {  # CUARTA PRIORIDAD
                 'keywords': [
                     'fútbol', 'baloncesto', 'deportivo', 'club', 'equipo',
                     'competición', 'torneo', 'liga', 'entrenamiento', 'boxeo',
@@ -375,8 +428,10 @@ class VisualizacionesSentimentAnalyzer:
                     # 🎯 PALABRAS ESPECÍFICAS QUE SE PERDÍAN
                     'mejor de', 'mejor tirador', 'triunfa', 'consigue',
                     'oro', 'plata', 'bronce', 'primer puesto', 'llenó',
-                    'se proclama', 'proclama', 'conseguido', 'título'
+                    'se proclama', 'proclama', 'conseguido', 'título',
+                    'avencia estatal', 'la avencia'
                 ],
+                'priority': 5,
                 'emoji': '⚽'
             },
             'politica': {
@@ -384,39 +439,46 @@ class VisualizacionesSentimentAnalyzer:
                     'alcalde', 'alcaldesa', 'concejo', 'concello', 'pleno', 'concejal',
                     'partido', 'político', 'elecciones', 'campaña', 'gobierno',
                     'oposición', 'debate', 'moción', 'presupuesto', 'ordenanza',
-                    'xunta', 'tramita', 'concesión', 'licencia'
+                    'xunta', 'tramita', 'concesión', 'licencia', 'explotación'
                 ],
+                'priority': 6,
                 'emoji': '🏛️'
-            },
-            'religion': {  # Sin prioridad específica
-                'keywords': [
-                    'capilla', 'iglesia', 'parroquia', 'sacerdote', 'religioso',
-                    'franciscano', 'san diego', 'san narciso', 'misa', 'fiesta religiosa',
-                    'colegio inmaculada', 'caridad', 'hermanas'
-                ],
-                'emoji': '⛪'
             },
             'infraestructura': {
                 'keywords': [
                     'carretera', 'puente', 'obra', 'construcción', 'urbanismo',
                     'saneamiento', 'agua', 'luz', 'gas', 'internet', 'edificio',
-                    'viviendas', 'kiosko', 'pabellón', 'paseo'
+                    'viviendas', 'kiosko', 'pabellón', 'paseo', 'auditorio',
+                    'aparcamiento', 'parking', 'lago castiñeiras', 'ardán'
                 ],
+                'priority': 7,
                 'emoji': '🏗️'
             },
             'economia': {
                 'keywords': [
                     'empresa', 'negocio', 'empleo', 'trabajo', 'industria',
                     'comercio', 'inversión', 'económico', 'financiación',
-                    'tecnopesca', 'hostelería', 'adjudicados', 'puestos'
+                    'tecnopesca', 'hostelería', 'adjudicados', 'puestos',
+                    'mercado', 'abastos', 'millón', 'euros', 'dinero'
                 ],
+                'priority': 8,
                 'emoji': '💰'
+            },
+            'religion': {
+                'keywords': [
+                    'capilla', 'iglesia', 'parroquia', 'sacerdote', 'religioso',
+                    'franciscano', 'san diego', 'san narciso', 'misa', 'fiesta religiosa',
+                    'colegio inmaculada', 'caridad', 'hermanas', 'tricentenaria'
+                ],
+                'priority': 9,
+                'emoji': '⛪'
             },
             'educacion': {
                 'keywords': [
                     'colegio', 'instituto', 'universidad', 'educación', 'estudiante',
                     'profesor', 'curso', 'escuela', 'formación', 'alumnos'
                 ],
+                'priority': 10,
                 'emoji': '📚'
             },
             'medio_ambiente': {
@@ -424,8 +486,38 @@ class VisualizacionesSentimentAnalyzer:
                     'parque', 'jardín', 'verde', 'sostenible', 'ecológico',
                     'medio ambiente', 'reciclaje', 'limpieza'
                 ],
+                'priority': 11,
                 'emoji': '🌱'
             }
+        }
+        
+        # 🚀 NUEVOS PATRONES DE SENTIMIENTO MÁS ESPECÍFICOS
+        self.patrones_sentimiento_mejorados = {
+            'fuertemente_positivo': [
+                # Reaperturas y nuevos negocios
+                'reabre', 'abre sus puertas', 'inauguración', 'nueva apertura',
+                'vuelve a abrir', 'renueva', 'moderniza',
+                # Eventos exitosos
+                'lleno', 'abarrotado', 'gran éxito', 'exitoso',
+                # Reconocimientos deportivos específicos
+                'campeón', 'oro', 'medalla', 'triunfa', 'se proclama', 'mejor de'
+            ],
+            
+            'contextual_negativo': [
+                # Accidentes específicos
+                'accidente', 'choque', 'heridos', 'muerte', 'fallecimiento',
+                'impacto', 'colisión', 'atropello', 'grave accidente',
+                # Cierres y problemas
+                'cierre definitivo', 'clausura', 'pérdida', 'problema'
+            ],
+            
+            'neutral_informativo': [
+                # Noticias administrativas
+                'concello tramita', 'ayuntamiento', 'licencia', 'permiso',
+                'adjudicados', 'concesión', 'solicitud',
+                # Información general
+                'se encontró', 'cantidad de', 'según', 'informa', 'cuenta con'
+            ]
         }
     
     def detectar_idioma_articulo(self, titulo: str, resumen: str = "") -> str:
@@ -453,72 +545,39 @@ class VisualizacionesSentimentAnalyzer:
         return 'castellano'
     
     def analizar_sentimiento_articulo(self, titulo: str, resumen: str = "") -> Tuple[str, float]:
-        """Análisis de sentimiento específico para artículos - VERSIÓN OPTIMIZADA"""
+        """🚀 Análisis de sentimiento específico para artículos - VERSIÓN MEJORADA"""
         texto_completo = f"{titulo} {resumen}".lower()
         
         score_positivo = 0
         score_negativo = 0
         
-        # 🔧 PATRONES EXPANDIDOS Y MÁS SENSIBLES
-        patrones_positivos_articulos = [
-            # Eventos y celebraciones (FESTIVIDADES - NUEVA PRIORIDAD)
-            'fiesta', 'festival', 'celebración', 'celebra', 'festividad',
-            'evento', 'verbena', 'romería', 'procesión', 'concierto',
-            'actuación', 'espectáculo', 'homenaje', 'grupo', 'cantantes',
-            'inauguración', 'inaugura', 'apertura', 'abre', 'nuevo', 'nueva',
-            # 🎯 ÉXITOS DEPORTIVOS ESPECÍFICOS - EXPANDIDO
-            'triunfa', 'triunfo', 'triunfante', 'campeón', 'campeonato',
-            'consigue', 'consiguiendo', 'se proclama', 'proclama',
-            'tirador', 'mejor', 'mejor de', 'oro', 'plata', 'bronce',
-            'ganador', 'gana', 'victoria', 'primer puesto', 'llenó',
-            'éxito', 'exitoso', 'medalla', 'premio', 'copa', 'título',
-            'olimpiadas', 'competición exitosa', 'torneo', 'conseguido',
-            # Desarrollo y mejoras
-            'desarrollo', 'crecimiento', 'mejora', 'avance', 'progreso',
-            'inversión', 'renovación', 'modernización', 'proyecto',
-            # Reconocimientos
-            'reconocimiento', 'distinción', 'honor', 'mérito', 'destacado'
-        ]
-        
-        patrones_negativos_articulos = [
-            # Problemas y conflictos
-            'problema', 'conflicto', 'crisis', 'dificultad', 'error',
-            'retraso', 'suspensión', 'reducción', 'corte', 'cancelación',
-            # Situaciones problemáticas
-            'esperando', 'espera', 'demora', 'paralizado', 'bloqueo',
-            'denuncia', 'queja', 'protesta', 'rechaza', 'opone',
-            # Necrológicas y pérdidas
-            'fallece', 'fallecimiento', 'muerte', 'muere', 'falleció',
-            'cierre', 'clausura', 'pérdida', 'despedida'
-        ]
-        
-        # 🔧 SCORING MÁS AGRESIVO (umbrales más bajos)
-        for patron in patrones_positivos_articulos:
+        # 🚀 PATRONES EXPANDIDOS Y MÁS SENSIBLES
+        for patron in self.patrones_sentimiento_mejorados['fuertemente_positivo']:
             if patron in texto_completo:
                 # Dar más peso si está en el título
                 if patron in titulo.lower():
-                    score_positivo += 3
+                    score_positivo += 4
                 else:
                     score_positivo += 2
         
-        for patron in patrones_negativos_articulos:
+        for patron in self.patrones_sentimiento_mejorados['contextual_negativo']:
             if patron in texto_completo:
                 # Dar más peso si está en el título
                 if patron in titulo.lower():
-                    score_negativo += 3
+                    score_negativo += 4
                 else:
                     score_negativo += 2
         
-        # 🔧 UMBRALES MUCHO MÁS BAJOS (menos conservador)
-        if score_positivo > score_negativo and score_positivo >= 1:  # Era >= 2
-            return 'positivo', min(0.65 + (score_positivo * 0.05), 0.90)
-        elif score_negativo > score_positivo and score_negativo >= 1:  # Era >= 2
-            return 'negativo', min(0.65 + (score_negativo * 0.05), 0.90)
+        # 🚀 UMBRALES AJUSTADOS (menos conservador pero más preciso)
+        if score_positivo > score_negativo and score_positivo >= 2:  
+            return 'positivo', min(0.70 + (score_positivo * 0.05), 0.95)
+        elif score_negativo > score_positivo and score_negativo >= 2:  
+            return 'negativo', min(0.70 + (score_negativo * 0.05), 0.95)
         else:
-            return 'neutral', 0.6
+            return 'neutral', 0.65
     
     def analizar_emociones_articulo(self, titulo: str, resumen: str = "") -> Dict[str, float]:
-        """Análisis de emociones específico para artículos - VERSIÓN OPTIMIZADA"""
+        """🚀 Análisis de emociones específico para artículos - VERSIÓN MEJORADA"""
         emotions_scores = {}
         texto_completo = f"{titulo} {resumen}".lower()
         
@@ -527,31 +586,33 @@ class VisualizacionesSentimentAnalyzer:
             
             for keyword in keywords:
                 if keyword in texto_completo:
-                    # 🔧 MÁS PESO al título (donde está la emoción principal)
+                    # 🚀 MÁS PESO al título (donde está la emoción principal)
                     if keyword in titulo.lower():
-                        score_total += 4.0  # Era 2.0
+                        score_total += 5.0  # Incrementado de 4.0
                     else:
-                        score_total += 2.0  # Era 1.0
+                        score_total += 2.5  # Incrementado de 2.0
             
-            # 🔧 UMBRAL MÁS BAJO para detectar emociones
+            # 🚀 UMBRAL MÁS SENSIBLE para detectar emociones
             if score_total > 0:
-                emotions_scores[emocion] = min(score_total / max(len(keywords), 5), 1.0)
+                emotions_scores[emocion] = min(score_total / max(len(keywords), 4), 1.0)
         
         return emotions_scores
     
     def calcular_intensidad_articulo(self, titulo: str, resumen: str, emotions_scores: Dict[str, float]) -> int:
-        """Intensidad específica para artículos - VERSIÓN OPTIMIZADA"""
-        intensidad_base = 2  # Aumentado de 1 a 2
+        """🚀 Intensidad específica para artículos - VERSIÓN MEJORADA"""
+        intensidad_base = 2  # Base aumentada
         
-        # 🔧 PALABRAS QUE INDICAN ALTA INTENSIDAD EN ARTÍCULOS
+        # 🚀 PALABRAS QUE INDICAN ALTA INTENSIDAD EN ARTÍCULOS
         palabras_alta_intensidad = [
             # Necrológicas (alta intensidad emocional)
-            'fallece', 'fallecimiento', 'muerte', 'falleció',
+            'fallece', 'fallecimiento', 'muerte', 'falleció', 'última hora',
+            # Accidentes graves
+            'grave accidente', 'accidente', 'choque', 'heridos', 'impacto',
             # Éxitos importantes
             'campeón', 'triunfa', 'oro', 'primer puesto', 'récord',
             # Eventos especiales
             'histórico', 'primer', 'único', 'gran', 'importante',
-            'nuevo', 'innovador', 'revolucionario', 'última hora'
+            'nuevo', 'innovador', 'revolucionario'
         ]
         
         texto_completo = f"{titulo} {resumen}".lower()
@@ -561,48 +622,104 @@ class VisualizacionesSentimentAnalyzer:
             if palabra in texto_completo:
                 intensidad_base += 1
         
-        # 🔧 BONUS por tipo de artículo
-        if 'fallece' in texto_completo or 'fallecimiento' in texto_completo:
+        # 🚀 BONUS por tipo de artículo
+        if any(word in texto_completo for word in ['fallece', 'fallecimiento', 'muerte']):
             intensidad_base += 2  # Necrológicas son siempre intensas
+        
+        if any(word in texto_completo for word in ['accidente', 'choque', 'heridos']):
+            intensidad_base += 2  # Accidentes también
         
         if any(word in texto_completo for word in ['campeón', 'triunfa', 'oro']):
             intensidad_base += 1  # Éxitos deportivos/personales
         
-        # Máximo score de emociones (umbral más bajo)
+        # Máximo score de emociones (umbral ajustado)
         if emotions_scores:
             max_emotion_score = max(emotions_scores.values())
-            if max_emotion_score > 0.3:  # Era 0.5
+            if max_emotion_score > 0.4:  # Reducido de 0.5 a 0.4
                 intensidad_base += 1
         
         return min(intensidad_base, 5)  # Máximo 5
     
     def determinar_tematica_articulo(self, titulo: str, resumen: str = "") -> Tuple[str, str]:
-        """Determinación temática específica para artículos - CON PRIORIDADES ACTUALIZADAS"""
+        """🚀 Determinación temática específica - CON PRIORIDADES MEJORADAS"""
         texto_completo = f"{titulo} {resumen}".lower()
         
-        # 🔧 NUEVO ORDEN DE PRIORIDAD según solicitud:
-        # 1. Necrológicas, 2. Festividades, 3. Deportes, 4. Política
-        categorias_prioritarias = ['necrologicas', 'festividades', 'deportes', 'politica']
+        # 🚀 ORDEN DE PRIORIDAD ACTUALIZADO:
+        # 1. Necrológicas, 2. Accidentes, 3. Gastronomía, 4. Festividades, 5. Deportes, 6. Política
+        categorias_por_prioridad = sorted(
+            self.categorias_tematicas_articulos.items(),
+            key=lambda x: x[1].get('priority', 999)
+        )
         
-        # Verificar categorías prioritarias primero
-        for categoria in categorias_prioritarias:
-            if categoria in self.categorias_tematicas_articulos:
-                info = self.categorias_tematicas_articulos[categoria]
-                score = sum(1 for keyword in info['keywords'] if keyword in texto_completo)
-                if score > 0:
-                    return categoria, info['emoji']
-        
-        # Si no es ninguna prioritaria, buscar en otras categorías
-        for categoria, info in self.categorias_tematicas_articulos.items():
-            if categoria not in categorias_prioritarias:
-                score = sum(1 for keyword in info['keywords'] if keyword in texto_completo)
-                if score > 0:
-                    return categoria, info['emoji']
+        # Verificar categorías por prioridad
+        for categoria, info in categorias_por_prioridad:
+            score = sum(1 for keyword in info['keywords'] if keyword in texto_completo)
+            if score > 0:
+                return categoria, info['emoji']
         
         return 'general', '📄'
+    
+    def verificar_coherencia_tono_emocion(self, titulo: str, tono: str, emocion: str, confidence: float) -> Tuple[str, str, float]:
+        """🚀 NUEVA FUNCIÓN: Verifica y corrige incoherencias entre tono general y emoción principal"""
+        texto_lower = titulo.lower()
+        correcciones = []
+        
+        # REGLAS DE COHERENCIA ESPECÍFICAS
+        
+        # Si detectamos palabras de accidente pero tono positivo -> corregir
+        palabras_accidente = ['accidente', 'choque', 'heridos', 'muerte', 'colisión']
+        if any(palabra in texto_lower for palabra in palabras_accidente):
+            if tono == 'positivo':
+                correcciones.append("Accidente clasificado como positivo -> corregido a negativo")
+                return 'negativo', 'preocupación', max(confidence, 0.80)
+        
+        # Si detectamos reapertura/inauguración pero tono negativo -> corregir
+        palabras_apertura = ['reabre', 'inaugura', 'abre', 'nueva apertura', 'gastronómico']
+        if any(palabra in texto_lower for palabra in palabras_apertura):
+            if tono == 'negativo':
+                correcciones.append("Reapertura clasificada como negativa -> corregida a positiva")
+                return 'positivo', 'alegría', max(confidence, 0.80)
+        
+        # Si es necrológica pero no tiene tono negativo -> corregir
+        if any(word in texto_lower for word in ['fallece', 'fallecimiento', 'muerte']):
+            if tono != 'negativo':
+                correcciones.append("Necrológica sin tono negativo -> corregida")
+                return 'negativo', 'tristeza', max(confidence, 0.90)
+        
+        # Si detectamos éxito deportivo pero tono neutral -> corregir  
+        palabras_exito_deportivo = ['campeón', 'oro', 'triunfa', 'medalla', 'mejor de']
+        if any(palabra in texto_lower for palabra in palabras_exito_deportivo):
+            if tono == 'neutral':
+                correcciones.append("Éxito deportivo neutral -> corregido a positivo")
+                return 'positivo', 'orgullo', max(confidence, 0.85)
+        
+        return tono, emocion, confidence
+    
+    def detectar_contexto_especifico(self, titulo: str, resumen: str = "") -> Dict[str, float]:
+        """🚀 NUEVA FUNCIÓN: Detecta contextos específicos con mayor precisión"""
+        texto_completo = f"{titulo} {resumen}".lower()
+        contextos = {}
+        
+        # Contexto de accidente de tráfico
+        if any(word in texto_completo for word in ['accidente', 'choque', 'tráfico', 'carretera', 'heridos']):
+            contextos['accidente_trafico'] = 0.9
+        
+        # Contexto gastronómico
+        if any(word in texto_completo for word in ['reabre', 'restaurante', 'bar', 'gastronómico']):
+            contextos['gastronomia'] = 0.85
+        
+        # Contexto deportivo de alto nivel
+        if any(word in texto_completo for word in ['campeón', 'oro', 'medalla', 'olimpiadas', 'triunfa']):
+            contextos['deporte_elite'] = 0.90
+        
+        # Contexto necrológico
+        if any(word in texto_completo for word in ['fallece', 'fallecimiento', 'tanatorio', 'muerte']):
+            contextos['necrologico'] = 0.95
+        
+        return contextos
 
 class HybridSentimentAnalyzer:
-    """Wrapper que decide qué analizador usar según el tipo de contenido"""
+    """🚀 Wrapper con validación cruzada y correcciones automáticas - VERSIÓN MEJORADA"""
     
     def __init__(self):
         self.available = True
@@ -612,6 +729,10 @@ class HybridSentimentAnalyzer:
         # Inicializar analizadores específicos
         self.comentarios_analyzer = ComentariosSentimentAnalyzer()
         self.visualizaciones_analyzer = VisualizacionesSentimentAnalyzer()
+        
+        # 🆕 Contadores para estadísticas
+        self.correcciones_aplicadas = 0
+        self.validaciones_realizadas = 0
         
         if self.cloud_mode:
             print("🌥️ Modo cloud habilitado")
@@ -642,7 +763,9 @@ class HybridSentimentAnalyzer:
             'inaugura', 'presenta', 'celebra', 'anuncia', 'aprueba',
             'concello', 'ayuntamiento', 'alcalde', 'alcaldesa',
             # 🎯 AÑADIR patrones deportivos
-            'campeón', 'triunfa', 'ganador', 'medalla', 'oro'
+            'campeón', 'triunfa', 'ganador', 'medalla', 'oro',
+            # 🆕 AÑADIR patrones gastronómicos
+            'reabre', 'restaurante', 'gastronómico'
         ]
         
         if any(patron in texto.lower() for patron in patrones_articulo):
@@ -651,16 +774,118 @@ class HybridSentimentAnalyzer:
         # Por defecto, asumir comentario
         return 'comentario'
     
+    def validar_clasificacion(self, titulo: str, tematica: str, tono: str, emocion: str) -> Dict[str, any]:
+        """🚀 NUEVA FUNCIÓN: Sistema de validación cruzada para detectar posibles errores"""
+        alertas = []
+        sugerencias = []
+        
+        titulo_lower = titulo.lower()
+        
+        # Validación 1: Necrológicas nunca deberían ser positivas
+        if 'necrologicas' in tematica.lower() and tono == 'positivo':
+            alertas.append("⚠️ Necrológica clasificada como positiva")
+            sugerencias.append("Revisar: probablemente debería ser negativo/tristeza")
+        
+        # Validación 2: Accidentes no deberían ser festividades
+        if 'accidente' in titulo_lower and 'festividades' in tematica.lower():
+            alertas.append("⚠️ Accidente clasificado como festividad")
+            sugerencias.append("Revisar: debería ser categoría 'accidentes' o 'general'")
+        
+        # Validación 3: Reaperturas no deberían ser necrológicas
+        if any(word in titulo_lower for word in ['reabre', 'abre', 'gastronómico']) and 'necrologicas' in tematica.lower():
+            alertas.append("⚠️ Reapertura clasificada como necrológica")
+            sugerencias.append("Revisar: debería ser 'gastronomia' o 'eventos'")
+        
+        # Validación 4: Éxitos deportivos deberían ser positivos
+        if any(word in titulo_lower for word in ['campeón', 'oro', 'triunfa', 'medalla']) and tono != 'positivo':
+            alertas.append("⚠️ Éxito deportivo no clasificado como positivo")
+            sugerencias.append("Revisar: debería ser positivo/orgullo")
+        
+        # 🆕 Validación 5: Accidentes deberían ser negativos
+        if 'accidente' in titulo_lower and tono == 'positivo':
+            alertas.append("⚠️ Accidente clasificado como positivo")
+            sugerencias.append("Revisar: debería ser negativo/preocupación")
+        
+        self.validaciones_realizadas += 1
+        
+        return {
+            'alertas': alertas,
+            'sugerencias': sugerencias,
+            'necesita_revision': len(alertas) > 0
+        }
+    
+    def aplicar_correcciones_automaticas(self, df_resultado: pd.DataFrame) -> pd.DataFrame:
+        """🚀 NUEVA FUNCIÓN: Aplica correcciones automáticas basadas en reglas"""
+        correcciones_aplicadas = 0
+        correcciones_detalle = []
+        
+        for idx, row in df_resultado.iterrows():
+            titulo = row.get('titulo', '') if hasattr(row, 'get') else ''
+            if not titulo:
+                # Intentar con diferentes nombres de columna
+                titulo = row.get('title', '') or row.get('Titulo', '') or ''
+            
+            titulo_lower = titulo.lower()
+            correcciones_fila = []
+            
+            # Corrección 1: Reaperturas gastronómicas mal clasificadas
+            if any(word in titulo_lower for word in ['reabre', 'gastronómico']) and str(row.get('tematica', '')).startswith('🕊️'):
+                df_resultado.at[idx, 'tematica'] = '🍽️ Gastronomia'
+                df_resultado.at[idx, 'tono_general'] = 'positivo'
+                df_resultado.at[idx, 'emocion_principal'] = 'alegría'
+                correcciones_fila.append("Reapertura gastronómica corregida")
+                correcciones_aplicadas += 1
+            
+            # Corrección 2: Accidentes de tráfico mal clasificados
+            if 'accidente' in titulo_lower and row.get('tono_general') == 'positivo':
+                df_resultado.at[idx, 'tono_general'] = 'negativo'
+                df_resultado.at[idx, 'emocion_principal'] = 'preocupación'
+                df_resultado.at[idx, 'tematica'] = '🚗💥 Accidentes'
+                correcciones_fila.append("Accidente corregido a negativo")
+                correcciones_aplicadas += 1
+            
+            # Corrección 3: Éxitos deportivos mal clasificados
+            if any(word in titulo_lower for word in ['campeón', 'oro', 'triunfa', 'mejor de']) and row.get('tono_general') != 'positivo':
+                df_resultado.at[idx, 'tono_general'] = 'positivo'
+                df_resultado.at[idx, 'emocion_principal'] = 'orgullo'
+                df_resultado.at[idx, 'intensidad_emocional'] = min(row.get('intensidad_emocional', 3) + 1, 5)
+                correcciones_fila.append("Éxito deportivo corregido a positivo")
+                correcciones_aplicadas += 1
+            
+            # Corrección 4: Necrológicas mal clasificadas como positivas
+            if any(word in titulo_lower for word in ['fallece', 'fallecimiento']) and row.get('tono_general') == 'positivo':
+                df_resultado.at[idx, 'tono_general'] = 'negativo'
+                df_resultado.at[idx, 'emocion_principal'] = 'tristeza'
+                df_resultado.at[idx, 'intensidad_emocional'] = 5
+                correcciones_fila.append("Necrológica corregida a negativo")
+                correcciones_aplicadas += 1
+            
+            if correcciones_fila:
+                correcciones_detalle.append(f"Fila {idx}: {', '.join(correcciones_fila)}")
+        
+        self.correcciones_aplicadas = correcciones_aplicadas
+        
+        if correcciones_aplicadas > 0:
+            print(f"✅ Aplicadas {correcciones_aplicadas} correcciones automáticas:")
+            for detalle in correcciones_detalle[:5]:  # Mostrar máximo 5
+                print(f"  - {detalle}")
+            if len(correcciones_detalle) > 5:
+                print(f"  ... y {len(correcciones_detalle) - 5} más")
+        
+        return df_resultado
+    
     def analizar_articulo_completo(self, titulo: str, resumen: str = "") -> EmotionResult:
-        """Análisis completo que decide qué analizador usar"""
+        """🚀 Análisis completo MEJORADO que decide qué analizador usar"""
         try:
             # Determinar tipo de contenido
             tipo_contenido = self.detectar_tipo_contenido(titulo, bool(resumen.strip()))
             
             if tipo_contenido == 'comentario':
-                return self._analizar_comentario(titulo)
+                resultado = self._analizar_comentario(titulo)
             else:
-                return self._analizar_articulo(titulo, resumen)
+                resultado = self._analizar_articulo_mejorado(titulo, resumen)
+                
+            return resultado
                 
         except Exception as e:
             print(f"❌ Error en análisis: {e}")
@@ -705,11 +930,14 @@ class HybridSentimentAnalyzer:
             general_tone=general_tone,
             general_confidence=general_confidence,
             is_political=is_political,
-            thematic_category=thematic_category
+            thematic_category=thematic_category,
+            validation_alerts=[],
+            needs_review=False,
+            applied_corrections=[]
         )
     
-    def _analizar_articulo(self, titulo: str, resumen: str = "") -> EmotionResult:
-        """Análisis específico para artículos/visualizaciones"""
+    def _analizar_articulo_mejorado(self, titulo: str, resumen: str = "") -> EmotionResult:
+        """🚀 Análisis específico para artículos/visualizaciones - VERSIÓN MEJORADA"""
         analyzer = self.visualizaciones_analyzer
         
         # Detectar idioma
@@ -729,13 +957,10 @@ class HybridSentimentAnalyzer:
         # Tono general
         general_tone, general_confidence = analyzer.analizar_sentimiento_articulo(titulo, resumen)
         
-        # 🎯 COHERENCIA TONO-EMOCIÓN: Ajustar tono basado en emoción detectada
-        if emotion_primary in ['alegría', 'orgullo', 'satisfacción', 'esperanza'] and general_tone == 'neutral':
-            general_tone = 'positivo'
-            general_confidence = max(general_confidence, 0.7)
-        elif emotion_primary in ['tristeza', 'preocupación'] and general_tone == 'neutral':
-            general_tone = 'negativo'
-            general_confidence = max(general_confidence, 0.7)
+        # 🚀 NUEVA CARACTERÍSTICA: Verificar coherencia tono-emoción
+        general_tone, emotion_primary, general_confidence = analyzer.verificar_coherencia_tono_emocion(
+            titulo, general_tone, emotion_primary, general_confidence
+        )
         
         # Intensidad
         emotional_intensity = analyzer.calcular_intensidad_articulo(titulo, resumen, emotions_scores)
@@ -745,6 +970,9 @@ class HybridSentimentAnalyzer:
         is_political = analyzer.contexto_politico.es_politico(f"{titulo} {resumen}")
         emotional_context = 'informativo' if general_tone == 'neutral' else 'optimista' if general_tone == 'positivo' else 'preocupante'
         thematic_category = f"{emoji} {tematica.title()}"
+        
+        # 🚀 NUEVA CARACTERÍSTICA: Validación cruzada
+        validacion = self.validar_clasificacion(titulo, thematic_category, general_tone, emotion_primary)
         
         return EmotionResult(
             language=language,
@@ -756,7 +984,10 @@ class HybridSentimentAnalyzer:
             general_tone=general_tone,
             general_confidence=general_confidence,
             is_political=is_political,
-            thematic_category=thematic_category
+            thematic_category=thematic_category,
+            validation_alerts=validacion['alertas'],
+            needs_review=validacion['necesita_revision'],
+            applied_corrections=[]
         )
     
     def _crear_resultado_default(self) -> EmotionResult:
@@ -771,11 +1002,14 @@ class HybridSentimentAnalyzer:
             general_tone='neutral',
             general_confidence=0.5,
             is_political=False,
-            thematic_category='📄 General'
+            thematic_category='📄 General',
+            validation_alerts=[],
+            needs_review=False,
+            applied_corrections=[]
         )
     
     def analizar_dataset(self, df: pd.DataFrame, columna_titulo: str, columna_resumen: str = None) -> pd.DataFrame:
-        """Análisis optimizado con batches y progress bar"""
+        """🚀 Análisis optimizado con batches, validación y correcciones automáticas"""
         
         if len(df) == 0:
             return df
@@ -835,6 +1069,18 @@ class HybridSentimentAnalyzer:
             df_resultado['tematica'] = [r.thematic_category for r in resultados]
             df_resultado['confianza_emocion'] = [r.confidence for r in resultados]
             df_resultado['emociones_detectadas'] = [r.emotions_detected for r in resultados]
+            # 🆕 Nuevas columnas de validación
+            df_resultado['alertas_validacion'] = [r.validation_alerts for r in resultados]
+            df_resultado['necesita_revision'] = [r.needs_review for r in resultados]
+            
+            # 🚀 APLICAR CORRECCIONES AUTOMÁTICAS
+            df_resultado = self.aplicar_correcciones_automaticas(df_resultado)
+            
+            # Estadísticas finales
+            articulos_con_alertas = sum(1 for r in resultados if r.needs_review)
+            if articulos_con_alertas > 0:
+                print(f"⚠️ {articulos_con_alertas} artículos necesitan revisión")
+                print(f"✅ {self.correcciones_aplicadas} correcciones automáticas aplicadas")
             
             return df_resultado
             
@@ -848,7 +1094,7 @@ class HybridSentimentAnalyzer:
             return df
         
     def generar_reporte_completo(self, df_analizado: pd.DataFrame) -> Dict:
-        """Genera reporte completo"""
+        """🚀 Genera reporte completo con estadísticas de validación"""
         total_articulos = len(df_analizado)
         
         if total_articulos == 0:
@@ -866,6 +1112,9 @@ class HybridSentimentAnalyzer:
             intensidad_promedio = float(df_analizado.get('intensidad_emocional', pd.Series()).mean()) if 'intensidad_emocional' in df_analizado.columns else 2.0
             confianza_promedio = float(df_analizado.get('confianza_analisis', pd.Series()).mean()) if 'confianza_analisis' in df_analizado.columns else 0.7
             
+            # 🆕 Estadísticas de validación
+            articulos_con_alertas = int(df_analizado.get('necesita_revision', pd.Series()).sum()) if 'necesita_revision' in df_analizado.columns else 0
+            
             return {
                 'total_articulos': total_articulos,
                 'articulos_politicos': articulos_politicos,
@@ -875,7 +1124,12 @@ class HybridSentimentAnalyzer:
                 'contextos_emocionales': contextos,
                 'tematicas': tematicas,
                 'intensidad_promedio': intensidad_promedio,
-                'confianza_promedio': confianza_promedio
+                'confianza_promedio': confianza_promedio,
+                # 🆕 Nuevas estadísticas
+                'articulos_con_alertas': articulos_con_alertas,
+                'correcciones_aplicadas': getattr(self, 'correcciones_aplicadas', 0),
+                'validaciones_realizadas': getattr(self, 'validaciones_realizadas', 0),
+                'porcentaje_precision': round((1 - articulos_con_alertas / total_articulos) * 100, 2) if total_articulos > 0 else 100
             }
             
         except Exception as e:
@@ -889,7 +1143,11 @@ class HybridSentimentAnalyzer:
                 'contextos_emocionales': {'informativo': total_articulos},
                 'tematicas': {'📄 General': total_articulos},
                 'intensidad_promedio': 2.0,
-                'confianza_promedio': 0.7
+                'confianza_promedio': 0.7,
+                'articulos_con_alertas': 0,
+                'correcciones_aplicadas': 0,
+                'validaciones_realizadas': 0,
+                'porcentaje_precision': 100
             }
 
 # Clases de compatibilidad
