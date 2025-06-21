@@ -308,17 +308,21 @@ class VisualizacionesSentimentAnalyzer:
                 'fiesta', 'festival', 'celebración', 'celebra', 'celebrar',
                 'festividad', 'evento', 'verbena', 'romería', 'procesión',
                 'inauguración', 'inaugura', 'apertura', 'abre', 'nuevo',
-                'boda', 'nacimiento', 'graduación', 'triunfa', 'triunfo',
-                'éxito', 'exitoso', 'victoria', 'gana', 'ganador', 'campeón',
-                'medalla', 'premio', 'distinción', 'honor', 'homenaje',
-                'concierto', 'actuación', 'espectáculo', 'grupo', 'cantantes'
+                'boda', 'nacimiento', 'graduación', 'concierto', 'actuación', 
+                'espectáculo', 'grupo', 'cantantes',
+                # 🎯 ÉXITOS DEPORTIVOS/PERSONALES - EXPANDIDO
+                'éxito', 'exitoso', 'victoria', 'gana', 'ganador', 'primer puesto',
+                'medalla', 'premio', 'distinción', 'honor', 'homenaje', 'llenó'
             ],
             'orgullo': [
-                # Logros, reconocimientos, éxitos deportivos/culturales
-                'campeón', 'campeonato', 'ganador', 'primer puesto', 'oro',
-                'reconocimiento', 'premio', 'distinción', 'honor', 'mérito',
-                'logro', 'conseguido', 'alcanza', 'supera', 'récord',
-                'representará', 'seleccionado', 'elegido', 'destacado'
+                # 🎯 ÉXITOS DEPORTIVOS ESPECÍFICOS - NUEVA SECCIÓN EXPANDIDA
+                'campeón', 'campeonato', 'campeón de', 'se proclama', 'proclama',
+                'triunfa', 'triunfo', 'triunfante', 'consigue', 'consiguiendo',
+                'oro', 'plata', 'bronce', 'mejor', 'mejor de', 'tirador',
+                'olimpiadas', 'competición', 'torneo', 'copa', 'título',
+                # Reconocimientos generales
+                'reconocimiento', 'logro', 'conseguido', 'alcanza', 'supera', 
+                'récord', 'representará', 'seleccionado', 'elegido', 'destacado'
             ],
             'esperanza': [
                 # Desarrollo, mejoras, proyectos futuros
@@ -365,9 +369,13 @@ class VisualizacionesSentimentAnalyzer:
                 'keywords': [
                     'fútbol', 'baloncesto', 'deportivo', 'club', 'equipo',
                     'competición', 'torneo', 'liga', 'entrenamiento', 'boxeo',
-                    'campeón', 'campeonato', 'olimpiadas', 'medalla',
+                    'campeón', 'campeonato', 'olimpiadas', 'medalla', 'copa',
                     'taekwondo', 'tirador', 'cerveza', 'sei', 'colegio',
-                    'pabellón', 'victoria', 'triunfo', 'ganador'
+                    'pabellón', 'victoria', 'triunfo', 'ganador', 'gana',
+                    # 🎯 PALABRAS ESPECÍFICAS QUE SE PERDÍAN
+                    'mejor de', 'mejor tirador', 'triunfa', 'consigue',
+                    'oro', 'plata', 'bronce', 'primer puesto', 'llenó',
+                    'se proclama', 'proclama', 'conseguido', 'título'
                 ],
                 'emoji': '⚽'
             },
@@ -458,9 +466,13 @@ class VisualizacionesSentimentAnalyzer:
             'evento', 'verbena', 'romería', 'procesión', 'concierto',
             'actuación', 'espectáculo', 'homenaje', 'grupo', 'cantantes',
             'inauguración', 'inaugura', 'apertura', 'abre', 'nuevo', 'nueva',
-            # Éxitos y logros (DEPORTES)
-            'triunfa', 'triunfo', 'éxito', 'exitoso', 'victoria', 'gana', 'ganador',
-            'campeón', 'campeonato', 'medalla', 'premio', 'oro', 'primer puesto',
+            # 🎯 ÉXITOS DEPORTIVOS ESPECÍFICOS - EXPANDIDO
+            'triunfa', 'triunfo', 'triunfante', 'campeón', 'campeonato',
+            'consigue', 'consiguiendo', 'se proclama', 'proclama',
+            'tirador', 'mejor', 'mejor de', 'oro', 'plata', 'bronce',
+            'ganador', 'gana', 'victoria', 'primer puesto', 'llenó',
+            'éxito', 'exitoso', 'medalla', 'premio', 'copa', 'título',
+            'olimpiadas', 'competición exitosa', 'torneo', 'conseguido',
             # Desarrollo y mejoras
             'desarrollo', 'crecimiento', 'mejora', 'avance', 'progreso',
             'inversión', 'renovación', 'modernización', 'proyecto',
@@ -614,12 +626,23 @@ class HybridSentimentAnalyzer:
         
         # Heurísticas para determinar el tipo
         if len(texto) < 100:  # Comentarios suelen ser más cortos
+            # 🎯 EXCEPCIÓN: Títulos deportivos pueden ser cortos pero son artículos
+            patrones_titulos_deportivos = [
+                'campeón', 'triunfa', 'mejor de', 'tirador', 'oro', 'medalla',
+                'se proclama', 'conseguido', 'olimpiadas', 'copa'
+            ]
+            
+            if any(patron in texto.lower() for patron in patrones_titulos_deportivos):
+                return 'articulo'
+                
             return 'comentario'
         
         # Buscar patrones típicos de títulos de artículo
         patrones_articulo = [
             'inaugura', 'presenta', 'celebra', 'anuncia', 'aprueba',
-            'concello', 'ayuntamiento', 'alcalde', 'alcaldesa'
+            'concello', 'ayuntamiento', 'alcalde', 'alcaldesa',
+            # 🎯 AÑADIR patrones deportivos
+            'campeón', 'triunfa', 'ganador', 'medalla', 'oro'
         ]
         
         if any(patron in texto.lower() for patron in patrones_articulo):
@@ -705,6 +728,14 @@ class HybridSentimentAnalyzer:
         
         # Tono general
         general_tone, general_confidence = analyzer.analizar_sentimiento_articulo(titulo, resumen)
+        
+        # 🎯 COHERENCIA TONO-EMOCIÓN: Ajustar tono basado en emoción detectada
+        if emotion_primary in ['alegría', 'orgullo', 'satisfacción', 'esperanza'] and general_tone == 'neutral':
+            general_tone = 'positivo'
+            general_confidence = max(general_confidence, 0.7)
+        elif emotion_primary in ['tristeza', 'preocupación'] and general_tone == 'neutral':
+            general_tone = 'negativo'
+            general_confidence = max(general_confidence, 0.7)
         
         # Intensidad
         emotional_intensity = analyzer.calcular_intensidad_articulo(titulo, resumen, emotions_scores)
