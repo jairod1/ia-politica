@@ -282,7 +282,7 @@ class ComentariosSentimentAnalyzer:
         return min(intensidad_base, 5)
 
 class VisualizacionesSentimentAnalyzer:
-    """Analizador específico para artículos/visualizaciones (informativo, formal)"""
+    """Analizador específico para artículos/visualizaciones (informativo, formal) - VERSIÓN OPTIMIZADA"""
     
     def __init__(self):
         self.contexto_politico = ContextoPolitico()
@@ -294,85 +294,122 @@ class VisualizacionesSentimentAnalyzer:
             'ata', 'sempre', 'nunca', 'tamén', 'ademais', 'porque', 'aínda'
         ]
         
-        # Emociones más suaves para artículos informativos
+        # 🔧 EMOCIONES EXPANDIDAS Y MÁS ESPECÍFICAS para artículos
         self.emociones_articulos = {
-            'esperanza': [
-                'desarrollo', 'crecimiento', 'mejora', 'avance', 'progreso',
-                'inversión', 'modernización', 'renovación', 'futuro'
-            ],
-            'preocupación': [
-                'problema', 'dificultad', 'crisis', 'reducción', 'corte',
-                'suspensión', 'retraso', 'conflicto'
-            ],
-            'satisfacción': [
-                'éxito', 'logro', 'inauguración', 'apertura', 'finalización',
-                'completado', 'conseguido'
-            ],
-            'orgullo': [
-                'reconocimiento', 'premio', 'distinción', 'honor', 'celebración',
-                'conmemoración', 'homenaje'
-            ],
             'tristeza': [
-                'cierre', 'clausura', 'pérdida', 'fallecimiento', 'despedida',
-                'fin', 'último'
+                # Necrológicas - palabras clave más específicas
+                'fallece', 'fallecimiento', 'muerte', 'muere', 'falleció',
+                'esquela', 'funeral', 'defunción', 'velatorio', 'cementerio',
+                'sepelio', 'duelo', 'luto', 'despedida', 'último adiós',
+                'cierre', 'clausura', 'pérdida', 'despedida', 'fin', 'último'
             ],
             'alegría': [
-                'fiesta', 'festival', 'celebración', 'inauguración', 'boda',
-                'nacimiento', 'graduación'
+                # Eventos positivos, fiestas, celebraciones
+                'fiesta', 'festival', 'celebración', 'celebra', 'celebrar',
+                'festividad', 'evento', 'verbena', 'romería', 'procesión',
+                'inauguración', 'inaugura', 'apertura', 'abre', 'nuevo',
+                'boda', 'nacimiento', 'graduación', 'triunfa', 'triunfo',
+                'éxito', 'exitoso', 'victoria', 'gana', 'ganador', 'campeón',
+                'medalla', 'premio', 'distinción', 'honor', 'homenaje',
+                'concierto', 'actuación', 'espectáculo', 'grupo', 'cantantes'
+            ],
+            'orgullo': [
+                # Logros, reconocimientos, éxitos deportivos/culturales
+                'campeón', 'campeonato', 'ganador', 'primer puesto', 'oro',
+                'reconocimiento', 'premio', 'distinción', 'honor', 'mérito',
+                'logro', 'conseguido', 'alcanza', 'supera', 'récord',
+                'representará', 'seleccionado', 'elegido', 'destacado'
+            ],
+            'esperanza': [
+                # Desarrollo, mejoras, proyectos futuros
+                'desarrollo', 'crecimiento', 'mejora', 'avance', 'progreso',
+                'inversión', 'modernización', 'renovación', 'futuro',
+                'proyecto', 'planifica', 'construirá', 'ampliará'
+            ],
+            'preocupación': [
+                # Problemas, conflictos, demoras
+                'problema', 'dificultad', 'crisis', 'reducción', 'corte',
+                'suspensión', 'retraso', 'conflicto', 'denuncia', 'queja',
+                'esperando', 'espera', 'demora', 'paralizado', 'bloqueo'
+            ],
+            'satisfacción': [
+                # Finalizaciones exitosas, completaciones
+                'finalización', 'completado', 'terminado', 'acabado',
+                'cumplido', 'realizado', 'entregado', 'adjudicado'
             ]
         }
         
-        # Categorías temáticas específicas para artículos
+        # 🔧 CATEGORÍAS TEMÁTICAS EXPANDIDAS para artículos
         self.categorias_tematicas_articulos = {
+            'necrologicas': {  # PRIMERA PRIORIDAD
+                'keywords': [
+                    'fallecimiento', 'fallece', 'falleció', 'muerte', 'muere',
+                    'esquela', 'funeral', 'defunción', 'velatorio', 'cementerio',
+                    'sepelio', 'duelo', 'luto', 'despedida', 'último adiós',
+                    'descanse en paz', 'd.e.p', 'años de edad'
+                ],
+                'emoji': '🕊️'
+            },
+            'festividades': {  # SEGUNDA PRIORIDAD
+                'keywords': [
+                    'fiesta', 'festival', 'celebración', 'celebra', 'celebrar',
+                    'festividad', 'evento', 'verbena', 'romería', 'procesión',
+                    'feria', 'carnaval', 'concierto', 'actuación', 'espectáculo',
+                    'homenaje', 'inauguración', 'apertura', 'clausura',
+                    'grupo', 'cantantes', 'músicos', 'folclore', 'tradicional',
+                    'cultural', 'arte', 'exposición', 'muestra'
+                ],
+                'emoji': '🎉'
+            },
+            'deportes': {  # TERCERA PRIORIDAD
+                'keywords': [
+                    'fútbol', 'baloncesto', 'deportivo', 'club', 'equipo',
+                    'competición', 'torneo', 'liga', 'entrenamiento', 'boxeo',
+                    'campeón', 'campeonato', 'olimpiadas', 'medalla',
+                    'taekwondo', 'tirador', 'cerveza', 'sei', 'colegio',
+                    'pabellón', 'victoria', 'triunfo', 'ganador'
+                ],
+                'emoji': '⚽'
+            },
             'politica': {
                 'keywords': [
                     'alcalde', 'alcaldesa', 'concejo', 'concello', 'pleno', 'concejal',
                     'partido', 'político', 'elecciones', 'campaña', 'gobierno',
-                    'oposición', 'debate', 'moción', 'presupuesto', 'ordenanza'
+                    'oposición', 'debate', 'moción', 'presupuesto', 'ordenanza',
+                    'xunta', 'tramita', 'concesión', 'licencia'
                 ],
                 'emoji': '🏛️'
             },
-            'economia': {
+            'religion': {  # Sin prioridad específica
                 'keywords': [
-                    'empresa', 'negocio', 'empleo', 'trabajo', 'industria',
-                    'comercio', 'inversión', 'económico', 'financiación'
+                    'capilla', 'iglesia', 'parroquia', 'sacerdote', 'religioso',
+                    'franciscano', 'san diego', 'san narciso', 'misa', 'fiesta religiosa',
+                    'colegio inmaculada', 'caridad', 'hermanas'
                 ],
-                'emoji': '💰'
-            },
-            'cultura': {
-                'keywords': [
-                    'festival', 'concierto', 'exposición', 'teatro', 'museo',
-                    'biblioteca', 'cultural', 'arte', 'tradición'
-                ],
-                'emoji': '🎭'
-            },
-            'deportes': {
-                'keywords': [
-                    'fútbol', 'baloncesto', 'deportivo', 'club', 'equipo',
-                    'competición', 'torneo', 'liga', 'entrenamiento'
-                ],
-                'emoji': '⚽'
-            },
-            'educacion': {
-                'keywords': [
-                    'colegio', 'instituto', 'universidad', 'educación', 'estudiante',
-                    'profesor', 'curso', 'escuela', 'formación'
-                ],
-                'emoji': '📚'
-            },
-            'salud': {
-                'keywords': [
-                    'hospital', 'centro de salud', 'médico', 'sanitario',
-                    'paciente', 'tratamiento', 'salud', 'clínica'
-                ],
-                'emoji': '🏥'
+                'emoji': '⛪'
             },
             'infraestructura': {
                 'keywords': [
                     'carretera', 'puente', 'obra', 'construcción', 'urbanismo',
-                    'saneamiento', 'agua', 'luz', 'gas', 'internet'
+                    'saneamiento', 'agua', 'luz', 'gas', 'internet', 'edificio',
+                    'viviendas', 'kiosko', 'pabellón', 'paseo'
                 ],
                 'emoji': '🏗️'
+            },
+            'economia': {
+                'keywords': [
+                    'empresa', 'negocio', 'empleo', 'trabajo', 'industria',
+                    'comercio', 'inversión', 'económico', 'financiación',
+                    'tecnopesca', 'hostelería', 'adjudicados', 'puestos'
+                ],
+                'emoji': '💰'
+            },
+            'educacion': {
+                'keywords': [
+                    'colegio', 'instituto', 'universidad', 'educación', 'estudiante',
+                    'profesor', 'curso', 'escuela', 'formación', 'alumnos'
+                ],
+                'emoji': '📚'
             },
             'medio_ambiente': {
                 'keywords': [
@@ -380,13 +417,6 @@ class VisualizacionesSentimentAnalyzer:
                     'medio ambiente', 'reciclaje', 'limpieza'
                 ],
                 'emoji': '🌱'
-            },
-            'necrologicas': {
-                'keywords': [
-                    'fallecimiento', 'muerte', 'esquela', 'funeral', 'defunción',
-                    'velatorio', 'cementerio', 'sepelio'
-                ],
-                'emoji': '🕊️'
             }
         }
     
@@ -415,43 +445,68 @@ class VisualizacionesSentimentAnalyzer:
         return 'castellano'
     
     def analizar_sentimiento_articulo(self, titulo: str, resumen: str = "") -> Tuple[str, float]:
-        """Análisis de sentimiento específico para artículos"""
+        """Análisis de sentimiento específico para artículos - VERSIÓN OPTIMIZADA"""
         texto_completo = f"{titulo} {resumen}".lower()
         
         score_positivo = 0
         score_negativo = 0
         
-        # Patrones más informativos y menos emocionales
+        # 🔧 PATRONES EXPANDIDOS Y MÁS SENSIBLES
         patrones_positivos_articulos = [
-            'inauguración', 'apertura', 'nuevo', 'moderna', 'mejora',
-            'desarrollo', 'crecimiento', 'éxito', 'logro', 'premio',
-            'inversión', 'renovación', 'modernización'
+            # Eventos y celebraciones (FESTIVIDADES - NUEVA PRIORIDAD)
+            'fiesta', 'festival', 'celebración', 'celebra', 'festividad',
+            'evento', 'verbena', 'romería', 'procesión', 'concierto',
+            'actuación', 'espectáculo', 'homenaje', 'grupo', 'cantantes',
+            'inauguración', 'inaugura', 'apertura', 'abre', 'nuevo', 'nueva',
+            # Éxitos y logros (DEPORTES)
+            'triunfa', 'triunfo', 'éxito', 'exitoso', 'victoria', 'gana', 'ganador',
+            'campeón', 'campeonato', 'medalla', 'premio', 'oro', 'primer puesto',
+            # Desarrollo y mejoras
+            'desarrollo', 'crecimiento', 'mejora', 'avance', 'progreso',
+            'inversión', 'renovación', 'modernización', 'proyecto',
+            # Reconocimientos
+            'reconocimiento', 'distinción', 'honor', 'mérito', 'destacado'
         ]
         
         patrones_negativos_articulos = [
-            'cierre', 'clausura', 'problema', 'conflicto', 'crisis',
-            'retraso', 'suspensión', 'reducción', 'corte', 'dificultad'
+            # Problemas y conflictos
+            'problema', 'conflicto', 'crisis', 'dificultad', 'error',
+            'retraso', 'suspensión', 'reducción', 'corte', 'cancelación',
+            # Situaciones problemáticas
+            'esperando', 'espera', 'demora', 'paralizado', 'bloqueo',
+            'denuncia', 'queja', 'protesta', 'rechaza', 'opone',
+            # Necrológicas y pérdidas
+            'fallece', 'fallecimiento', 'muerte', 'muere', 'falleció',
+            'cierre', 'clausura', 'pérdida', 'despedida'
         ]
         
-        # Scoring más conservador para artículos
+        # 🔧 SCORING MÁS AGRESIVO (umbrales más bajos)
         for patron in patrones_positivos_articulos:
             if patron in texto_completo:
-                score_positivo += 2
+                # Dar más peso si está en el título
+                if patron in titulo.lower():
+                    score_positivo += 3
+                else:
+                    score_positivo += 2
         
         for patron in patrones_negativos_articulos:
             if patron in texto_completo:
-                score_negativo += 2
+                # Dar más peso si está en el título
+                if patron in titulo.lower():
+                    score_negativo += 3
+                else:
+                    score_negativo += 2
         
-        # Umbrales más altos para artículos (más conservador)
-        if score_positivo > score_negativo and score_positivo >= 2:
-            return 'positivo', min(0.7 + (score_positivo * 0.05), 0.85)
-        elif score_negativo > score_positivo and score_negativo >= 2:
-            return 'negativo', min(0.7 + (score_negativo * 0.05), 0.85)
+        # 🔧 UMBRALES MUCHO MÁS BAJOS (menos conservador)
+        if score_positivo > score_negativo and score_positivo >= 1:  # Era >= 2
+            return 'positivo', min(0.65 + (score_positivo * 0.05), 0.90)
+        elif score_negativo > score_positivo and score_negativo >= 1:  # Era >= 2
+            return 'negativo', min(0.65 + (score_negativo * 0.05), 0.90)
         else:
-            return 'neutral', 0.7
+            return 'neutral', 0.6
     
     def analizar_emociones_articulo(self, titulo: str, resumen: str = "") -> Dict[str, float]:
-        """Análisis de emociones específico para artículos"""
+        """Análisis de emociones específico para artículos - VERSIÓN OPTIMIZADA"""
         emotions_scores = {}
         texto_completo = f"{titulo} {resumen}".lower()
         
@@ -460,52 +515,74 @@ class VisualizacionesSentimentAnalyzer:
             
             for keyword in keywords:
                 if keyword in texto_completo:
-                    # Dar más peso al título
+                    # 🔧 MÁS PESO al título (donde está la emoción principal)
                     if keyword in titulo.lower():
-                        score_total += 2.0
+                        score_total += 4.0  # Era 2.0
                     else:
-                        score_total += 1.0
+                        score_total += 2.0  # Era 1.0
             
+            # 🔧 UMBRAL MÁS BAJO para detectar emociones
             if score_total > 0:
-                emotions_scores[emocion] = min(score_total / len(keywords), 1.0)
+                emotions_scores[emocion] = min(score_total / max(len(keywords), 5), 1.0)
         
         return emotions_scores
     
     def calcular_intensidad_articulo(self, titulo: str, resumen: str, emotions_scores: Dict[str, float]) -> int:
-        """Intensidad específica para artículos (más conservadora)"""
-        intensidad_base = 1  # Más bajo para artículos
+        """Intensidad específica para artículos - VERSIÓN OPTIMIZADA"""
+        intensidad_base = 2  # Aumentado de 1 a 2
         
-        # Palabras que indican mayor importancia en artículos
-        palabras_importantes = [
+        # 🔧 PALABRAS QUE INDICAN ALTA INTENSIDAD EN ARTÍCULOS
+        palabras_alta_intensidad = [
+            # Necrológicas (alta intensidad emocional)
+            'fallece', 'fallecimiento', 'muerte', 'falleció',
+            # Éxitos importantes
+            'campeón', 'triunfa', 'oro', 'primer puesto', 'récord',
+            # Eventos especiales
             'histórico', 'primer', 'único', 'gran', 'importante',
-            'nuevo', 'innovador', 'revolucionario'
+            'nuevo', 'innovador', 'revolucionario', 'última hora'
         ]
         
         texto_completo = f"{titulo} {resumen}".lower()
         
-        for palabra in palabras_importantes:
+        # Contar palabras de alta intensidad
+        for palabra in palabras_alta_intensidad:
             if palabra in texto_completo:
                 intensidad_base += 1
         
-        # Máximo score de emociones (más conservador)
+        # 🔧 BONUS por tipo de artículo
+        if 'fallece' in texto_completo or 'fallecimiento' in texto_completo:
+            intensidad_base += 2  # Necrológicas son siempre intensas
+        
+        if any(word in texto_completo for word in ['campeón', 'triunfa', 'oro']):
+            intensidad_base += 1  # Éxitos deportivos/personales
+        
+        # Máximo score de emociones (umbral más bajo)
         if emotions_scores:
             max_emotion_score = max(emotions_scores.values())
-            if max_emotion_score > 0.5:  # Umbral más bajo
+            if max_emotion_score > 0.3:  # Era 0.5
                 intensidad_base += 1
         
-        return min(intensidad_base, 4)  # Máximo más bajo para artículos
+        return min(intensidad_base, 5)  # Máximo 5
     
     def determinar_tematica_articulo(self, titulo: str, resumen: str = "") -> Tuple[str, str]:
-        """Determinación temática específica para artículos"""
+        """Determinación temática específica para artículos - CON PRIORIDADES ACTUALIZADAS"""
         texto_completo = f"{titulo} {resumen}".lower()
         
-        # Primero verificar si es político
-        if self.contexto_politico.es_politico(texto_completo):
-            return 'politica', '🏛️'
+        # 🔧 NUEVO ORDEN DE PRIORIDAD según solicitud:
+        # 1. Necrológicas, 2. Festividades, 3. Deportes, 4. Política
+        categorias_prioritarias = ['necrologicas', 'festividades', 'deportes', 'politica']
         
-        # Buscar en otras categorías
+        # Verificar categorías prioritarias primero
+        for categoria in categorias_prioritarias:
+            if categoria in self.categorias_tematicas_articulos:
+                info = self.categorias_tematicas_articulos[categoria]
+                score = sum(1 for keyword in info['keywords'] if keyword in texto_completo)
+                if score > 0:
+                    return categoria, info['emoji']
+        
+        # Si no es ninguna prioritaria, buscar en otras categorías
         for categoria, info in self.categorias_tematicas_articulos.items():
-            if categoria != 'politica':
+            if categoria not in categorias_prioritarias:
                 score = sum(1 for keyword in info['keywords'] if keyword in texto_completo)
                 if score > 0:
                     return categoria, info['emoji']
