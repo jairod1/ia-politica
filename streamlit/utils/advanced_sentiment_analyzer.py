@@ -564,19 +564,7 @@ class VisualizacionesSentimentAnalyzer:
         # 🔥 REGLAS ABSOLUTAS PARA CASOS ESPECÍFICOS (no negociables)
         
         # REGLA 1: Si es necrológica real -> SIEMPRE negativo con alta confianza
-        palabras_muerte_directa = [
-            'fallece', 'fallecimiento', 'falleció', 'muerte', 'muere', 'muertos', 'muertas',
-            'jóvenes muertos', 'dos jóvenes muertos', 'fallecidos ocupantes',
-            'se tiñe de luto', 'encoge su corazón', 'está de luto'
-        ]
-        exclusiones_necrologica = [
-            'orquesta', 'furia joven', 'lamenta el episodio', 'verbena del viernes'
-        ]
-        
-        es_necrologica = (any(palabra in texto_completo for palabra in palabras_muerte_directa) and 
-                         not any(exclusion in texto_completo for exclusion in exclusiones_necrologica))
-        
-        if es_necrologica:
+        if self.es_necrologica_real(titulo, resumen):
             return 'negativo', 0.95
         
         # REGLA 2: Accidentes mortales -> SIEMPRE negativo
@@ -650,25 +638,13 @@ class VisualizacionesSentimentAnalyzer:
         """🔥 Intensidad específica para artículos - VERSIÓN ULTRA MEJORADA"""
         
         # 🔥 REGLAS ABSOLUTAS DE INTENSIDAD (no negociables)
-        texto_completo = f"{titulo} {resumen}".lower()
         
         # REGLA 1: Necrológicas SIEMPRE intensidad máxima
-        palabras_muerte_directa = [
-            'fallece', 'fallecimiento', 'falleció', 'muerte', 'muere', 'muertos', 'muertas',
-            'jóvenes muertos', 'dos jóvenes muertos', 'fallecidos ocupantes',
-            'se tiñe de luto', 'encoge su corazón', 'está de luto'
-        ]
-        exclusiones_necrologica = [
-            'orquesta', 'furia joven', 'lamenta el episodio', 'verbena del viernes'
-        ]
-        
-        es_necrologica = (any(palabra in texto_completo for palabra in palabras_muerte_directa) and 
-                         not any(exclusion in texto_completo for exclusion in exclusiones_necrologica))
-        
-        if es_necrologica:
+        if self.es_necrologica_real(titulo, resumen):
             return 5
         
         # REGLA 2: Accidentes mortales SIEMPRE intensidad máxima
+        texto_completo = f"{titulo} {resumen}".lower()
         palabras_accidente_mortal = [
             'dos jóvenes muertos', 'jóvenes muertos en', 'luctuoso accidente',
             'fallecidos ocupantes', 'accidente de tráfico'
@@ -748,28 +724,34 @@ class VisualizacionesSentimentAnalyzer:
         return 'general', '📄'
     
     def verificar_coherencia_tono_emocion(self, titulo: str, tono: str, emocion: str, confidence: float) -> Tuple[str, str, float]:
-        """🔥 FUNCIÓN SIMPLIFICADA para la clase VisualizacionesSentimentAnalyzer"""
+        """🔥 FUNCIÓN MEJORADA para verificar coherencia tono-emoción"""
         texto_lower = titulo.lower()
         
-        # Reglas básicas sin dependencia de es_necrologica_real
+        # REGLA 1: Cualquier necrológica real DEBE ser negativo + tristeza
+        if self.es_necrologica_real(titulo):
+            if tono != 'negativo' or emocion != 'tristeza':
+                return 'negativo', 'tristeza', 0.95
         
-        # REGLA 1: Si detectamos reapertura/inauguración pero tono negativo -> corregir
+        # REGLA 2: Accidentes mortales DEBEN ser negativo + preocupación
+        palabras_accidente_mortal = [
+            'dos jóvenes muertos', 'jóvenes muertos en', 'accidente de tráfico',
+            'luctuoso accidente', 'fallecidos ocupantes'
+        ]
+        if any(palabra in texto_lower for palabra in palabras_accidente_mortal):
+            if tono != 'negativo':
+                return 'negativo', 'preocupación', 0.90
+        
+        # REGLA 3: Si detectamos reapertura/inauguración pero tono negativo -> corregir
         palabras_apertura = ['reabre', 'inaugura', 'abre', 'nueva apertura', 'gastronómico']
         if any(palabra in texto_lower for palabra in palabras_apertura):
             if tono == 'negativo':
                 return 'positivo', 'alegría', max(confidence, 0.80)
         
-        # REGLA 2: Si detectamos éxito deportivo pero tono neutral -> corregir  
+        # REGLA 4: Si detectamos éxito deportivo pero tono neutral -> corregir  
         palabras_exito_deportivo = ['campeón', 'oro', 'triunfa', 'medalla', 'mejor de']
         if any(palabra in texto_lower for palabra in palabras_exito_deportivo):
             if tono == 'neutral':
                 return 'positivo', 'orgullo', max(confidence, 0.85)
-        
-        # REGLA 3: Palabras de muerte directas
-        palabras_muerte = ['fallece', 'fallecimiento', 'falleció', 'muerte', 'muere']
-        if any(palabra in texto_lower for palabra in palabras_muerte):
-            if tono != 'negativo':
-                return 'negativo', 'tristeza', max(confidence, 0.90)
         
         return tono, emocion, confidence
     
