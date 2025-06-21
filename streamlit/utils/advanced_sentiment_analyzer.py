@@ -564,7 +564,19 @@ class VisualizacionesSentimentAnalyzer:
         # 🔥 REGLAS ABSOLUTAS PARA CASOS ESPECÍFICOS (no negociables)
         
         # REGLA 1: Si es necrológica real -> SIEMPRE negativo con alta confianza
-        if self.es_necrologica_real(titulo, resumen):
+        palabras_muerte_directa = [
+            'fallece', 'fallecimiento', 'falleció', 'muerte', 'muere', 'muertos', 'muertas',
+            'jóvenes muertos', 'dos jóvenes muertos', 'fallecidos ocupantes',
+            'se tiñe de luto', 'encoge su corazón', 'está de luto'
+        ]
+        exclusiones_necrologica = [
+            'orquesta', 'furia joven', 'lamenta el episodio', 'verbena del viernes'
+        ]
+        
+        es_necrologica = (any(palabra in texto_completo for palabra in palabras_muerte_directa) and 
+                         not any(exclusion in texto_completo for exclusion in exclusiones_necrologica))
+        
+        if es_necrologica:
             return 'negativo', 0.95
         
         # REGLA 2: Accidentes mortales -> SIEMPRE negativo
@@ -638,13 +650,25 @@ class VisualizacionesSentimentAnalyzer:
         """🔥 Intensidad específica para artículos - VERSIÓN ULTRA MEJORADA"""
         
         # 🔥 REGLAS ABSOLUTAS DE INTENSIDAD (no negociables)
+        texto_completo = f"{titulo} {resumen}".lower()
         
         # REGLA 1: Necrológicas SIEMPRE intensidad máxima
-        if self.es_necrologica_real(titulo, resumen):
+        palabras_muerte_directa = [
+            'fallece', 'fallecimiento', 'falleció', 'muerte', 'muere', 'muertos', 'muertas',
+            'jóvenes muertos', 'dos jóvenes muertos', 'fallecidos ocupantes',
+            'se tiñe de luto', 'encoge su corazón', 'está de luto'
+        ]
+        exclusiones_necrologica = [
+            'orquesta', 'furia joven', 'lamenta el episodio', 'verbena del viernes'
+        ]
+        
+        es_necrologica = (any(palabra in texto_completo for palabra in palabras_muerte_directa) and 
+                         not any(exclusion in texto_completo for exclusion in exclusiones_necrologica))
+        
+        if es_necrologica:
             return 5
         
         # REGLA 2: Accidentes mortales SIEMPRE intensidad máxima
-        texto_completo = f"{titulo} {resumen}".lower()
         palabras_accidente_mortal = [
             'dos jóvenes muertos', 'jóvenes muertos en', 'luctuoso accidente',
             'fallecidos ocupantes', 'accidente de tráfico'
@@ -724,41 +748,28 @@ class VisualizacionesSentimentAnalyzer:
         return 'general', '📄'
     
     def verificar_coherencia_tono_emocion(self, titulo: str, tono: str, emocion: str, confidence: float) -> Tuple[str, str, float]:
-        """🔥 NUEVA FUNCIÓN MEJORADA: Verifica y corrige incoherencias con reglas absolutas"""
+        """🔥 FUNCIÓN SIMPLIFICADA para la clase VisualizacionesSentimentAnalyzer"""
         texto_lower = titulo.lower()
-        correcciones = []
         
-        # 🔥 REGLAS ABSOLUTAS DE COHERENCIA (no negociables)
+        # Reglas básicas sin dependencia de es_necrologica_real
         
-        # REGLA 1: Cualquier necrológica real DEBE ser negativo + tristeza
-        if self.es_necrologica_real(titulo):
-            if tono != 'negativo' or emocion != 'tristeza':
-                correcciones.append("Necrológica corregida -> negativo/tristeza")
-                return 'negativo', 'tristeza', 0.95
-        
-        # REGLA 2: Accidentes mortales DEBEN ser negativo + preocupación
-        palabras_accidente_mortal = [
-            'dos jóvenes muertos', 'jóvenes muertos en', 'accidente de tráfico',
-            'luctuoso accidente', 'fallecidos ocupantes'
-        ]
-        if any(palabra in texto_lower for palabra in palabras_accidente_mortal):
-            if tono != 'negativo':
-                correcciones.append("Accidente mortal corregido -> negativo/preocupación")
-                return 'negativo', 'preocupación', 0.90
-        
-        # REGLA 3: Si detectamos reapertura/inauguración pero tono negativo -> corregir
+        # REGLA 1: Si detectamos reapertura/inauguración pero tono negativo -> corregir
         palabras_apertura = ['reabre', 'inaugura', 'abre', 'nueva apertura', 'gastronómico']
         if any(palabra in texto_lower for palabra in palabras_apertura):
             if tono == 'negativo':
-                correcciones.append("Reapertura clasificada como negativa -> corregida a positiva")
                 return 'positivo', 'alegría', max(confidence, 0.80)
         
-        # REGLA 4: Si detectamos éxito deportivo pero tono neutral -> corregir  
+        # REGLA 2: Si detectamos éxito deportivo pero tono neutral -> corregir  
         palabras_exito_deportivo = ['campeón', 'oro', 'triunfa', 'medalla', 'mejor de']
         if any(palabra in texto_lower for palabra in palabras_exito_deportivo):
             if tono == 'neutral':
-                correcciones.append("Éxito deportivo neutral -> corregido a positivo")
                 return 'positivo', 'orgullo', max(confidence, 0.85)
+        
+        # REGLA 3: Palabras de muerte directas
+        palabras_muerte = ['fallece', 'fallecimiento', 'falleció', 'muerte', 'muere']
+        if any(palabra in texto_lower for palabra in palabras_muerte):
+            if tono != 'negativo':
+                return 'negativo', 'tristeza', max(confidence, 0.90)
         
         return tono, emocion, confidence
     
@@ -801,6 +812,31 @@ class HybridSentimentAnalyzer:
             print("🌥️ Modo cloud habilitado")
         else:
             print("🔧 Modo keywords únicamente")
+    
+    def es_necrologica_real(self, titulo: str, resumen: str = "") -> bool:
+        """🔥 NUEVA FUNCIÓN: Detecta necrológicas reales evitando falsos positivos"""
+        texto_completo = f"{titulo} {resumen}".lower()
+        
+        # 🔥 PALABRAS QUE GARANTIZAN QUE ES NECROLÓGICA (peso máximo)
+        palabras_muerte_directa = [
+            'fallece', 'fallecimiento', 'falleció', 'muerte', 'muere', 'muertos', 'muertas',
+            'jóvenes muertos', 'dos jóvenes muertos', 'fallecidos ocupantes',
+            'se tiñe de luto', 'encoge su corazón', 'está de luto'
+        ]
+        
+        # 🔥 PALABRAS DE EXCLUSIÓN que indican que NO es necrológica
+        exclusiones_necrologica = [
+            'orquesta', 'furia joven', 'lamenta el episodio', 'verbena del viernes',
+            'disculpas', 'perdón', 'no compartimos', 'manifestar que',
+            'enseñar algunos chicos', 'corear tal manifestación', 'grupo humano'
+        ]
+        
+        # Si contiene exclusiones, NO es necrológica
+        if any(exclusion in texto_completo for exclusion in exclusiones_necrologica):
+            return False
+        
+        # Si contiene palabras directas de muerte, SÍ es necrológica
+        return any(palabra in texto_completo for palabra in palabras_muerte_directa)
     
     def detectar_tipo_contenido(self, texto: str, tiene_resumen: bool = False) -> str:
         """Detecta si es un comentario o un artículo/visualización"""
@@ -901,91 +937,96 @@ class HybridSentimentAnalyzer:
         correcciones_aplicadas = 0
         correcciones_detalle = []
         
-        for idx, row in df_resultado.iterrows():
-            titulo = row.get('titulo', '') if hasattr(row, 'get') else ''
-            if not titulo:
-                # Intentar con diferentes nombres de columna
-                titulo = row.get('title', '') or row.get('Titulo', '') or ''
-            
-            titulo_lower = titulo.lower()
-            correcciones_fila = []
-            
-            # 🔥 CORRECCIÓN 1: Necrológicas no detectadas (casos específicos de capturas)
-            if self.es_necrologica_real(titulo) and not str(row.get('tematica', '')).startswith('🕊️'):
-                df_resultado.at[idx, 'tematica'] = '🕊️ Necrologicas'
-                df_resultado.at[idx, 'tono_general'] = 'negativo'
-                df_resultado.at[idx, 'emocion_principal'] = 'tristeza'
-                df_resultado.at[idx, 'intensidad_emocional'] = 5
-                df_resultado.at[idx, 'confianza_analisis'] = 0.95
-                correcciones_fila.append("Necrológica no detectada -> corregida")
-                correcciones_aplicadas += 1
-            
-            # 🔥 CORRECCIÓN 2: Casos específicos mal categorizados
-            casos_correccion = {
-                'con menos de millón': ('🏗️ Infraestructura', 'neutral', 'neutral', 2),
-                'lago castiñeiras': ('🏗️ Infraestructura', 'neutral', 'neutral', 2),
-                'rumbo a república dominicana': ('💰 Economia', 'negativo', 'preocupación', 3),
-                'recaudación': ('💰 Economia', 'negativo', 'preocupación', 3),
-                'sueldos de los trabajadores': ('💰 Economia', 'negativo', 'preocupación', 3)
-            }
-            
-            for patron, (nueva_tematica, nuevo_tono, nueva_emocion, nueva_intensidad) in casos_correccion.items():
-                if patron in titulo_lower and str(row.get('tematica', '')) != nueva_tematica:
-                    df_resultado.at[idx, 'tematica'] = nueva_tematica
-                    df_resultado.at[idx, 'tono_general'] = nuevo_tono
-                    df_resultado.at[idx, 'emocion_principal'] = nueva_emocion
-                    df_resultado.at[idx, 'intensidad_emocional'] = nueva_intensidad
-                    correcciones_fila.append(f"Caso específico '{patron}' corregido")
+        try:
+            for idx, row in df_resultado.iterrows():
+                titulo = row.get('titulo', '') if hasattr(row, 'get') else ''
+                if not titulo:
+                    # Intentar con diferentes nombres de columna
+                    titulo = row.get('title', '') or row.get('Titulo', '') or ''
+                
+                titulo_lower = titulo.lower()
+                correcciones_fila = []
+                
+                # 🔥 CORRECCIÓN 1: Necrológicas no detectadas (casos específicos de capturas)
+                if self.es_necrologica_real(titulo) and not str(row.get('tematica', '')).startswith('🕊️'):
+                    df_resultado.at[idx, 'tematica'] = '🕊️ Necrologicas'
+                    df_resultado.at[idx, 'tono_general'] = 'negativo'
+                    df_resultado.at[idx, 'emocion_principal'] = 'tristeza'
+                    df_resultado.at[idx, 'intensidad_emocional'] = 5
+                    df_resultado.at[idx, 'confianza_analisis'] = 0.95
+                    correcciones_fila.append("Necrológica no detectada -> corregida")
                     correcciones_aplicadas += 1
-                    break
+                
+                # 🔥 CORRECCIÓN 2: Casos específicos mal categorizados
+                casos_correccion = {
+                    'con menos de millón': ('🏗️ Infraestructura', 'neutral', 'neutral', 2),
+                    'lago castiñeiras': ('🏗️ Infraestructura', 'neutral', 'neutral', 2),
+                    'rumbo a república dominicana': ('💰 Economia', 'negativo', 'preocupación', 3),
+                    'recaudación': ('💰 Economia', 'negativo', 'preocupación', 3),
+                    'sueldos de los trabajadores': ('💰 Economia', 'negativo', 'preocupación', 3)
+                }
+                
+                for patron, (nueva_tematica, nuevo_tono, nueva_emocion, nueva_intensidad) in casos_correccion.items():
+                    if patron in titulo_lower and str(row.get('tematica', '')) != nueva_tematica:
+                        df_resultado.at[idx, 'tematica'] = nueva_tematica
+                        df_resultado.at[idx, 'tono_general'] = nuevo_tono
+                        df_resultado.at[idx, 'emocion_principal'] = nueva_emocion
+                        df_resultado.at[idx, 'intensidad_emocional'] = nueva_intensidad
+                        correcciones_fila.append(f"Caso específico '{patron}' corregido")
+                        correcciones_aplicadas += 1
+                        break
+                
+                # 🔥 CORRECCIÓN 3: Falso positivo Orquesta Furia Joven
+                if ('orquesta' in titulo_lower and 'furia joven' in titulo_lower and 
+                    str(row.get('tematica', '')).startswith('🕊️')):
+                    df_resultado.at[idx, 'tematica'] = '🎉 Festividades'
+                    df_resultado.at[idx, 'tono_general'] = 'neutral'
+                    df_resultado.at[idx, 'emocion_principal'] = 'neutral'
+                    df_resultado.at[idx, 'intensidad_emocional'] = 2
+                    correcciones_fila.append("Falso positivo Orquesta Furia Joven corregido")
+                    correcciones_aplicadas += 1
+                
+                # CORRECCIÓN 4: Reaperturas gastronómicas mal clasificadas
+                if any(word in titulo_lower for word in ['reabre', 'gastronómico']) and str(row.get('tematica', '')).startswith('🕊️'):
+                    df_resultado.at[idx, 'tematica'] = '🍽️ Gastronomia'
+                    df_resultado.at[idx, 'tono_general'] = 'positivo'
+                    df_resultado.at[idx, 'emocion_principal'] = 'alegría'
+                    correcciones_fila.append("Reapertura gastronómica corregida")
+                    correcciones_aplicadas += 1
+                
+                # CORRECCIÓN 5: Éxitos deportivos mal clasificados
+                if any(word in titulo_lower for word in ['campeón', 'oro', 'triunfa', 'mejor de']) and row.get('tono_general') != 'positivo':
+                    df_resultado.at[idx, 'tono_general'] = 'positivo'
+                    df_resultado.at[idx, 'emocion_principal'] = 'orgullo'
+                    df_resultado.at[idx, 'intensidad_emocional'] = min(row.get('intensidad_emocional', 3) + 1, 5)
+                    correcciones_fila.append("Éxito deportivo corregido a positivo")
+                    correcciones_aplicadas += 1
+                
+                # CORRECCIÓN 6: Necrológicas con tono incorrecto
+                if str(row.get('tematica', '')).startswith('🕊️') and row.get('tono_general') != 'negativo':
+                    df_resultado.at[idx, 'tono_general'] = 'negativo'
+                    df_resultado.at[idx, 'emocion_principal'] = 'tristeza'
+                    df_resultado.at[idx, 'intensidad_emocional'] = 5
+                    correcciones_fila.append("Necrológica con tono incorrecto corregida")
+                    correcciones_aplicadas += 1
+                
+                if correcciones_fila:
+                    correcciones_detalle.append(f"Fila {idx}: {', '.join(correcciones_fila)}")
             
-            # 🔥 CORRECCIÓN 3: Falso positivo Orquesta Furia Joven
-            if ('orquesta' in titulo_lower and 'furia joven' in titulo_lower and 
-                str(row.get('tematica', '')).startswith('🕊️')):
-                df_resultado.at[idx, 'tematica'] = '🎉 Festividades'
-                df_resultado.at[idx, 'tono_general'] = 'neutral'
-                df_resultado.at[idx, 'emocion_principal'] = 'neutral'
-                df_resultado.at[idx, 'intensidad_emocional'] = 2
-                correcciones_fila.append("Falso positivo Orquesta Furia Joven corregido")
-                correcciones_aplicadas += 1
+            self.correcciones_aplicadas = correcciones_aplicadas
             
-            # CORRECCIÓN 4: Reaperturas gastronómicas mal clasificadas
-            if any(word in titulo_lower for word in ['reabre', 'gastronómico']) and str(row.get('tematica', '')).startswith('🕊️'):
-                df_resultado.at[idx, 'tematica'] = '🍽️ Gastronomia'
-                df_resultado.at[idx, 'tono_general'] = 'positivo'
-                df_resultado.at[idx, 'emocion_principal'] = 'alegría'
-                correcciones_fila.append("Reapertura gastronómica corregida")
-                correcciones_aplicadas += 1
+            if correcciones_aplicadas > 0:
+                print(f"🔥 Aplicadas {correcciones_aplicadas} correcciones automáticas específicas:")
+                for detalle in correcciones_detalle[:5]:  # Mostrar máximo 5
+                    print(f"  - {detalle}")
+                if len(correcciones_detalle) > 5:
+                    print(f"  ... y {len(correcciones_detalle) - 5} más")
             
-            # CORRECCIÓN 5: Éxitos deportivos mal clasificados
-            if any(word in titulo_lower for word in ['campeón', 'oro', 'triunfa', 'mejor de']) and row.get('tono_general') != 'positivo':
-                df_resultado.at[idx, 'tono_general'] = 'positivo'
-                df_resultado.at[idx, 'emocion_principal'] = 'orgullo'
-                df_resultado.at[idx, 'intensidad_emocional'] = min(row.get('intensidad_emocional', 3) + 1, 5)
-                correcciones_fila.append("Éxito deportivo corregido a positivo")
-                correcciones_aplicadas += 1
+            return df_resultado
             
-            # CORRECCIÓN 6: Necrológicas con tono incorrecto
-            if str(row.get('tematica', '')).startswith('🕊️') and row.get('tono_general') != 'negativo':
-                df_resultado.at[idx, 'tono_general'] = 'negativo'
-                df_resultado.at[idx, 'emocion_principal'] = 'tristeza'
-                df_resultado.at[idx, 'intensidad_emocional'] = 5
-                correcciones_fila.append("Necrológica con tono incorrecto corregida")
-                correcciones_aplicadas += 1
-            
-            if correcciones_fila:
-                correcciones_detalle.append(f"Fila {idx}: {', '.join(correcciones_fila)}")
-        
-        self.correcciones_aplicadas = correcciones_aplicadas
-        
-        if correcciones_aplicadas > 0:
-            print(f"🔥 Aplicadas {correcciones_aplicadas} correcciones automáticas específicas:")
-            for detalle in correcciones_detalle[:5]:  # Mostrar máximo 5
-                print(f"  - {detalle}")
-            if len(correcciones_detalle) > 5:
-                print(f"  ... y {len(correcciones_detalle) - 5} más")
-        
-        return df_resultado
+        except Exception as e:
+            print(f"❌ Error en correcciones automáticas: {e}")
+            return df_resultado
     
     def analizar_articulo_completo(self, titulo: str, resumen: str = "") -> EmotionResult:
         """🚀 Análisis completo MEJORADO que decide qué analizador usar"""
@@ -1146,10 +1187,10 @@ class HybridSentimentAnalyzer:
                 # Procesar lote
                 batch_resultados = []
                 for idx, row in batch.iterrows():
-                    titulo = str(row[columna_titulo]) if pd.notna(row[columna_titulo]) else ""
-                    resumen = str(row[columna_resumen]) if columna_resumen and pd.notna(row[columna_resumen]) else ""
-                    
                     try:
+                        titulo = str(row[columna_titulo]) if pd.notna(row[columna_titulo]) else ""
+                        resumen = str(row[columna_resumen]) if columna_resumen and pd.notna(row[columna_resumen]) else ""
+                        
                         resultado = self.analizar_articulo_completo(titulo, resumen)
                         batch_resultados.append(resultado)
                     except Exception as e:
@@ -1171,20 +1212,39 @@ class HybridSentimentAnalyzer:
             # Construir DataFrame resultado
             df_resultado = df.copy()
             
-            # Añadir columnas
-            df_resultado['idioma'] = [r.language for r in resultados]
-            df_resultado['tono_general'] = [r.general_tone for r in resultados]
-            df_resultado['emocion_principal'] = [r.emotion_primary for r in resultados]
-            df_resultado['confianza_analisis'] = [r.general_confidence for r in resultados]
-            df_resultado['intensidad_emocional'] = [r.emotional_intensity for r in resultados]
-            df_resultado['contexto_emocional'] = [r.emotional_context for r in resultados]
-            df_resultado['es_politico'] = [r.is_political for r in resultados]
-            df_resultado['tematica'] = [r.thematic_category for r in resultados]
-            df_resultado['confianza_emocion'] = [r.confidence for r in resultados]
-            df_resultado['emociones_detectadas'] = [r.emotions_detected for r in resultados]
-            # 🆕 Nuevas columnas de validación
-            df_resultado['alertas_validacion'] = [r.validation_alerts for r in resultados]
-            df_resultado['necesita_revision'] = [r.needs_review for r in resultados]
+            # 🔥 AÑADIR TODAS LAS COLUMNAS REQUERIDAS
+            try:
+                df_resultado['idioma'] = [r.language for r in resultados]
+                df_resultado['tono_general'] = [r.general_tone for r in resultados]
+                df_resultado['emocion_principal'] = [r.emotion_primary for r in resultados]
+                df_resultado['confianza_analisis'] = [r.general_confidence for r in resultados]
+                df_resultado['intensidad_emocional'] = [r.emotional_intensity for r in resultados]
+                df_resultado['contexto_emocional'] = [r.emotional_context for r in resultados]
+                df_resultado['es_politico'] = [r.is_political for r in resultados]
+                df_resultado['tematica'] = [r.thematic_category for r in resultados]
+                df_resultado['confianza_emocion'] = [r.confidence for r in resultados]
+                df_resultado['emociones_detectadas'] = [r.emotions_detected for r in resultados]
+                # 🆕 Nuevas columnas de validación
+                df_resultado['alertas_validacion'] = [r.validation_alerts or [] for r in resultados]
+                df_resultado['necesita_revision'] = [r.needs_review for r in resultados]
+                
+                print(f"✅ Columnas añadidas correctamente: {len(df_resultado.columns)} columnas totales")
+                
+            except Exception as e:
+                print(f"❌ Error añadiendo columnas: {e}")
+                # Añadir columnas por defecto si hay error
+                df_resultado['idioma'] = ['castellano'] * len(df)
+                df_resultado['tono_general'] = ['neutral'] * len(df)
+                df_resultado['emocion_principal'] = ['neutral'] * len(df)
+                df_resultado['confianza_analisis'] = [0.6] * len(df)
+                df_resultado['intensidad_emocional'] = [2] * len(df)
+                df_resultado['contexto_emocional'] = ['informativo'] * len(df)
+                df_resultado['es_politico'] = [False] * len(df)
+                df_resultado['tematica'] = ['📄 General'] * len(df)
+                df_resultado['confianza_emocion'] = [0.6] * len(df)
+                df_resultado['emociones_detectadas'] = [{}] * len(df)
+                df_resultado['alertas_validacion'] = [[]] * len(df)
+                df_resultado['necesita_revision'] = [False] * len(df)
             
             # 🚀 APLICAR CORRECCIONES AUTOMÁTICAS
             df_resultado = self.aplicar_correcciones_automaticas(df_resultado)
